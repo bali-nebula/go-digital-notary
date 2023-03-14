@@ -15,6 +15,7 @@ public certificate associated with the notary key used to sign the document.
 ### Quick Links
 For more information on this project click on the following links:
  * [project documentation](https://github.com/bali-nebula/go-digital-notary/wiki)
+ * [coding conventions](https://github.com/craterdog/go-collection-framework/wiki/coding-conventions)
  * [release notes](https://github.com/bali-nebula/go-digital-notary/wiki/releases)
 
 ### Getting Started
