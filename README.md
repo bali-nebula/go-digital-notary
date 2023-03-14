@@ -6,38 +6,29 @@ you are interested in this project or have suggestions on how to improve it feel
 free to contact us at [craterdog@gmail.com](mailto:craterdog@gmail.com)._
 
 ### Overview
-This project provides a rich set of components that can be used to construct
-[abstract syntax trees](https://en.wikipedia.org/wiki/Abstract_syntax_tree)
-(ASTs) from documents containing _Bali Document Notation™_ (Bali for short). The
-syntax trees can then be processed by agents like compilers, interpreters and
-formatters for different document types (Bali, HTML, JSON, XML, etc.)
+This project implements a digital notary agent that can be used to digitally
+sign documents containing
+[Bali Document Notation™](https://github.com/bali-nebula/specifications/wiki/Language-Specification)
+(or "Bali" for short). Each notarized document can then be validated using the
+public certificate associated with the notary key used to sign the document.
 
 ### Quick Links
 For more information on this project click on the following links:
- * [project documentation](https://github.com/bali-nebula/go-component-framework/wiki)
- * [release notes](https://github.com/bali-nebula/go-component-framework/wiki/release-notes)
- * [code examples](https://github.com/bali-nebula/go-component-framework/wiki/code-examples)
+ * [project documentation](https://github.com/bali-nebula/go-digital-notary/wiki)
+ * [release notes](https://github.com/bali-nebula/go-digital-notary/wiki/releases)
 
 ### Getting Started
 To include the Go packages for this module use the following import statement:
 ```go
 import (
-	abs "github.com/bali-nebula/go-component-framework/abstractions"
-	bdn "github.com/bali-nebula/go-component-framework/bdn"
-	col "github.com/bali-nebula/go-component-framework/collections"
-	ele "github.com/bali-nebula/go-component-framework/elements"
-	htm "github.com/bali-nebula/go-component-framework/html"
-	jso "github.com/bali-nebula/go-component-framework/json"
-	str "github.com/bali-nebula/go-component-framework/strings"
-	uti "github.com/bali-nebula/go-component-framework/utilities"
-	xml "github.com/bali-nebula/go-component-framework/xml"
+	not "github.com/bali-nebula/go-digital-notary/v1"
 )
 ```
 
 ### Contributing
 Project contributors are always welcome. Create a
-[fork](https://github.com/bali-nebula/go-component-framework) of the project and add cool
-new things to the framework. When you are ready to contribute the changes create a subsequent
+[fork](https://github.com/bali-nebula/go-digital-notary) of the project and add cool
+new things to the project. When you are ready to contribute the changes create a subsequent
 ["pull request"](https://help.github.com/articles/about-pull-requests/). Any questions and
 comments can be sent to [craterdog@gmail.com](mailto:craterdog@gmail.com).
 
