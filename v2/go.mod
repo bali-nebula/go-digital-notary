@@ -1,10 +1,10 @@
-module github.com/bali-nebula/go-digital-notary/v1
+module github.com/bali-nebula/go-digital-notary/v2
 
 go 1.19
 
 require (
-	github.com/bali-nebula/go-component-framework/v1 v1.0.0
-	github.com/craterdog/go-collection-framework/v2 v2.0.1
+	github.com/bali-nebula/go-component-framework/v2 v2.0.0
+	github.com/craterdog/go-collection-framework/v2 v2.1.0
 	github.com/stretchr/testify v1.8.1
 )
 

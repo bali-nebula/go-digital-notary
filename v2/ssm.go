@@ -22,8 +22,9 @@ import (
 	sig "crypto/ed25519"
 	dig "crypto/sha512"
 	fmt "fmt"
-	abs "github.com/bali-nebula/go-component-framework/v1/abstractions"
-	bal "github.com/bali-nebula/go-component-framework/v1/bali"
+	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
+	age "github.com/bali-nebula/go-component-framework/v2/agents"
+	bal "github.com/bali-nebula/go-component-framework/v2/bali"
 )
 
 // SOFTWARE SECURITY MODULE (SSM) INTERFACE
@@ -31,7 +32,7 @@ import (
 // This constructor creates a new software security module. It emulates a
 // hardware security module and may be used for testing or, in a trusted
 // cloud environment where it cannot be tampered with.
-func SSMv1(directory string) abs.SecurityModuleLike {
+func SSMv1(directory string) SecurityModuleLike {
 	var configurator abs.ConfiguratorLike
 	var controller abs.ControllerLike
 	var v = &ssmV1{} // Assume this is only a trusted security module.
@@ -39,8 +40,8 @@ func SSMv1(directory string) abs.SecurityModuleLike {
 		// Nope, this is pretending to be a hardened security module!
 		fmt.Println("WARNING: Using a SOFTWARE security module instead of a HARDWARE security module.")
 		var filename = "SSMv1.bali"
-		controller = Controller(states)
-		configurator = Configurator(directory, filename)
+		controller = age.Controller(states)
+		configurator = age.Configurator(directory, filename)
 		v = &ssmV1{controller: controller, configurator: configurator}
 		if configurator.Exists() {
 			v.readConfiguration()

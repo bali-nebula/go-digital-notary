@@ -11,21 +11,21 @@
 package notary
 
 import (
-	abs "github.com/bali-nebula/go-component-framework/v1/abstractions"
-	bal "github.com/bali-nebula/go-component-framework/v1/bali"
-	col "github.com/bali-nebula/go-component-framework/v1/collections"
-	com "github.com/bali-nebula/go-component-framework/v1/components"
+	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
+	bal "github.com/bali-nebula/go-component-framework/v2/bali"
+	col "github.com/bali-nebula/go-component-framework/v2/collections"
+	com "github.com/bali-nebula/go-component-framework/v2/components"
 )
 
 // CONTRACT INTERFACE
 
 // This constructor creates a new contract.
 func Contract(
-	document abs.DocumentLike,
+	document DocumentLike,
 	account abs.TagLike,
 	protocol abs.VersionLike,
-	certificate abs.CitationLike,
-) abs.ContractLike {
+	certificate CitationLike,
+) ContractLike {
 	// Create a new catalog for the attributes.
 	var attributes = col.Catalog()
 	attributes.SetValue(documentAttribute, document)
@@ -51,12 +51,12 @@ func (v *contract) GetAccount() abs.TagLike {
 	return v.ExtractCatalog().GetValue(accountAttribute).ExtractTag()
 }
 
-func (v *contract) GetCertificate() abs.CitationLike {
-	return v.ExtractCatalog().GetValue(versionAttribute).(abs.CitationLike)
+func (v *contract) GetCertificate() CitationLike {
+	return v.ExtractCatalog().GetValue(versionAttribute).(CitationLike)
 }
 
-func (v *contract) GetDocument() abs.DocumentLike {
-	return v.ExtractCatalog().GetValue(documentAttribute).(abs.DocumentLike)
+func (v *contract) GetDocument() DocumentLike {
+	return v.ExtractCatalog().GetValue(documentAttribute).(DocumentLike)
 }
 
 func (v *contract) GetProtocol() abs.VersionLike {

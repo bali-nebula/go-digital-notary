@@ -11,10 +11,8 @@
 package notary_test
 
 import (
-	abs "github.com/bali-nebula/go-component-framework/v1/abstractions"
-	bal "github.com/bali-nebula/go-component-framework/v1/bali"
-	doc "github.com/bali-nebula/go-component-framework/v1/documents"
-	not "github.com/bali-nebula/go-digital-notary/v1"
+	bal "github.com/bali-nebula/go-component-framework/v2/bali"
+	not "github.com/bali-nebula/go-digital-notary/v2"
 	ass "github.com/stretchr/testify/assert"
 	osx "os"
 	sts "strings"
@@ -26,7 +24,7 @@ const directory = "./"
 func TestNotaryInitialization(t *tes.T) {
 	// Initialize the security module and digital notary.
 	var module = not.SSMv1(directory)
-	var notary = doc.Notary(directory, module)
+	var notary = not.Notary(directory, module)
 
 	// Should not be able to retrieve the certificate citation without any keys.
 	defer func() {
@@ -43,7 +41,7 @@ func TestNotaryInitialization(t *tes.T) {
 func TestNotaryGenerateKey(t *tes.T) {
 	// Initialize the security module and digital notary.
 	var module = not.SSMv1(directory)
-	var notary = doc.Notary(directory, module)
+	var notary = not.Notary(directory, module)
 
 	// Generate a new public-private key pair.
 	notary.GenerateKey()
@@ -64,7 +62,7 @@ func TestNotaryGenerateKey(t *tes.T) {
 func TestNotaryLifecycle(t *tes.T) {
 	// Initialize the security module and digital notary.
 	var module = not.SSMv1(directory)
-	var notary = doc.Notary(directory, module)
+	var notary = not.Notary(directory, module)
 
 	// Generate and validate a new public-private key pair.
 	var certificateV1 = notary.GenerateKey()
@@ -87,7 +85,7 @@ func TestNotaryLifecycle(t *tes.T) {
 	var version = bal.Version("v1.2")
 	var permissions = bal.Moniker("/bali/permissions/public/v1")
 	var previous not.CitationLike
-	var document = doc.Document(attributes, type_, tag, version, permissions, previous)
+	var document = not.Document(attributes, type_, tag, version, permissions, previous)
 	osx.WriteFile("./examples/document.bali", bal.FormatDocument(document), 0600)
 	citation = notary.CiteDocument(document)
 	ass.True(t, notary.CitationMatches(citation, document))
@@ -99,7 +97,7 @@ func TestNotaryLifecycle(t *tes.T) {
 
 	// Pickup where we left off with a new security module and digital notary.
 	module = not.SSMv1(directory)
-	notary = doc.Notary(directory, module)
+	notary = not.Notary(directory, module)
 
 	// Refresh and validate the public-private key pair.
 	var certificateV2 = notary.RefreshKey()

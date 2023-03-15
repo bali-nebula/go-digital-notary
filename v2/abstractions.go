@@ -10,52 +10,56 @@
 
 package notary
 
+import (
+	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
+)
+
 // INDIVIDUAL INTERFACES
 
 // This interface defines the methods supported by all notarized components.
 type Notarized interface {
 	GetDocument() DocumentLike
-	GetTimestamp() MomentLike
-	GetAccount() TagLike
-	GetProtocol() VersionLike
+	GetTimestamp() abs.MomentLike
+	GetAccount() abs.TagLike
+	GetProtocol() abs.VersionLike
 	GetCertificate() CitationLike
-	AddSignature(signature BinaryLike)
-	RemoveSignature() BinaryLike
+	AddSignature(signature abs.BinaryLike)
+	RemoveSignature() abs.BinaryLike
 }
 
 // This interface defines the methods supported by all published components.
 type Published interface {
-	GetAlgorithms() CatalogLike
-	GetKey() BinaryLike
+	GetAlgorithms() abs.CatalogLike
+	GetKey() abs.BinaryLike
 }
 
 // This interface defines the methods supported by all referential components.
 type Referential interface {
-	GetTag() TagLike
-	GetVersion() VersionLike
-	GetProtocol() VersionLike
-	GetDigest() BinaryLike
+	GetTag() abs.TagLike
+	GetVersion() abs.VersionLike
+	GetProtocol() abs.VersionLike
+	GetDigest() abs.BinaryLike
 }
 
 // This interface defines the methods supported by all restricted components.
 type Restricted interface {
-	GetPermissions() MonikerLike
+	GetPermissions() abs.MonikerLike
 }
 
 // This interface defines the methods supported by all salted components.
 type Salted interface {
-	GetSalt() BinaryLike
+	GetSalt() abs.BinaryLike
 }
 
 // This interface defines the methods supported by all typed components.
 type Typed interface {
-	GetType() MonikerLike
+	GetType() abs.MonikerLike
 }
 
 // This interface defines the methods supported by all versioned components.
 type Versioned interface {
-	GetTag() TagLike
-	GetVersion() VersionLike
+	GetTag() abs.TagLike
+	GetVersion() abs.VersionLike
 	GetPrevious() CitationLike
 }
 
@@ -71,41 +75,59 @@ type Prudent interface {
 // This interface defines the methods supported by all certified notary
 // agents.
 type Certified interface {
-	GenerateCredentials(salt BinaryLike) ContractLike
+	GenerateCredentials(salt abs.BinaryLike) ContractLike
 	NotarizeDocument(document DocumentLike) ContractLike
 	SignatureMatches(contract ContractLike, certificate CertificateLike) bool
 	CiteDocument(document DocumentLike) CitationLike
 	CitationMatches(citation CitationLike, document DocumentLike) bool
 }
 
+// This interface defines the methods supported by all trusted security
+// modules.
+type Trusted interface {
+	GetProtocol() string
+	DigestBytes(bytes []byte) []byte
+	IsValid(key []byte, signature []byte, bytes []byte) bool
+}
+
+// This interface defines the methods supported by all hardened security
+// modules.
+type Hardened interface {
+	GetTag() string
+	GenerateKeys() []byte
+	SignBytes(bytes []byte) []byte
+	RotateKeys() []byte
+	EraseKeys()
+}
+
 // CONSOLIDATED INTERFACES
 
 type TypeLike interface {
-	Encapsulated
+	abs.Encapsulated
 	Typed
 }
 
 type CitationLike interface {
-	Encapsulated
+	abs.Encapsulated
 	Referential
 	Typed
 }
 
 type ContractLike interface {
-	Encapsulated
+	abs.Encapsulated
 	Notarized
 	Typed
 }
 
 type DocumentLike interface {
-	Encapsulated
+	abs.Encapsulated
 	Typed
 	Restricted
 	Versioned
 }
 
 type CertificateLike interface {
-	Encapsulated
+	abs.Encapsulated
 	Published
 	Typed
 	Restricted
@@ -113,7 +135,7 @@ type CertificateLike interface {
 }
 
 type CredentialsLike interface {
-	Encapsulated
+	abs.Encapsulated
 	Salted
 	Typed
 	Restricted
@@ -123,4 +145,11 @@ type CredentialsLike interface {
 type NotaryLike interface {
 	Prudent
 	Certified
+}
+
+// This interface consolidates all the interfaces supported by
+// security-module-like devices.
+type SecurityModuleLike interface {
+	Trusted
+	Hardened
 }

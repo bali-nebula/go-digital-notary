@@ -11,10 +11,10 @@
 package notary
 
 import (
-	abs "github.com/bali-nebula/go-component-framework/v1/abstractions"
-	bal "github.com/bali-nebula/go-component-framework/v1/bali"
-	col "github.com/bali-nebula/go-component-framework/v1/collections"
-	com "github.com/bali-nebula/go-component-framework/v1/components"
+	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
+	bal "github.com/bali-nebula/go-component-framework/v2/bali"
+	col "github.com/bali-nebula/go-component-framework/v2/collections"
+	com "github.com/bali-nebula/go-component-framework/v2/components"
 )
 
 // CREDENTIALS INTERFACE
@@ -22,7 +22,7 @@ import (
 // This constructor creates a new credentials.
 func Credentials(
 	salt abs.BinaryLike,
-) abs.CredentialsLike {
+) CredentialsLike {
 
 	// Create a new catalog for the attributes.
 	var attributes = col.Catalog()
@@ -53,8 +53,8 @@ func (v *credentials) GetPermissions() abs.MonikerLike {
 	return v.GetContext().GetValue(permissionsAttribute).ExtractMoniker()
 }
 
-func (v *credentials) GetPrevious() abs.CitationLike {
-	return v.GetContext().GetValue(previousAttribute).ExtractCatalog().(abs.CitationLike)
+func (v *credentials) GetPrevious() CitationLike {
+	return v.GetContext().GetValue(previousAttribute).ExtractCatalog().(CitationLike)
 }
 
 func (v *credentials) GetTag() abs.TagLike {

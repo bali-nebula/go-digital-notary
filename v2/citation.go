@@ -11,10 +11,10 @@
 package notary
 
 import (
-	abs "github.com/bali-nebula/go-component-framework/v1/abstractions"
-	bal "github.com/bali-nebula/go-component-framework/v1/bali"
-	col "github.com/bali-nebula/go-component-framework/v1/collections"
-	com "github.com/bali-nebula/go-component-framework/v1/components"
+	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
+	bal "github.com/bali-nebula/go-component-framework/v2/bali"
+	col "github.com/bali-nebula/go-component-framework/v2/collections"
+	com "github.com/bali-nebula/go-component-framework/v2/components"
 )
 
 // CITATION INTERFACE
@@ -25,7 +25,7 @@ func Citation(
 	version abs.VersionLike,
 	protocol abs.VersionLike,
 	digest abs.BinaryLike,
-) abs.CitationLike {
+) CitationLike {
 
 	// Create a new catalog for the attributes.
 	var attributes = col.Catalog()

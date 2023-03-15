@@ -11,14 +11,14 @@
 package notary_test
 
 import (
-	age "github.com/bali-nebula/go-component-framework/v1/agents"
+	not "github.com/bali-nebula/go-digital-notary/v2"
 	ass "github.com/stretchr/testify/assert"
 	tes "testing"
 )
 
 func TestSSM(t *tes.T) {
 	var bytes = []byte{0x0, 0x1, 0x2, 0x3, 0x4}
-	var module = age.SSMv1("./")
+	var module = not.SSMv1("./")
 	ass.Equal(t, "v1", module.GetProtocol())
 	ass.Equal(t, 64, len(module.DigestBytes(bytes)))
 

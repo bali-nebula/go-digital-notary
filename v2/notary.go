@@ -13,9 +13,9 @@ package notary
 import (
 	byt "bytes"
 	fmt "fmt"
-	abs "github.com/bali-nebula/go-component-framework/v1/abstractions"
-	age "github.com/bali-nebula/go-component-framework/v1/agents"
-	bal "github.com/bali-nebula/go-component-framework/v1/bali"
+	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
+	age "github.com/bali-nebula/go-component-framework/v2/agents"
+	bal "github.com/bali-nebula/go-component-framework/v2/bali"
 	col "github.com/craterdog/go-collection-framework/v2"
 )
 
@@ -87,7 +87,6 @@ var (
 	protocolAttribute    = bal.Symbol("$protocol")
 	saltAttribute        = bal.Symbol("$salt")
 	signatureAttribute   = bal.Symbol("$signature")
-	tagAttribute         = bal.Symbol("$tag")
 	timestampAttribute   = bal.Symbol("$timestamp")
 	typeAttribute        = bal.Symbol("$type")
 	versionAttribute     = bal.Symbol("$version")

@@ -11,8 +11,8 @@
 package notary
 
 import (
-	abs "github.com/bali-nebula/go-component-framework/v1/abstractions"
-	bal "github.com/bali-nebula/go-component-framework/v1/bali"
+	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
+	bal "github.com/bali-nebula/go-component-framework/v2/bali"
 )
 
 // TYPE INTERFACE
@@ -21,7 +21,7 @@ import (
 func Type(
 	moniker abs.MonikerLike,
 	context abs.ContextLike,
-) abs.TypeLike {
+) TypeLike {
 	return &type_{bal.ComponentWithContext(moniker, context)}
 }
 

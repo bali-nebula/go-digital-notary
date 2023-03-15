@@ -11,10 +11,10 @@
 package notary
 
 import (
-	abs "github.com/bali-nebula/go-component-framework/v1/abstractions"
-	bal "github.com/bali-nebula/go-component-framework/v1/bali"
-	col "github.com/bali-nebula/go-component-framework/v1/collections"
-	com "github.com/bali-nebula/go-component-framework/v1/components"
+	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
+	bal "github.com/bali-nebula/go-component-framework/v2/bali"
+	col "github.com/bali-nebula/go-component-framework/v2/collections"
+	com "github.com/bali-nebula/go-component-framework/v2/components"
 )
 
 // CERTIFICATE INTERFACE
@@ -25,8 +25,8 @@ func Certificate(
 	algorithms abs.CatalogLike,
 	tag abs.TagLike,
 	version abs.VersionLike,
-	previous abs.CitationLike,
-) abs.CertificateLike {
+	previous CitationLike,
+) CertificateLike {
 
 	// Create a new catalog for the attributes.
 	var attributes = col.Catalog()
@@ -65,8 +65,8 @@ func (v *certificate) GetPermissions() abs.MonikerLike {
 	return v.GetContext().GetValue(permissionsAttribute).ExtractMoniker()
 }
 
-func (v *certificate) GetPrevious() abs.CitationLike {
-	return v.GetContext().GetValue(previousAttribute).ExtractCatalog().(abs.CitationLike)
+func (v *certificate) GetPrevious() CitationLike {
+	return v.GetContext().GetValue(previousAttribute).ExtractCatalog().(CitationLike)
 }
 
 func (v *certificate) GetTag() abs.TagLike {
