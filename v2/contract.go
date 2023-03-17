@@ -63,10 +63,6 @@ func (v *contract) GetProtocol() abs.VersionLike {
 	return v.ExtractCatalog().GetValue(protocolAttribute).ExtractVersion()
 }
 
-func (v *contract) GetTimestamp() abs.MomentLike {
-	return v.ExtractCatalog().GetValue(timestampAttribute).ExtractMoment()
-}
-
 func (v *contract) GetType() abs.MonikerLike {
 	return v.GetContext().GetValue(typeAttribute).GetEntity().(abs.MonikerLike)
 }

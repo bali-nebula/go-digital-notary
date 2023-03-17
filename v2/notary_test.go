@@ -82,7 +82,7 @@ func TestNotaryLifecycle(t *tes.T) {
 ]`)
 	var type_ = bal.Component("/bali/examples/Document/v1.2.3")
 	var tag = bal.NewTag()
-	var version = bal.Version("v1.2")
+	var version = bal.Version("v1")
 	var permissions = bal.Moniker("/bali/permissions/public/v1")
 	var previous not.CitationLike
 	var document = not.Document(attributes, type_, tag, version, permissions, previous)

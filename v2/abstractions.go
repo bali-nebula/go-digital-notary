@@ -19,7 +19,6 @@ import (
 // This interface defines the methods supported by all notarized components.
 type Notarized interface {
 	GetDocument() DocumentLike
-	GetTimestamp() abs.MomentLike
 	GetAccount() abs.TagLike
 	GetProtocol() abs.VersionLike
 	GetCertificate() CitationLike
