@@ -45,26 +45,34 @@ type credentials struct {
 	abs.Encapsulated
 }
 
+// SEASONED INTERFACE
+
 func (v *credentials) GetSalt() abs.BinaryLike {
 	return v.ExtractCatalog().GetValue(saltAttribute).ExtractBinary()
 }
 
-func (v *credentials) GetPermissions() abs.MonikerLike {
-	return v.GetContext().GetValue(permissionsAttribute).ExtractMoniker()
-}
-
-func (v *credentials) GetPrevious() CitationLike {
-	return v.GetContext().GetValue(previousAttribute).ExtractCatalog().(CitationLike)
-}
-
-func (v *credentials) GetTag() abs.TagLike {
-	return v.GetContext().GetValue(tagAttribute).ExtractTag()
-}
+// TYPED INTERFACE
 
 func (v *credentials) GetType() abs.MonikerLike {
 	return v.GetContext().GetValue(typeAttribute).GetEntity().(abs.MonikerLike)
 }
 
+// RESTRICTED INTERFACE
+
+func (v *credentials) GetPermissions() abs.MonikerLike {
+	return v.GetContext().GetValue(permissionsAttribute).ExtractMoniker()
+}
+
+// VERSIONED INTERFACE
+
+func (v *credentials) GetTag() abs.TagLike {
+	return v.GetContext().GetValue(tagAttribute).ExtractTag()
+}
+
 func (v *credentials) GetVersion() abs.VersionLike {
 	return v.GetContext().GetValue(versionAttribute).ExtractVersion()
+}
+
+func (v *credentials) GetPrevious() CitationLike {
+	return v.GetContext().GetValue(previousAttribute).ExtractCatalog().(CitationLike)
 }

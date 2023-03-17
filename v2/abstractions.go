@@ -46,7 +46,7 @@ type Restricted interface {
 }
 
 // This interface defines the methods supported by all salted components.
-type Salted interface {
+type Seasoned interface {
 	GetSalt() abs.BinaryLike
 }
 
@@ -135,7 +135,7 @@ type CertificateLike interface {
 
 type CredentialsLike interface {
 	abs.Encapsulated
-	Salted
+	Seasoned
 	Typed
 	Restricted
 	Versioned
