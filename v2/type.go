@@ -19,10 +19,10 @@ import (
 
 // This constructor creates a new type component.
 func Type(
-	moniker abs.MonikerLike,
+	name abs.MonikerLike,
 	context abs.ContextLike,
 ) TypeLike {
-	return &type_{bal.ComponentWithContext(moniker, context)}
+	return &type_{bal.ComponentWithContext(name, context)}
 }
 
 // TYPE IMPLEMENTATION
@@ -31,6 +31,6 @@ type type_ struct {
 	abs.Encapsulated
 }
 
-func (v *type_) GetType() TypeLike {
-	return v.GetContext().GetValue(typeAttribute).(TypeLike)
+func (v *type_) GetName() abs.MonikerLike {
+	return v.ExtractMoniker()
 }

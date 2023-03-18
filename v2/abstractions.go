@@ -55,6 +55,11 @@ type Typed interface {
 	GetType() TypeLike
 }
 
+// This interface defines the methods supported by all named components.
+type Named interface {
+	GetName() abs.MonikerLike
+}
+
 // This interface defines the methods supported by all versioned components.
 type Versioned interface {
 	GetTag() abs.TagLike
@@ -103,7 +108,7 @@ type Hardened interface {
 
 type TypeLike interface {
 	abs.Encapsulated
-	Typed
+	Named
 }
 
 type CitationLike interface {

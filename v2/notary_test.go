@@ -80,7 +80,7 @@ func TestNotaryLifecycle(t *tes.T) {
     $merchant: <https://www.starbucks.com/>
     $amount: 4.95($currency: $USD)
 ]`)
-	var type_ = bal.Component("/bali/examples/Document/v1.2.3")
+	var type_ = not.Type(bal.Moniker("/bali/examples/Document/v1.2.3"), nil)
 	var tag = bal.NewTag()
 	var version = bal.Version("v1")
 	var permissions = bal.Moniker("/bali/permissions/public/v1")

@@ -21,7 +21,7 @@ import (
 // This constructor creates a new document.
 func Document(
 	attributes abs.CatalogLike,
-	type_ abs.ComponentLike,
+	type_ TypeLike,
 	tag abs.TagLike,
 	version abs.VersionLike,
 	permissions abs.MonikerLike,
