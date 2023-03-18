@@ -53,8 +53,8 @@ func (v *credentials) GetSalt() abs.BinaryLike {
 
 // TYPED INTERFACE
 
-func (v *credentials) GetType() abs.MonikerLike {
-	return v.GetContext().GetValue(typeAttribute).GetEntity().(abs.MonikerLike)
+func (v *credentials) GetType() TypeLike {
+	return v.GetContext().GetValue(typeAttribute).(TypeLike)
 }
 
 // RESTRICTED INTERFACE

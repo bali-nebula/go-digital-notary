@@ -52,7 +52,7 @@ type Seasoned interface {
 
 // This interface defines the methods supported by all typed components.
 type Typed interface {
-	GetType() abs.MonikerLike
+	GetType() TypeLike
 }
 
 // This interface defines the methods supported by all versioned components.

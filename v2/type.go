@@ -31,6 +31,6 @@ type type_ struct {
 	abs.Encapsulated
 }
 
-func (v *type_) GetType() abs.MonikerLike {
-	return v.GetContext().GetValue(typeAttribute).GetEntity().(abs.MonikerLike)
+func (v *type_) GetType() TypeLike {
+	return v.GetContext().GetValue(typeAttribute).(TypeLike)
 }

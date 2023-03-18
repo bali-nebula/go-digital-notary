@@ -63,8 +63,8 @@ func (v *contract) GetProtocol() abs.VersionLike {
 	return v.ExtractCatalog().GetValue(protocolAttribute).ExtractVersion()
 }
 
-func (v *contract) GetType() abs.MonikerLike {
-	return v.GetContext().GetValue(typeAttribute).GetEntity().(abs.MonikerLike)
+func (v *contract) GetType() TypeLike {
+	return v.GetContext().GetValue(typeAttribute).(TypeLike)
 }
 
 func (v *contract) AddSignature(signature abs.BinaryLike) {

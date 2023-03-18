@@ -60,8 +60,8 @@ func (v *document) GetTag() abs.TagLike {
 	return v.GetContext().GetValue(tagAttribute).ExtractTag()
 }
 
-func (v *document) GetType() abs.MonikerLike {
-	return v.GetContext().GetValue(typeAttribute).GetEntity().(abs.MonikerLike)
+func (v *document) GetType() TypeLike {
+	return v.GetContext().GetValue(typeAttribute).(TypeLike)
 }
 
 func (v *document) GetVersion() abs.VersionLike {

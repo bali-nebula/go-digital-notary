@@ -73,8 +73,8 @@ func (v *certificate) GetTag() abs.TagLike {
 	return v.GetContext().GetValue(tagAttribute).ExtractTag()
 }
 
-func (v *certificate) GetType() abs.MonikerLike {
-	return v.GetContext().GetValue(typeAttribute).GetEntity().(abs.MonikerLike)
+func (v *certificate) GetType() TypeLike {
+	return v.GetContext().GetValue(typeAttribute).(TypeLike)
 }
 
 func (v *certificate) GetVersion() abs.VersionLike {
