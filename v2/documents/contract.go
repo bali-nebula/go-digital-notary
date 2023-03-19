@@ -27,6 +27,7 @@ func Contract(
 	protocol abs.VersionLike,
 	certificate ab2.CitationLike,
 ) ab2.ContractLike {
+
 	// Create a new catalog for the attributes.
 	var attributes = col.Catalog()
 	attributes.SetValue(ab2.RecordAttribute, record)
@@ -48,6 +49,8 @@ type contract struct {
 	abs.Encapsulated
 }
 
+// NOTARIZED INTERFACE
+
 func (v *contract) GetAccount() abs.TagLike {
 	return v.ExtractCatalog().GetValue(ab2.AccountAttribute).ExtractTag()
 }
@@ -64,14 +67,16 @@ func (v *contract) GetProtocol() abs.VersionLike {
 	return v.ExtractCatalog().GetValue(ab2.ProtocolAttribute).ExtractVersion()
 }
 
-func (v *contract) GetType() ab2.TypeLike {
-	return v.GetContext().GetValue(ab2.TypeAttribute).(ab2.TypeLike)
-}
-
 func (v *contract) AddSignature(signature abs.BinaryLike) {
 	v.ExtractCatalog().SetValue(ab2.SignatureAttribute, bal.Component(signature))
 }
 
 func (v *contract) RemoveSignature() abs.BinaryLike {
 	return v.ExtractCatalog().RemoveValue(ab2.SignatureAttribute).ExtractBinary()
+}
+
+// TYPED INTERFACE
+
+func (v *contract) GetType() ab2.TypeLike {
+	return v.GetContext().GetValue(ab2.TypeAttribute).(ab2.TypeLike)
 }

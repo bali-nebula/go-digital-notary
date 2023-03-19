@@ -49,9 +49,13 @@ type record struct {
 	abs.Encapsulated
 }
 
+// RESTRICTED INTERFACE
+
 func (v *record) GetPermissions() abs.MonikerLike {
 	return v.GetContext().GetValue(ab2.PermissionsAttribute).ExtractMoniker()
 }
+
+// VERSIONED INTERFACE
 
 func (v *record) GetPrevious() ab2.CitationLike {
 	return v.GetContext().GetValue(ab2.PreviousAttribute).ExtractCatalog().(ab2.CitationLike)
@@ -61,10 +65,12 @@ func (v *record) GetTag() abs.TagLike {
 	return v.GetContext().GetValue(ab2.TagAttribute).ExtractTag()
 }
 
-func (v *record) GetType() ab2.TypeLike {
-	return v.GetContext().GetValue(ab2.TypeAttribute).(ab2.TypeLike)
-}
-
 func (v *record) GetVersion() abs.VersionLike {
 	return v.GetContext().GetValue(ab2.VersionAttribute).ExtractVersion()
+}
+
+// TYPED INTERFACE
+
+func (v *record) GetType() ab2.TypeLike {
+	return v.GetContext().GetValue(ab2.TypeAttribute).(ab2.TypeLike)
 }

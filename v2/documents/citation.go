@@ -49,6 +49,8 @@ type citation struct {
 	abs.Encapsulated
 }
 
+// REFERENTIAL INTERFACE
+
 func (v *citation) GetDigest() abs.BinaryLike {
 	return v.ExtractCatalog().GetValue(ab2.DigestAttribute).ExtractBinary()
 }
@@ -61,10 +63,12 @@ func (v *citation) GetTag() abs.TagLike {
 	return v.ExtractCatalog().GetValue(ab2.TagAttribute).ExtractTag()
 }
 
-func (v *citation) GetType() ab2.TypeLike {
-	return v.GetContext().GetValue(ab2.TypeAttribute).(ab2.TypeLike)
-}
-
 func (v *citation) GetVersion() abs.VersionLike {
 	return v.ExtractCatalog().GetValue(ab2.VersionAttribute).ExtractVersion()
+}
+
+// TYPED INTERFACE
+
+func (v *citation) GetType() ab2.TypeLike {
+	return v.GetContext().GetValue(ab2.TypeAttribute).(ab2.TypeLike)
 }

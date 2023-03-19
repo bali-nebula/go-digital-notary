@@ -154,7 +154,7 @@ func (v *notary) GenerateCredential(salt abs.BinaryLike) ab2.ContractLike {
 }
 
 // This method uses the current private notary key to notarized the specified
-// record and returns the resulting contract.
+// digital record and returns the resulting contract.
 func (v *notary) NotarizeRecord(record ab2.RecordLike) ab2.ContractLike {
 	var citation = v.GetCitation()
 	var contract = doc.Contract(record, v.account, v.protocol, citation)
