@@ -19,35 +19,35 @@ import (
 
 // CREDENTIALS INTERFACE
 
-// This constructor creates a new credentials.
-func Credentials(
+// This constructor creates a new credential.
+func Credential(
 	salt abs.BinaryLike,
-) ab2.CredentialsLike {
+) ab2.CredentialLike {
 
 	// Create a new catalog for the attributes.
 	var attributes = col.Catalog()
 	attributes.SetValue(ab2.SaltAttribute, bal.Component(salt))
 
 	// Create a new document.
-	var type_ = Type(bal.Moniker("/bali/types/documents/Credentials/v1"), nil)
+	var type_ = Type(bal.Moniker("/bali/types/documents/Credential/v1"), nil)
 	var tag = bal.NewTag()
 	var version = bal.Version("v1")
 	var permissions = bal.Moniker("/bali/permissions/private/v1")
 	var previous ab2.CitationLike
 	var document = Document(attributes, type_, tag, version, permissions, previous)
 
-	// Create a new credentials.
-	return &credentials{document}
+	// Create a new credential.
+	return &credential{document}
 }
 
 // CREDENTIALS IMPLEMENTATION
 
-type credentials struct {
+type credential struct {
 	ab2.DocumentLike
 }
 
 // SEASONED INTERFACE
 
-func (v *credentials) GetSalt() abs.BinaryLike {
+func (v *credential) GetSalt() abs.BinaryLike {
 	return v.ExtractCatalog().GetValue(ab2.SaltAttribute).ExtractBinary()
 }

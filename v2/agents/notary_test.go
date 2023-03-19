@@ -106,11 +106,11 @@ func TestNotaryLifecycle(t *tes.T) {
 	osx.WriteFile("./examples/certificateV2.bali", bal.FormatDocument(certificateV2), 0600)
 	ass.True(t, notary.SignatureMatches(certificateV2, certificateV1.GetDocument().(abs.CertificateLike)))
 
-	// Generate some authentication credentials.
+	// Generate an authentication credential.
 	var salt = bal.Binary(64)
-	var credentials = notary.GenerateCredentials(salt)
-	osx.WriteFile("./examples/credentials.bali", bal.FormatDocument(credentials), 0600)
-	ass.True(t, notary.SignatureMatches(credentials, certificateV2.GetDocument().(abs.CertificateLike)))
+	var credential = notary.GenerateCredential(salt)
+	osx.WriteFile("./examples/credential.bali", bal.FormatDocument(credential), 0600)
+	ass.True(t, notary.SignatureMatches(credential, certificateV2.GetDocument().(abs.CertificateLike)))
 
 	// Reset the security module and digital notary to an uninitialized state.
 	notary.ForgetKey()

@@ -111,7 +111,7 @@ type ContractLike interface {
 	Typed
 }
 
-type CredentialsLike interface {
+type CredentialLike interface {
 	abs.Encapsulated
 	Restricted
 	Seasoned

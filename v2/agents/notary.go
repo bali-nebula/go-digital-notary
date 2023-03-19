@@ -141,12 +141,12 @@ func (v *notary) ForgetKey() {
 
 // CERTIFIED INTERFACE
 
-// This method generates a new set of account credentials that can be used for
+// This method generates a new account credential that can be used for
 // authentication.
-func (v *notary) GenerateCredentials(salt abs.BinaryLike) ab2.ContractLike {
+func (v *notary) GenerateCredential(salt abs.BinaryLike) ab2.ContractLike {
 	var citation = v.GetCitation()
-	var credentials = rec.Credentials(salt)
-	var contract = rec.Contract(credentials, v.account, v.protocol, citation)
+	var credential = rec.Credential(salt)
+	var contract = rec.Contract(credential, v.account, v.protocol, citation)
 	var bytes = bal.FormatDocument(contract)
 	var signature = bal.Binary(v.hsm.SignBytes(bytes))
 	contract.AddSignature(signature)
