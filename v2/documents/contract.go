@@ -8,7 +8,7 @@
  * Initiative. (See http://opensource.org/licenses/MIT)                        *
  *******************************************************************************/
 
-package records
+package documents
 
 import (
 	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
@@ -22,14 +22,14 @@ import (
 
 // This constructor creates a new contract.
 func Contract(
-	document ab2.DocumentLike,
+	record ab2.RecordLike,
 	account abs.TagLike,
 	protocol abs.VersionLike,
 	certificate ab2.CitationLike,
 ) ab2.ContractLike {
 	// Create a new catalog for the attributes.
 	var attributes = col.Catalog()
-	attributes.SetValue(ab2.DocumentAttribute, document)
+	attributes.SetValue(ab2.RecordAttribute, record)
 	attributes.SetValue(ab2.AccountAttribute, bal.Component(account))
 	attributes.SetValue(ab2.ProtocolAttribute, bal.Component(protocol))
 	attributes.SetValue(ab2.CertificateAttribute, certificate)
@@ -56,8 +56,8 @@ func (v *contract) GetCertificate() ab2.CitationLike {
 	return v.ExtractCatalog().GetValue(ab2.VersionAttribute).(ab2.CitationLike)
 }
 
-func (v *contract) GetDocument() ab2.DocumentLike {
-	return v.ExtractCatalog().GetValue(ab2.DocumentAttribute).(ab2.DocumentLike)
+func (v *contract) GetRecord() ab2.RecordLike {
+	return v.ExtractCatalog().GetValue(ab2.RecordAttribute).(ab2.RecordLike)
 }
 
 func (v *contract) GetProtocol() abs.VersionLike {

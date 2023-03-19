@@ -14,7 +14,7 @@ import (
 	bal "github.com/bali-nebula/go-component-framework/v2/bali"
 	abs "github.com/bali-nebula/go-digital-notary/v2/abstractions"
 	age "github.com/bali-nebula/go-digital-notary/v2/agents"
-	rec "github.com/bali-nebula/go-digital-notary/v2/records"
+	doc "github.com/bali-nebula/go-digital-notary/v2/documents"
 	ass "github.com/stretchr/testify/assert"
 	osx "os"
 	sts "strings"
@@ -68,34 +68,34 @@ func TestNotaryLifecycle(t *tes.T) {
 
 	// Generate and validate a new public-private key pair.
 	var certificateV1 = notary.GenerateKey()
-	osx.WriteFile("./examples/certificateV1.bali", bal.FormatDocument(certificateV1), 0600)
-	ass.True(t, notary.SignatureMatches(certificateV1, certificateV1.GetDocument().(abs.CertificateLike)))
+	osx.WriteFile("../examples/certificateV1.bali", bal.FormatDocument(certificateV1), 0600)
+	ass.True(t, notary.SignatureMatches(certificateV1, certificateV1.GetRecord().(abs.CertificateLike)))
 
 	// Extract the citation to the public certificate.
 	var citation = notary.GetCitation()
-	osx.WriteFile("./examples/citation.bali", bal.FormatDocument(citation), 0600)
+	osx.WriteFile("../examples/citation.bali", bal.FormatDocument(citation), 0600)
 
-	// Create and cite a new transaction document.
+	// Create and cite a new transaction record.
 	var attributes = bal.Catalog(`[
     $timestamp: <2022-06-03T07:39:54>
     $consumer: "Derk Norton"
     $merchant: <https://www.starbucks.com/>
     $amount: 4.95($currency: $USD)
 ]`)
-	var type_ = rec.Type(bal.Moniker("/bali/examples/Document/v1.2.3"), nil)
+	var type_ = doc.Type(bal.Moniker("/bali/examples/Record/v1.2.3"), nil)
 	var tag = bal.NewTag()
 	var version = bal.Version("v1")
 	var permissions = bal.Moniker("/bali/permissions/public/v1")
 	var previous abs.CitationLike
-	var document = rec.Document(attributes, type_, tag, version, permissions, previous)
-	osx.WriteFile("./examples/document.bali", bal.FormatDocument(document), 0600)
-	citation = notary.CiteDocument(document)
-	ass.True(t, notary.CitationMatches(citation, document))
+	var record = doc.Record(attributes, type_, tag, version, permissions, previous)
+	osx.WriteFile("../examples/record.bali", bal.FormatDocument(record), 0600)
+	citation = notary.CiteRecord(record)
+	ass.True(t, notary.CitationMatches(citation, record))
 
-	// Notarize the transaction document to create a signed contract.
-	var contract = notary.NotarizeDocument(document)
-	osx.WriteFile("./examples/contract.bali", bal.FormatDocument(contract), 0600)
-	ass.True(t, notary.SignatureMatches(contract, certificateV1.GetDocument().(abs.CertificateLike)))
+	// Notarize the transaction record to create a signed contract.
+	var contract = notary.NotarizeRecord(record)
+	osx.WriteFile("../examples/contract.bali", bal.FormatDocument(contract), 0600)
+	ass.True(t, notary.SignatureMatches(contract, certificateV1.GetRecord().(abs.CertificateLike)))
 
 	// Pickup where we left off with a new security module and digital notary.
 	module = age.SSMv1(directory)
@@ -103,14 +103,14 @@ func TestNotaryLifecycle(t *tes.T) {
 
 	// Refresh and validate the public-private key pair.
 	var certificateV2 = notary.RefreshKey()
-	osx.WriteFile("./examples/certificateV2.bali", bal.FormatDocument(certificateV2), 0600)
-	ass.True(t, notary.SignatureMatches(certificateV2, certificateV1.GetDocument().(abs.CertificateLike)))
+	osx.WriteFile("../examples/certificateV2.bali", bal.FormatDocument(certificateV2), 0600)
+	ass.True(t, notary.SignatureMatches(certificateV2, certificateV1.GetRecord().(abs.CertificateLike)))
 
 	// Generate an authentication credential.
 	var salt = bal.Binary(64)
 	var credential = notary.GenerateCredential(salt)
-	osx.WriteFile("./examples/credential.bali", bal.FormatDocument(credential), 0600)
-	ass.True(t, notary.SignatureMatches(credential, certificateV2.GetDocument().(abs.CertificateLike)))
+	osx.WriteFile("../examples/credential.bali", bal.FormatDocument(credential), 0600)
+	ass.True(t, notary.SignatureMatches(credential, certificateV2.GetRecord().(abs.CertificateLike)))
 
 	// Reset the security module and digital notary to an uninitialized state.
 	notary.ForgetKey()

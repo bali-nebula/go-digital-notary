@@ -8,7 +8,7 @@
  * Initiative. (See http://opensource.org/licenses/MIT)                        *
  *******************************************************************************/
 
-package records
+package documents
 
 import (
 	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
@@ -17,43 +17,37 @@ import (
 	ab2 "github.com/bali-nebula/go-digital-notary/v2/abstractions"
 )
 
-// CERTIFICATE INTERFACE
+// CREDENTIALS INTERFACE
 
-// This constructor creates a new certificate.
-func Certificate(
-	key abs.BinaryLike,
-	algorithms abs.CatalogLike,
-	tag abs.TagLike,
-	version abs.VersionLike,
-	previous ab2.CitationLike,
-) ab2.CertificateLike {
+// This constructor creates a new credential.
+func Credential(
+	salt abs.BinaryLike,
+) ab2.CredentialLike {
 
 	// Create a new catalog for the attributes.
 	var attributes = col.Catalog()
-	attributes.SetValue(ab2.KeyAttribute, bal.Component(key))
-	attributes.SetValue(ab2.AlgorithmsAttribute, bal.Component(algorithms))
+	attributes.SetValue(ab2.SaltAttribute, bal.Component(salt))
 
-	// Create a new document.
-	var type_ = Type(bal.Moniker("/bali/types/documents/Certificate/v1"), nil)
-	var permissions = bal.Moniker("/bali/permissions/public/v1")
-	var document = Document(attributes, type_, tag, version, permissions, previous)
+	// Create a new record.
+	var type_ = Type(bal.Moniker("/bali/types/documents/Credential/v1"), nil)
+	var tag = bal.NewTag()
+	var version = bal.Version("v1")
+	var permissions = bal.Moniker("/bali/permissions/private/v1")
+	var previous ab2.CitationLike
+	var record = Record(attributes, type_, tag, version, permissions, previous)
 
-	// Create a new certificate.
-	return &certificate{document}
+	// Create a new credential.
+	return &credential{record}
 }
 
-// CERTIFICATE IMPLEMENTATION
+// CREDENTIALS IMPLEMENTATION
 
-type certificate struct {
-	ab2.DocumentLike
+type credential struct {
+	ab2.RecordLike
 }
 
-// PUBLISHED INTERFACE
+// SEASONED INTERFACE
 
-func (v *certificate) GetAlgorithms() abs.CatalogLike {
-	return v.ExtractCatalog().GetValue(ab2.AlgorithmsAttribute).ExtractCatalog()
-}
-
-func (v *certificate) GetKey() abs.BinaryLike {
-	return v.ExtractCatalog().GetValue(ab2.KeyAttribute).ExtractBinary()
+func (v *credential) GetSalt() abs.BinaryLike {
+	return v.ExtractCatalog().GetValue(ab2.SaltAttribute).ExtractBinary()
 }

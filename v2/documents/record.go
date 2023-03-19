@@ -8,7 +8,7 @@
  * Initiative. (See http://opensource.org/licenses/MIT)                        *
  *******************************************************************************/
 
-package records
+package documents
 
 import (
 	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
@@ -17,17 +17,17 @@ import (
 	ab2 "github.com/bali-nebula/go-digital-notary/v2/abstractions"
 )
 
-// DOCUMENT INTERFACE
+// RECORD INTERFACE
 
-// This constructor creates a new document.
-func Document(
+// This constructor creates a new record.
+func Record(
 	attributes abs.CatalogLike,
 	type_ ab2.TypeLike,
 	tag abs.TagLike,
 	version abs.VersionLike,
 	permissions abs.MonikerLike,
 	previous ab2.CitationLike,
-) ab2.DocumentLike {
+) ab2.RecordLike {
 
 	// Create a new context.
 	var context = com.Context()
@@ -39,32 +39,32 @@ func Document(
 		context.SetValue(ab2.PreviousAttribute, bal.Component(previous))
 	}
 
-	// Create a new document.
-	return &document{bal.ComponentWithContext(attributes, context)}
+	// Create a new record.
+	return &record{bal.ComponentWithContext(attributes, context)}
 }
 
-// DOCUMENT IMPLEMENTATION
+// RECORD IMPLEMENTATION
 
-type document struct {
+type record struct {
 	abs.Encapsulated
 }
 
-func (v *document) GetPermissions() abs.MonikerLike {
+func (v *record) GetPermissions() abs.MonikerLike {
 	return v.GetContext().GetValue(ab2.PermissionsAttribute).ExtractMoniker()
 }
 
-func (v *document) GetPrevious() ab2.CitationLike {
+func (v *record) GetPrevious() ab2.CitationLike {
 	return v.GetContext().GetValue(ab2.PreviousAttribute).ExtractCatalog().(ab2.CitationLike)
 }
 
-func (v *document) GetTag() abs.TagLike {
+func (v *record) GetTag() abs.TagLike {
 	return v.GetContext().GetValue(ab2.TagAttribute).ExtractTag()
 }
 
-func (v *document) GetType() ab2.TypeLike {
+func (v *record) GetType() ab2.TypeLike {
 	return v.GetContext().GetValue(ab2.TypeAttribute).(ab2.TypeLike)
 }
 
-func (v *document) GetVersion() abs.VersionLike {
+func (v *record) GetVersion() abs.VersionLike {
 	return v.GetContext().GetValue(ab2.VersionAttribute).ExtractVersion()
 }

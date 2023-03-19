@@ -17,14 +17,14 @@ import (
 	age "github.com/bali-nebula/go-component-framework/v2/agents"
 	bal "github.com/bali-nebula/go-component-framework/v2/bali"
 	ab2 "github.com/bali-nebula/go-digital-notary/v2/abstractions"
-	rec "github.com/bali-nebula/go-digital-notary/v2/records"
+	doc "github.com/bali-nebula/go-digital-notary/v2/documents"
 	col "github.com/craterdog/go-collection-framework/v2"
 )
 
 // NOTARY INTERFACE
 
 // This constructor creates a new digital notary. The notary may be used to
-// digitally sign contract documents using the specified hardware security
+// digitally sign digital records using the specified hardware security
 // module (HSM). The notary may also be used to validate the signature on a
 // contract that was signed using the current or any previous version of the
 // security protocol used by digital notaries. The HSM will be used to validate
@@ -85,12 +85,12 @@ func (v *notary) GenerateKey() ab2.ContractLike {
 	var tag = bal.NewTag()
 	var version = v1              // The first version of this certificate.
 	var previous ab2.CitationLike // No previous version.
-	var certificate = rec.Certificate(key, algorithms, tag, version, previous)
+	var certificate = doc.Certificate(key, algorithms, tag, version, previous)
 	var bytes = []byte(bal.FormatDocument(certificate))
 	var digest = bal.Binary(v.hsm.DigestBytes(bytes))
-	var citation = rec.Citation(tag, version, v.protocol, digest)
+	var citation = doc.Citation(tag, version, v.protocol, digest)
 	v.configurator.Store(bal.FormatDocument(citation))
-	var contract = rec.Contract(certificate, v.account, v.protocol, citation)
+	var contract = doc.Contract(certificate, v.account, v.protocol, citation)
 	bytes = bal.FormatDocument(contract)
 	var signature = bal.Binary(v.hsm.SignBytes(bytes))
 	contract.AddSignature(signature)
@@ -109,7 +109,7 @@ func (v *notary) GetCitation() ab2.CitationLike {
 	var version = attributes.GetValue(ab2.VersionAttribute).ExtractVersion()
 	var protocol = attributes.GetValue(ab2.ProtocolAttribute).ExtractVersion()
 	var digest = attributes.GetValue(ab2.DigestAttribute).ExtractBinary()
-	return rec.Citation(tag, version, protocol, digest)
+	return doc.Citation(tag, version, protocol, digest)
 }
 
 // This method replaces an existing private notary key with a new one and
@@ -120,13 +120,13 @@ func (v *notary) RefreshKey() ab2.ContractLike {
 	var key = bal.Binary(v.hsm.RotateKeys()) // Returns the new public key.
 	var tag = citation.GetTag()
 	var version = bal.NextVersion(citation.GetVersion())
-	var previous = citation // Record the previous certificate citation.
-	var certificate = rec.Certificate(key, algorithms, tag, version, previous)
+	var previous = citation // Save the previous certificate citation.
+	var certificate = doc.Certificate(key, algorithms, tag, version, previous)
 	var bytes = []byte(bal.FormatDocument(certificate))
 	var digest = bal.Binary(v.hsm.DigestBytes(bytes))
-	citation = rec.Citation(tag, version, v.protocol, digest)
+	citation = doc.Citation(tag, version, v.protocol, digest)
 	v.configurator.Store(bal.FormatDocument(citation))
-	var contract = rec.Contract(certificate, v.account, v.protocol, previous)
+	var contract = doc.Contract(certificate, v.account, v.protocol, previous)
 	bytes = bal.FormatDocument(contract)
 	var signature = bal.Binary(v.hsm.SignBytes(bytes))
 	contract.AddSignature(signature)
@@ -145,8 +145,8 @@ func (v *notary) ForgetKey() {
 // authentication.
 func (v *notary) GenerateCredential(salt abs.BinaryLike) ab2.ContractLike {
 	var citation = v.GetCitation()
-	var credential = rec.Credential(salt)
-	var contract = rec.Contract(credential, v.account, v.protocol, citation)
+	var credential = doc.Credential(salt)
+	var contract = doc.Contract(credential, v.account, v.protocol, citation)
 	var bytes = bal.FormatDocument(contract)
 	var signature = bal.Binary(v.hsm.SignBytes(bytes))
 	contract.AddSignature(signature)
@@ -154,10 +154,10 @@ func (v *notary) GenerateCredential(salt abs.BinaryLike) ab2.ContractLike {
 }
 
 // This method uses the current private notary key to notarized the specified
-// document and returns the resulting contract.
-func (v *notary) NotarizeDocument(document ab2.DocumentLike) ab2.ContractLike {
+// record and returns the resulting contract.
+func (v *notary) NotarizeRecord(record ab2.RecordLike) ab2.ContractLike {
 	var citation = v.GetCitation()
-	var contract = rec.Contract(document, v.account, v.protocol, citation)
+	var contract = doc.Contract(record, v.account, v.protocol, citation)
 	var bytes = bal.FormatDocument(contract)
 	var signature = bal.Binary(v.hsm.SignBytes(bytes))
 	contract.AddSignature(signature)
@@ -186,20 +186,20 @@ func (v *notary) SignatureMatches(contract ab2.ContractLike, certificate ab2.Cer
 	return isValid
 }
 
-// This method generates a citation to the specified document and returns that
+// This method generates a citation to the specified record and returns that
 // citation.
-func (v *notary) CiteDocument(document ab2.DocumentLike) ab2.CitationLike {
-	var tag = document.GetTag()
-	var version = document.GetVersion()
-	var bytes = bal.FormatDocument(document)
+func (v *notary) CiteRecord(record ab2.RecordLike) ab2.CitationLike {
+	var tag = record.GetTag()
+	var version = record.GetVersion()
+	var bytes = bal.FormatDocument(record)
 	var digest = bal.Binary(v.hsm.DigestBytes(bytes))
-	var citation = rec.Citation(tag, version, v.protocol, digest)
+	var citation = doc.Citation(tag, version, v.protocol, digest)
 	return citation
 }
 
-// This method determines whether or not the specified document citation matches
-// the specified document.
-func (v *notary) CitationMatches(citation ab2.CitationLike, document ab2.DocumentLike) bool {
+// This method determines whether or not the specified record citation matches
+// the specified record.
+func (v *notary) CitationMatches(citation ab2.CitationLike, record ab2.RecordLike) bool {
 	// Retrieve the SSM that supports the required security protocol.
 	var protocol = citation.GetProtocol()
 	var ssm = v.modules.GetValue(protocol)
@@ -210,8 +210,8 @@ func (v *notary) CitationMatches(citation ab2.CitationLike, document ab2.Documen
 		panic(message)
 	}
 
-	// Compare the citation digest with a digest of the document.
-	var bytes = bal.FormatDocument(document)
+	// Compare the citation digest with a digest of the record.
+	var bytes = bal.FormatDocument(record)
 	var digest = bal.Binary(ssm.DigestBytes(bytes))
 	return byt.Equal(digest.AsArray(), citation.GetDigest().AsArray())
 }
