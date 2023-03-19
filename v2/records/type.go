@@ -8,11 +8,12 @@
  * Initiative. (See http://opensource.org/licenses/MIT)                        *
  *******************************************************************************/
 
-package notary
+package records
 
 import (
 	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
 	bal "github.com/bali-nebula/go-component-framework/v2/bali"
+	ab2 "github.com/bali-nebula/go-digital-notary/v2/abstractions"
 )
 
 // TYPE INTERFACE
@@ -21,7 +22,7 @@ import (
 func Type(
 	name abs.MonikerLike,
 	context abs.ContextLike,
-) TypeLike {
+) ab2.TypeLike {
 	return &type_{bal.ComponentWithContext(name, context)}
 }
 

@@ -8,7 +8,7 @@
  * Initiative. (See http://opensource.org/licenses/MIT)                        *
  *******************************************************************************/
 
-package notary
+package agents
 
 /////////////////////////////////////////////////////////////////////////////////
 // This module should only be used for LOCAL TESTING or on a PHYSICALLY SECURE //
@@ -25,6 +25,7 @@ import (
 	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
 	age "github.com/bali-nebula/go-component-framework/v2/agents"
 	bal "github.com/bali-nebula/go-component-framework/v2/bali"
+	ab2 "github.com/bali-nebula/go-digital-notary/v2/abstractions"
 )
 
 // SOFTWARE SECURITY MODULE (SSM) INTERFACE
@@ -32,7 +33,7 @@ import (
 // This constructor creates a new software security module. It emulates a
 // hardware security module and may be used for testing or, in a trusted
 // cloud environment where it cannot be tampered with.
-func SSMv1(directory string) SecurityModuleLike {
+func SSMv1(directory string) ab2.SecurityModuleLike {
 	var configurator abs.ConfiguratorLike
 	var controller abs.ControllerLike
 	var v = &ssmV1{} // Assume this is only a trusted security module.

@@ -8,11 +8,13 @@
  * Initiative. (See http://opensource.org/licenses/MIT)                        *
  *******************************************************************************/
 
-package notary_test
+package agents_test
 
 import (
 	bal "github.com/bali-nebula/go-component-framework/v2/bali"
-	not "github.com/bali-nebula/go-digital-notary/v2"
+	abs "github.com/bali-nebula/go-digital-notary/v2/abstractions"
+	age "github.com/bali-nebula/go-digital-notary/v2/agents"
+	rec "github.com/bali-nebula/go-digital-notary/v2/records"
 	ass "github.com/stretchr/testify/assert"
 	osx "os"
 	sts "strings"
@@ -23,8 +25,8 @@ const directory = "./"
 
 func TestNotaryInitialization(t *tes.T) {
 	// Initialize the security module and digital notary.
-	var module = not.SSMv1(directory)
-	var notary = not.Notary(directory, module)
+	var module = age.SSMv1(directory)
+	var notary = age.Notary(directory, module)
 
 	// Should not be able to retrieve the certificate citation without any keys.
 	defer func() {
@@ -40,8 +42,8 @@ func TestNotaryInitialization(t *tes.T) {
 
 func TestNotaryGenerateKey(t *tes.T) {
 	// Initialize the security module and digital notary.
-	var module = not.SSMv1(directory)
-	var notary = not.Notary(directory, module)
+	var module = age.SSMv1(directory)
+	var notary = age.Notary(directory, module)
 
 	// Generate a new public-private key pair.
 	notary.GenerateKey()
@@ -61,13 +63,13 @@ func TestNotaryGenerateKey(t *tes.T) {
 
 func TestNotaryLifecycle(t *tes.T) {
 	// Initialize the security module and digital notary.
-	var module = not.SSMv1(directory)
-	var notary = not.Notary(directory, module)
+	var module = age.SSMv1(directory)
+	var notary = age.Notary(directory, module)
 
 	// Generate and validate a new public-private key pair.
 	var certificateV1 = notary.GenerateKey()
 	osx.WriteFile("./examples/certificateV1.bali", bal.FormatDocument(certificateV1), 0600)
-	ass.True(t, notary.SignatureMatches(certificateV1, certificateV1.GetDocument().(not.CertificateLike)))
+	ass.True(t, notary.SignatureMatches(certificateV1, certificateV1.GetDocument().(abs.CertificateLike)))
 
 	// Extract the citation to the public certificate.
 	var citation = notary.GetCitation()
@@ -80,12 +82,12 @@ func TestNotaryLifecycle(t *tes.T) {
     $merchant: <https://www.starbucks.com/>
     $amount: 4.95($currency: $USD)
 ]`)
-	var type_ = not.Type(bal.Moniker("/bali/examples/Document/v1.2.3"), nil)
+	var type_ = rec.Type(bal.Moniker("/bali/examples/Document/v1.2.3"), nil)
 	var tag = bal.NewTag()
 	var version = bal.Version("v1")
 	var permissions = bal.Moniker("/bali/permissions/public/v1")
-	var previous not.CitationLike
-	var document = not.Document(attributes, type_, tag, version, permissions, previous)
+	var previous abs.CitationLike
+	var document = rec.Document(attributes, type_, tag, version, permissions, previous)
 	osx.WriteFile("./examples/document.bali", bal.FormatDocument(document), 0600)
 	citation = notary.CiteDocument(document)
 	ass.True(t, notary.CitationMatches(citation, document))
@@ -93,22 +95,22 @@ func TestNotaryLifecycle(t *tes.T) {
 	// Notarize the transaction document to create a signed contract.
 	var contract = notary.NotarizeDocument(document)
 	osx.WriteFile("./examples/contract.bali", bal.FormatDocument(contract), 0600)
-	ass.True(t, notary.SignatureMatches(contract, certificateV1.GetDocument().(not.CertificateLike)))
+	ass.True(t, notary.SignatureMatches(contract, certificateV1.GetDocument().(abs.CertificateLike)))
 
 	// Pickup where we left off with a new security module and digital notary.
-	module = not.SSMv1(directory)
-	notary = not.Notary(directory, module)
+	module = age.SSMv1(directory)
+	notary = age.Notary(directory, module)
 
 	// Refresh and validate the public-private key pair.
 	var certificateV2 = notary.RefreshKey()
 	osx.WriteFile("./examples/certificateV2.bali", bal.FormatDocument(certificateV2), 0600)
-	ass.True(t, notary.SignatureMatches(certificateV2, certificateV1.GetDocument().(not.CertificateLike)))
+	ass.True(t, notary.SignatureMatches(certificateV2, certificateV1.GetDocument().(abs.CertificateLike)))
 
 	// Generate some authentication credentials.
 	var salt = bal.Binary(64)
 	var credentials = notary.GenerateCredentials(salt)
 	osx.WriteFile("./examples/credentials.bali", bal.FormatDocument(credentials), 0600)
-	ass.True(t, notary.SignatureMatches(credentials, certificateV2.GetDocument().(not.CertificateLike)))
+	ass.True(t, notary.SignatureMatches(credentials, certificateV2.GetDocument().(abs.CertificateLike)))
 
 	// Reset the security module and digital notary to an uninitialized state.
 	notary.ForgetKey()

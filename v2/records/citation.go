@@ -8,13 +8,14 @@
  * Initiative. (See http://opensource.org/licenses/MIT)                        *
  *******************************************************************************/
 
-package notary
+package records
 
 import (
 	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
 	bal "github.com/bali-nebula/go-component-framework/v2/bali"
 	col "github.com/bali-nebula/go-component-framework/v2/collections"
 	com "github.com/bali-nebula/go-component-framework/v2/components"
+	ab2 "github.com/bali-nebula/go-digital-notary/v2/abstractions"
 )
 
 // CITATION INTERFACE
@@ -25,18 +26,18 @@ func Citation(
 	version abs.VersionLike,
 	protocol abs.VersionLike,
 	digest abs.BinaryLike,
-) CitationLike {
+) ab2.CitationLike {
 
 	// Create a new catalog for the attributes.
 	var attributes = col.Catalog()
-	attributes.SetValue(tagAttribute, bal.Component(tag))
-	attributes.SetValue(versionAttribute, bal.Component(version))
-	attributes.SetValue(protocolAttribute, bal.Component(protocol))
-	attributes.SetValue(digestAttribute, bal.Component(digest))
+	attributes.SetValue(ab2.TagAttribute, bal.Component(tag))
+	attributes.SetValue(ab2.VersionAttribute, bal.Component(version))
+	attributes.SetValue(ab2.ProtocolAttribute, bal.Component(protocol))
+	attributes.SetValue(ab2.DigestAttribute, bal.Component(digest))
 
 	// Create a new context for the type.
 	var context = com.Context()
-	context.SetValue(typeAttribute, bal.ParseComponent("/bali/types/documents/Citation/v1"))
+	context.SetValue(ab2.TypeAttribute, bal.ParseComponent("/bali/types/documents/Citation/v1"))
 
 	// Create a new citation.
 	return &citation{bal.ComponentWithContext(attributes, context)}
@@ -49,21 +50,21 @@ type citation struct {
 }
 
 func (v *citation) GetDigest() abs.BinaryLike {
-	return v.ExtractCatalog().GetValue(digestAttribute).ExtractBinary()
+	return v.ExtractCatalog().GetValue(ab2.DigestAttribute).ExtractBinary()
 }
 
 func (v *citation) GetProtocol() abs.VersionLike {
-	return v.ExtractCatalog().GetValue(protocolAttribute).ExtractVersion()
+	return v.ExtractCatalog().GetValue(ab2.ProtocolAttribute).ExtractVersion()
 }
 
 func (v *citation) GetTag() abs.TagLike {
-	return v.ExtractCatalog().GetValue(tagAttribute).ExtractTag()
+	return v.ExtractCatalog().GetValue(ab2.TagAttribute).ExtractTag()
 }
 
-func (v *citation) GetType() TypeLike {
-	return v.GetContext().GetValue(typeAttribute).(TypeLike)
+func (v *citation) GetType() ab2.TypeLike {
+	return v.GetContext().GetValue(ab2.TypeAttribute).(ab2.TypeLike)
 }
 
 func (v *citation) GetVersion() abs.VersionLike {
-	return v.ExtractCatalog().GetValue(versionAttribute).ExtractVersion()
+	return v.ExtractCatalog().GetValue(ab2.VersionAttribute).ExtractVersion()
 }

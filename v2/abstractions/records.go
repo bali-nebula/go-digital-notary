@@ -8,10 +8,32 @@
  * Initiative. (See http://opensource.org/licenses/MIT)                        *
  *******************************************************************************/
 
-package notary
+package abstractions
 
 import (
 	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
+	bal "github.com/bali-nebula/go-component-framework/v2/bali"
+)
+
+// CONSTANT DEFINITIONS
+
+// These constants define the attribute names for the standard attribues.
+var (
+	TagAttribute         = bal.Symbol("$tag")
+	AccountAttribute     = bal.Symbol("$account")
+	AlgorithmsAttribute  = bal.Symbol("$algorithms")
+	CertificateAttribute = bal.Symbol("$certificate")
+	DigestAttribute      = bal.Symbol("$digest")
+	DocumentAttribute    = bal.Symbol("$document")
+	KeyAttribute         = bal.Symbol("$key")
+	PermissionsAttribute = bal.Symbol("$permissions")
+	PreviousAttribute    = bal.Symbol("$previous")
+	ProtocolAttribute    = bal.Symbol("$protocol")
+	SaltAttribute        = bal.Symbol("$salt")
+	SignatureAttribute   = bal.Symbol("$signature")
+	TimestampAttribute   = bal.Symbol("$timestamp")
+	TypeAttribute        = bal.Symbol("$type")
+	VersionAttribute     = bal.Symbol("$version")
 )
 
 // INDIVIDUAL INTERFACES
@@ -67,43 +89,6 @@ type Versioned interface {
 	GetPrevious() CitationLike
 }
 
-// This interface defines the methods supported by all prudent notary
-// agents.
-type Prudent interface {
-	GenerateKey() ContractLike
-	GetCitation() CitationLike
-	RefreshKey() ContractLike
-	ForgetKey()
-}
-
-// This interface defines the methods supported by all certified notary
-// agents.
-type Certified interface {
-	GenerateCredentials(salt abs.BinaryLike) ContractLike
-	NotarizeDocument(document DocumentLike) ContractLike
-	SignatureMatches(contract ContractLike, certificate CertificateLike) bool
-	CiteDocument(document DocumentLike) CitationLike
-	CitationMatches(citation CitationLike, document DocumentLike) bool
-}
-
-// This interface defines the methods supported by all trusted security
-// modules.
-type Trusted interface {
-	GetProtocol() string
-	DigestBytes(bytes []byte) []byte
-	IsValid(key []byte, signature []byte, bytes []byte) bool
-}
-
-// This interface defines the methods supported by all hardened security
-// modules.
-type Hardened interface {
-	GetTag() string
-	GenerateKeys() []byte
-	SignBytes(bytes []byte) []byte
-	RotateKeys() []byte
-	EraseKeys()
-}
-
 // CONSOLIDATED INTERFACES
 
 type TypeLike interface {
@@ -144,16 +129,4 @@ type CredentialsLike interface {
 	Typed
 	Restricted
 	Versioned
-}
-
-type NotaryLike interface {
-	Prudent
-	Certified
-}
-
-// This interface consolidates all the interfaces supported by
-// security-module-like devices.
-type SecurityModuleLike interface {
-	Trusted
-	Hardened
 }

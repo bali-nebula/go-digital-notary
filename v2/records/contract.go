@@ -8,34 +8,35 @@
  * Initiative. (See http://opensource.org/licenses/MIT)                        *
  *******************************************************************************/
 
-package notary
+package records
 
 import (
 	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
 	bal "github.com/bali-nebula/go-component-framework/v2/bali"
 	col "github.com/bali-nebula/go-component-framework/v2/collections"
 	com "github.com/bali-nebula/go-component-framework/v2/components"
+	ab2 "github.com/bali-nebula/go-digital-notary/v2/abstractions"
 )
 
 // CONTRACT INTERFACE
 
 // This constructor creates a new contract.
 func Contract(
-	document DocumentLike,
+	document ab2.DocumentLike,
 	account abs.TagLike,
 	protocol abs.VersionLike,
-	certificate CitationLike,
-) ContractLike {
+	certificate ab2.CitationLike,
+) ab2.ContractLike {
 	// Create a new catalog for the attributes.
 	var attributes = col.Catalog()
-	attributes.SetValue(documentAttribute, document)
-	attributes.SetValue(accountAttribute, bal.Component(account))
-	attributes.SetValue(protocolAttribute, bal.Component(protocol))
-	attributes.SetValue(certificateAttribute, certificate)
+	attributes.SetValue(ab2.DocumentAttribute, document)
+	attributes.SetValue(ab2.AccountAttribute, bal.Component(account))
+	attributes.SetValue(ab2.ProtocolAttribute, bal.Component(protocol))
+	attributes.SetValue(ab2.CertificateAttribute, certificate)
 
 	// Create a new context for the type.
 	var context = com.Context()
-	context.SetValue(typeAttribute, bal.ParseComponent("/bali/types/documents/Contract/v1"))
+	context.SetValue(ab2.TypeAttribute, bal.ParseComponent("/bali/types/documents/Contract/v1"))
 
 	// Create a new contract.
 	return &contract{bal.ComponentWithContext(attributes, context)}
@@ -48,29 +49,29 @@ type contract struct {
 }
 
 func (v *contract) GetAccount() abs.TagLike {
-	return v.ExtractCatalog().GetValue(accountAttribute).ExtractTag()
+	return v.ExtractCatalog().GetValue(ab2.AccountAttribute).ExtractTag()
 }
 
-func (v *contract) GetCertificate() CitationLike {
-	return v.ExtractCatalog().GetValue(versionAttribute).(CitationLike)
+func (v *contract) GetCertificate() ab2.CitationLike {
+	return v.ExtractCatalog().GetValue(ab2.VersionAttribute).(ab2.CitationLike)
 }
 
-func (v *contract) GetDocument() DocumentLike {
-	return v.ExtractCatalog().GetValue(documentAttribute).(DocumentLike)
+func (v *contract) GetDocument() ab2.DocumentLike {
+	return v.ExtractCatalog().GetValue(ab2.DocumentAttribute).(ab2.DocumentLike)
 }
 
 func (v *contract) GetProtocol() abs.VersionLike {
-	return v.ExtractCatalog().GetValue(protocolAttribute).ExtractVersion()
+	return v.ExtractCatalog().GetValue(ab2.ProtocolAttribute).ExtractVersion()
 }
 
-func (v *contract) GetType() TypeLike {
-	return v.GetContext().GetValue(typeAttribute).(TypeLike)
+func (v *contract) GetType() ab2.TypeLike {
+	return v.GetContext().GetValue(ab2.TypeAttribute).(ab2.TypeLike)
 }
 
 func (v *contract) AddSignature(signature abs.BinaryLike) {
-	v.ExtractCatalog().SetValue(signatureAttribute, bal.Component(signature))
+	v.ExtractCatalog().SetValue(ab2.SignatureAttribute, bal.Component(signature))
 }
 
 func (v *contract) RemoveSignature() abs.BinaryLike {
-	return v.ExtractCatalog().RemoveValue(signatureAttribute).ExtractBinary()
+	return v.ExtractCatalog().RemoveValue(ab2.SignatureAttribute).ExtractBinary()
 }

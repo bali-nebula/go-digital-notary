@@ -8,13 +8,14 @@
  * Initiative. (See http://opensource.org/licenses/MIT)                        *
  *******************************************************************************/
 
-package notary
+package records
 
 import (
 	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
 	bal "github.com/bali-nebula/go-component-framework/v2/bali"
 	col "github.com/bali-nebula/go-component-framework/v2/collections"
 	com "github.com/bali-nebula/go-component-framework/v2/components"
+	ab2 "github.com/bali-nebula/go-digital-notary/v2/abstractions"
 )
 
 // CERTIFICATE INTERFACE
@@ -25,22 +26,22 @@ func Certificate(
 	algorithms abs.CatalogLike,
 	tag abs.TagLike,
 	version abs.VersionLike,
-	previous CitationLike,
-) CertificateLike {
+	previous ab2.CitationLike,
+) ab2.CertificateLike {
 
 	// Create a new catalog for the attributes.
 	var attributes = col.Catalog()
-	attributes.SetValue(keyAttribute, bal.Component(key))
-	attributes.SetValue(algorithmsAttribute, bal.Component(algorithms))
+	attributes.SetValue(ab2.KeyAttribute, bal.Component(key))
+	attributes.SetValue(ab2.AlgorithmsAttribute, bal.Component(algorithms))
 
 	// Create a new context.
 	var context = com.Context()
-	context.SetValue(typeAttribute, bal.ParseComponent("/bali/types/documents/Certificate/v1"))
-	context.SetValue(tagAttribute, bal.Component(tag))
-	context.SetValue(versionAttribute, bal.Component(version))
-	context.SetValue(permissionsAttribute, bal.ParseComponent("/bali/permissions/public/v1"))
+	context.SetValue(ab2.TypeAttribute, bal.ParseComponent("/bali/types/documents/Certificate/v1"))
+	context.SetValue(ab2.TagAttribute, bal.Component(tag))
+	context.SetValue(ab2.VersionAttribute, bal.Component(version))
+	context.SetValue(ab2.PermissionsAttribute, bal.ParseComponent("/bali/permissions/public/v1"))
 	if previous != nil {
-		context.SetValue(previousAttribute, bal.Component(previous))
+		context.SetValue(ab2.PreviousAttribute, bal.Component(previous))
 	}
 
 	// Create a new certificate.
@@ -54,29 +55,29 @@ type certificate struct {
 }
 
 func (v *certificate) GetAlgorithms() abs.CatalogLike {
-	return v.ExtractCatalog().GetValue(algorithmsAttribute).ExtractCatalog()
+	return v.ExtractCatalog().GetValue(ab2.AlgorithmsAttribute).ExtractCatalog()
 }
 
 func (v *certificate) GetKey() abs.BinaryLike {
-	return v.ExtractCatalog().GetValue(keyAttribute).ExtractBinary()
+	return v.ExtractCatalog().GetValue(ab2.KeyAttribute).ExtractBinary()
 }
 
 func (v *certificate) GetPermissions() abs.MonikerLike {
-	return v.GetContext().GetValue(permissionsAttribute).ExtractMoniker()
+	return v.GetContext().GetValue(ab2.PermissionsAttribute).ExtractMoniker()
 }
 
-func (v *certificate) GetPrevious() CitationLike {
-	return v.GetContext().GetValue(previousAttribute).ExtractCatalog().(CitationLike)
+func (v *certificate) GetPrevious() ab2.CitationLike {
+	return v.GetContext().GetValue(ab2.PreviousAttribute).ExtractCatalog().(ab2.CitationLike)
 }
 
 func (v *certificate) GetTag() abs.TagLike {
-	return v.GetContext().GetValue(tagAttribute).ExtractTag()
+	return v.GetContext().GetValue(ab2.TagAttribute).ExtractTag()
 }
 
-func (v *certificate) GetType() TypeLike {
-	return v.GetContext().GetValue(typeAttribute).(TypeLike)
+func (v *certificate) GetType() ab2.TypeLike {
+	return v.GetContext().GetValue(ab2.TypeAttribute).(ab2.TypeLike)
 }
 
 func (v *certificate) GetVersion() abs.VersionLike {
-	return v.GetContext().GetValue(versionAttribute).ExtractVersion()
+	return v.GetContext().GetValue(ab2.VersionAttribute).ExtractVersion()
 }
