@@ -91,9 +91,12 @@ type Versioned interface {
 
 // CONSOLIDATED INTERFACES
 
-type TypeLike interface {
+type CertificateLike interface {
 	abs.Encapsulated
-	Named
+	Published
+	Restricted
+	Typed
+	Versioned
 }
 
 type CitationLike interface {
@@ -108,25 +111,22 @@ type ContractLike interface {
 	Typed
 }
 
-type DocumentLike interface {
-	abs.Encapsulated
-	Typed
-	Restricted
-	Versioned
-}
-
-type CertificateLike interface {
-	abs.Encapsulated
-	Published
-	Typed
-	Restricted
-	Versioned
-}
-
 type CredentialsLike interface {
 	abs.Encapsulated
+	Restricted
 	Seasoned
 	Typed
-	Restricted
 	Versioned
+}
+
+type DocumentLike interface {
+	abs.Encapsulated
+	Restricted
+	Typed
+	Versioned
+}
+
+type TypeLike interface {
+	abs.Encapsulated
+	Named
 }

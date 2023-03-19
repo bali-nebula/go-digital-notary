@@ -36,7 +36,7 @@ func Contract(
 
 	// Create a new context for the type.
 	var context = com.Context()
-	context.SetValue(ab2.TypeAttribute, bal.ParseComponent("/bali/types/documents/Contract/v1"))
+	context.SetValue(ab2.TypeAttribute, bal.Component("/bali/types/documents/Contract/v1"))
 
 	// Create a new contract.
 	return &contract{bal.ComponentWithContext(attributes, context)}

@@ -14,7 +14,6 @@ import (
 	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
 	bal "github.com/bali-nebula/go-component-framework/v2/bali"
 	col "github.com/bali-nebula/go-component-framework/v2/collections"
-	com "github.com/bali-nebula/go-component-framework/v2/components"
 	ab2 "github.com/bali-nebula/go-digital-notary/v2/abstractions"
 )
 
@@ -34,25 +33,22 @@ func Certificate(
 	attributes.SetValue(ab2.KeyAttribute, bal.Component(key))
 	attributes.SetValue(ab2.AlgorithmsAttribute, bal.Component(algorithms))
 
-	// Create a new context.
-	var context = com.Context()
-	context.SetValue(ab2.TypeAttribute, bal.ParseComponent("/bali/types/documents/Certificate/v1"))
-	context.SetValue(ab2.TagAttribute, bal.Component(tag))
-	context.SetValue(ab2.VersionAttribute, bal.Component(version))
-	context.SetValue(ab2.PermissionsAttribute, bal.ParseComponent("/bali/permissions/public/v1"))
-	if previous != nil {
-		context.SetValue(ab2.PreviousAttribute, bal.Component(previous))
-	}
+	// Create a new document.
+	var type_ = Type(bal.Moniker("/bali/types/documents/Certificate/v1"), nil)
+	var permissions = bal.Moniker("/bali/permissions/public/v1")
+	var document = Document(attributes, type_, tag, version, permissions, previous)
 
 	// Create a new certificate.
-	return &certificate{bal.ComponentWithContext(attributes, context)}
+	return &certificate{document}
 }
 
 // CERTIFICATE IMPLEMENTATION
 
 type certificate struct {
-	abs.Encapsulated
+	ab2.DocumentLike
 }
+
+// PUBLISHED INTERFACE
 
 func (v *certificate) GetAlgorithms() abs.CatalogLike {
 	return v.ExtractCatalog().GetValue(ab2.AlgorithmsAttribute).ExtractCatalog()
@@ -60,24 +56,4 @@ func (v *certificate) GetAlgorithms() abs.CatalogLike {
 
 func (v *certificate) GetKey() abs.BinaryLike {
 	return v.ExtractCatalog().GetValue(ab2.KeyAttribute).ExtractBinary()
-}
-
-func (v *certificate) GetPermissions() abs.MonikerLike {
-	return v.GetContext().GetValue(ab2.PermissionsAttribute).ExtractMoniker()
-}
-
-func (v *certificate) GetPrevious() ab2.CitationLike {
-	return v.GetContext().GetValue(ab2.PreviousAttribute).ExtractCatalog().(ab2.CitationLike)
-}
-
-func (v *certificate) GetTag() abs.TagLike {
-	return v.GetContext().GetValue(ab2.TagAttribute).ExtractTag()
-}
-
-func (v *certificate) GetType() ab2.TypeLike {
-	return v.GetContext().GetValue(ab2.TypeAttribute).(ab2.TypeLike)
-}
-
-func (v *certificate) GetVersion() abs.VersionLike {
-	return v.GetContext().GetValue(ab2.VersionAttribute).ExtractVersion()
 }

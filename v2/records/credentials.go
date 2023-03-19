@@ -14,7 +14,6 @@ import (
 	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
 	bal "github.com/bali-nebula/go-component-framework/v2/bali"
 	col "github.com/bali-nebula/go-component-framework/v2/collections"
-	com "github.com/bali-nebula/go-component-framework/v2/components"
 	ab2 "github.com/bali-nebula/go-digital-notary/v2/abstractions"
 )
 
@@ -29,51 +28,26 @@ func Credentials(
 	var attributes = col.Catalog()
 	attributes.SetValue(ab2.SaltAttribute, bal.Component(salt))
 
-	// Create a new context.
-	var context = com.Context()
-	context.SetValue(ab2.TypeAttribute, bal.ParseComponent("/bali/types/documents/Credentials/v1"))
-	context.SetValue(ab2.TagAttribute, bal.Component(bal.NewTag()))
-	context.SetValue(ab2.VersionAttribute, bal.Component("v1"))
-	context.SetValue(ab2.PermissionsAttribute, bal.ParseComponent("/bali/permissions/private/v1"))
+	// Create a new document.
+	var type_ = Type(bal.Moniker("/bali/types/documents/Credentials/v1"), nil)
+	var tag = bal.NewTag()
+	var version = bal.Version("v1")
+	var permissions = bal.Moniker("/bali/permissions/private/v1")
+	var previous ab2.CitationLike
+	var document = Document(attributes, type_, tag, version, permissions, previous)
 
 	// Create a new credentials.
-	return &credentials{bal.ComponentWithContext(attributes, context)}
+	return &credentials{document}
 }
 
 // CREDENTIALS IMPLEMENTATION
 
 type credentials struct {
-	abs.Encapsulated
+	ab2.DocumentLike
 }
 
 // SEASONED INTERFACE
 
 func (v *credentials) GetSalt() abs.BinaryLike {
 	return v.ExtractCatalog().GetValue(ab2.SaltAttribute).ExtractBinary()
-}
-
-// TYPED INTERFACE
-
-func (v *credentials) GetType() ab2.TypeLike {
-	return v.GetContext().GetValue(ab2.TypeAttribute).(ab2.TypeLike)
-}
-
-// RESTRICTED INTERFACE
-
-func (v *credentials) GetPermissions() abs.MonikerLike {
-	return v.GetContext().GetValue(ab2.PermissionsAttribute).ExtractMoniker()
-}
-
-// VERSIONED INTERFACE
-
-func (v *credentials) GetTag() abs.TagLike {
-	return v.GetContext().GetValue(ab2.TagAttribute).ExtractTag()
-}
-
-func (v *credentials) GetVersion() abs.VersionLike {
-	return v.GetContext().GetValue(ab2.VersionAttribute).ExtractVersion()
-}
-
-func (v *credentials) GetPrevious() ab2.CitationLike {
-	return v.GetContext().GetValue(ab2.PreviousAttribute).ExtractCatalog().(ab2.CitationLike)
 }
