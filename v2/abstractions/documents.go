@@ -113,10 +113,9 @@ type ContractLike interface {
 
 type CredentialLike interface {
 	abs.Encapsulated
-	Restricted
+	Notarized
 	Seasoned
 	Typed
-	Versioned
 }
 
 type RecordLike interface {

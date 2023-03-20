@@ -13,7 +13,6 @@ package documents
 import (
 	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
 	bal "github.com/bali-nebula/go-component-framework/v2/bali"
-	col "github.com/bali-nebula/go-component-framework/v2/collections"
 	ab2 "github.com/bali-nebula/go-digital-notary/v2/abstractions"
 )
 
@@ -22,32 +21,32 @@ import (
 // This constructor creates a new credential.
 func Credential(
 	salt abs.BinaryLike,
+	account abs.TagLike,
+	protocol abs.VersionLike,
+	certificate ab2.CitationLike,
 ) ab2.CredentialLike {
 
-	// Create a new catalog for the attributes.
-	var attributes = col.Catalog()
-	attributes.SetValue(ab2.SaltAttribute, bal.Component(salt))
+	// Create a new contract.
+	var component = bal.Component(salt)
+	var contract = Contract(component, account, protocol, certificate)
 
-	// Create a new record.
+	// Change the type of the contract.
 	var type_ = Type(bal.Moniker("/bali/types/documents/Credential/v1"), nil)
-	var tag = bal.NewTag()
-	var version = bal.Version("v1")
-	var permissions = bal.Moniker("/bali/permissions/private/v1")
-	var previous ab2.CitationLike
-	var record = Record(attributes, type_, tag, version, permissions, previous)
+	var context = contract.GetContext()
+	context.SetValue(ab2.TypeAttribute, bal.Component(type_))
 
 	// Create a new credential.
-	return &credential{record}
+	return &credential{contract}
 }
 
 // CREDENTIALS IMPLEMENTATION
 
 type credential struct {
-	ab2.RecordLike
+	ab2.ContractLike
 }
 
 // SEASONED INTERFACE
 
 func (v *credential) GetSalt() abs.BinaryLike {
-	return v.ExtractCatalog().GetValue(ab2.SaltAttribute).ExtractBinary()
+	return v.ExtractBinary()
 }

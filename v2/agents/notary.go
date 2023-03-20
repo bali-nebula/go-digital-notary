@@ -143,14 +143,13 @@ func (v *notary) ForgetKey() {
 
 // This method generates a new account credential that can be used for
 // authentication.
-func (v *notary) GenerateCredential(salt abs.BinaryLike) ab2.ContractLike {
+func (v *notary) GenerateCredential(salt abs.BinaryLike) ab2.CredentialLike {
 	var citation = v.GetCitation()
-	var credential = doc.Credential(salt)
-	var contract = doc.Contract(credential, v.account, v.protocol, citation)
-	var bytes = bal.FormatDocument(contract)
+	var credential = doc.Credential(salt, v.account, v.protocol, citation)
+	var bytes = bal.FormatDocument(credential)
 	var signature = bal.Binary(v.hsm.SignBytes(bytes))
-	contract.AddSignature(signature)
-	return contract
+	credential.AddSignature(signature)
+	return credential
 }
 
 // This method uses the current private notary key to notarized the specified

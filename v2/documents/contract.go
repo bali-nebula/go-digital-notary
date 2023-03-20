@@ -56,7 +56,7 @@ func (v *contract) GetAccount() abs.TagLike {
 }
 
 func (v *contract) GetCertificate() ab2.CitationLike {
-	return v.ExtractCatalog().GetValue(ab2.VersionAttribute).(ab2.CitationLike)
+	return v.ExtractCatalog().GetValue(ab2.CertificateAttribute).(ab2.CitationLike)
 }
 
 func (v *contract) GetComponent() abs.ComponentLike {
