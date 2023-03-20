@@ -23,12 +23,12 @@ var (
 	AccountAttribute     = bal.Symbol("$account")
 	AlgorithmsAttribute  = bal.Symbol("$algorithms")
 	CertificateAttribute = bal.Symbol("$certificate")
+	ComponentAttribute   = bal.Symbol("$component")
 	DigestAttribute      = bal.Symbol("$digest")
 	KeyAttribute         = bal.Symbol("$key")
 	PermissionsAttribute = bal.Symbol("$permissions")
 	PreviousAttribute    = bal.Symbol("$previous")
 	ProtocolAttribute    = bal.Symbol("$protocol")
-	RecordAttribute      = bal.Symbol("$record")
 	SaltAttribute        = bal.Symbol("$salt")
 	SignatureAttribute   = bal.Symbol("$signature")
 	TimestampAttribute   = bal.Symbol("$timestamp")
@@ -40,7 +40,7 @@ var (
 
 // This interface defines the methods supported by all notarized components.
 type Notarized interface {
-	GetRecord() RecordLike
+	GetComponent() abs.ComponentLike
 	GetAccount() abs.TagLike
 	GetProtocol() abs.VersionLike
 	GetCertificate() CitationLike

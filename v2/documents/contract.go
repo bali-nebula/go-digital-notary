@@ -22,7 +22,7 @@ import (
 
 // This constructor creates a new contract.
 func Contract(
-	record ab2.RecordLike,
+	component abs.ComponentLike,
 	account abs.TagLike,
 	protocol abs.VersionLike,
 	certificate ab2.CitationLike,
@@ -30,7 +30,7 @@ func Contract(
 
 	// Create a new catalog for the attributes.
 	var attributes = col.Catalog()
-	attributes.SetValue(ab2.RecordAttribute, record)
+	attributes.SetValue(ab2.ComponentAttribute, component)
 	attributes.SetValue(ab2.AccountAttribute, bal.Component(account))
 	attributes.SetValue(ab2.ProtocolAttribute, bal.Component(protocol))
 	attributes.SetValue(ab2.CertificateAttribute, certificate)
@@ -59,8 +59,8 @@ func (v *contract) GetCertificate() ab2.CitationLike {
 	return v.ExtractCatalog().GetValue(ab2.VersionAttribute).(ab2.CitationLike)
 }
 
-func (v *contract) GetRecord() ab2.RecordLike {
-	return v.ExtractCatalog().GetValue(ab2.RecordAttribute).(ab2.RecordLike)
+func (v *contract) GetComponent() abs.ComponentLike {
+	return v.ExtractCatalog().GetValue(ab2.ComponentAttribute).(abs.ComponentLike)
 }
 
 func (v *contract) GetProtocol() abs.VersionLike {

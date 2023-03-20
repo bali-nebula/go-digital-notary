@@ -27,7 +27,7 @@ type Prudent interface {
 // This interface defines the methods supported by all certified notary agents.
 type Certified interface {
 	GenerateCredential(salt abs.BinaryLike) ContractLike
-	NotarizeRecord(record RecordLike) ContractLike
+	NotarizeComponent(component abs.ComponentLike) ContractLike
 	SignatureMatches(contract ContractLike, certificate CertificateLike) bool
 	CiteRecord(record RecordLike) CitationLike
 	CitationMatches(citation CitationLike, record RecordLike) bool
