@@ -11,27 +11,27 @@
 package documents
 
 import (
-	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
+	gcf "github.com/bali-nebula/go-component-framework/v2/abstractions"
 	bal "github.com/bali-nebula/go-component-framework/v2/bali"
 	col "github.com/bali-nebula/go-component-framework/v2/collections"
-	ab2 "github.com/bali-nebula/go-digital-notary/v2/abstractions"
+	abs "github.com/bali-nebula/go-digital-notary/v2/abstractions"
 )
 
 // CERTIFICATE INTERFACE
 
 // This constructor creates a new certificate.
 func Certificate(
-	key abs.BinaryLike,
-	algorithms abs.CatalogLike,
-	tag abs.TagLike,
-	version abs.VersionLike,
-	previous ab2.CitationLike,
-) ab2.CertificateLike {
+	key gcf.BinaryLike,
+	algorithms gcf.CatalogLike,
+	tag gcf.TagLike,
+	version gcf.VersionLike,
+	previous abs.CitationLike,
+) abs.CertificateLike {
 
 	// Create a new catalog for the attributes.
 	var attributes = col.Catalog()
-	attributes.SetValue(ab2.KeyAttribute, bal.Component(key))
-	attributes.SetValue(ab2.AlgorithmsAttribute, bal.Component(algorithms))
+	attributes.SetValue(abs.KeyAttribute, bal.Component(key))
+	attributes.SetValue(abs.AlgorithmsAttribute, bal.Component(algorithms))
 
 	// Create a new record.
 	var type_ = Type(bal.Moniker("/bali/types/documents/Certificate/v1"), nil)
@@ -45,15 +45,15 @@ func Certificate(
 // CERTIFICATE IMPLEMENTATION
 
 type certificate struct {
-	ab2.RecordLike
+	abs.RecordLike
 }
 
 // PUBLISHED INTERFACE
 
-func (v *certificate) GetAlgorithms() abs.CatalogLike {
-	return v.ExtractCatalog().GetValue(ab2.AlgorithmsAttribute).ExtractCatalog()
+func (v *certificate) GetAlgorithms() gcf.CatalogLike {
+	return v.ExtractCatalog().GetValue(abs.AlgorithmsAttribute).ExtractCatalog()
 }
 
-func (v *certificate) GetKey() abs.BinaryLike {
-	return v.ExtractCatalog().GetValue(ab2.KeyAttribute).ExtractBinary()
+func (v *certificate) GetKey() gcf.BinaryLike {
+	return v.ExtractCatalog().GetValue(abs.KeyAttribute).ExtractBinary()
 }

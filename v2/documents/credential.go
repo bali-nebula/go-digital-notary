@@ -11,20 +11,20 @@
 package documents
 
 import (
-	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
+	gcf "github.com/bali-nebula/go-component-framework/v2/abstractions"
 	bal "github.com/bali-nebula/go-component-framework/v2/bali"
-	ab2 "github.com/bali-nebula/go-digital-notary/v2/abstractions"
+	abs "github.com/bali-nebula/go-digital-notary/v2/abstractions"
 )
 
 // CREDENTIALS INTERFACE
 
 // This constructor creates a new credential.
 func Credential(
-	salt abs.BinaryLike,
-	account abs.TagLike,
-	protocol abs.VersionLike,
-	certificate ab2.CitationLike,
-) ab2.CredentialLike {
+	salt gcf.BinaryLike,
+	account gcf.TagLike,
+	protocol gcf.VersionLike,
+	certificate abs.CitationLike,
+) abs.CredentialLike {
 
 	// Create a new contract.
 	var component = bal.Component(salt)
@@ -33,7 +33,7 @@ func Credential(
 	// Change the type of the contract.
 	var type_ = Type(bal.Moniker("/bali/types/documents/Credential/v1"), nil)
 	var context = contract.GetContext()
-	context.SetValue(ab2.TypeAttribute, bal.Component(type_))
+	context.SetValue(abs.TypeAttribute, bal.Component(type_))
 
 	// Create a new credential.
 	return &credential{contract}
@@ -42,11 +42,11 @@ func Credential(
 // CREDENTIALS IMPLEMENTATION
 
 type credential struct {
-	ab2.ContractLike
+	abs.ContractLike
 }
 
 // SEASONED INTERFACE
 
-func (v *credential) GetSalt() abs.BinaryLike {
+func (v *credential) GetSalt() gcf.BinaryLike {
 	return v.ExtractBinary()
 }

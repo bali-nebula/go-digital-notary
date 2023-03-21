@@ -13,10 +13,10 @@ package agents
 import (
 	byt "bytes"
 	fmt "fmt"
-	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
+	gcf "github.com/bali-nebula/go-component-framework/v2/abstractions"
 	age "github.com/bali-nebula/go-component-framework/v2/agents"
 	bal "github.com/bali-nebula/go-component-framework/v2/bali"
-	ab2 "github.com/bali-nebula/go-digital-notary/v2/abstractions"
+	abs "github.com/bali-nebula/go-digital-notary/v2/abstractions"
 	doc "github.com/bali-nebula/go-digital-notary/v2/documents"
 	col "github.com/craterdog/go-collection-framework/v2"
 )
@@ -30,14 +30,14 @@ import (
 // security protocol used by digital notaries. The HSM will be used to validate
 // all current version signatures while a software security module (SSM) will be
 // used to validate previous version signatures.
-func Notary(directory string, hsm ab2.SecurityModuleLike) ab2.NotaryLike {
+func Notary(directory string, hsm abs.SecurityModuleLike) abs.NotaryLike {
 	if hsm == nil {
 		panic("A security module must be provided to the digital notary.")
 	}
 
 	// Initialize the modules catalog with all versions of software security
 	// modules. The modules must be ordered with latest version first.
-	var modules = col.Catalog[abs.VersionLike, ab2.SecurityModuleLike]()
+	var modules = col.Catalog[gcf.VersionLike, abs.SecurityModuleLike]()
 	//modules.SetValue(v3, SSMv3(""))
 	//modules.SetValue(v2, SSMv2(""))
 	modules.SetValue(v1, SSMv1(""))
@@ -56,11 +56,11 @@ func Notary(directory string, hsm ab2.SecurityModuleLike) ab2.NotaryLike {
 
 // This type defines the structure and methods associated with a digital notary.
 type notary struct {
-	account      abs.TagLike
-	protocol     abs.VersionLike
-	hsm          ab2.SecurityModuleLike
-	modules      col.CatalogLike[abs.VersionLike, ab2.SecurityModuleLike]
-	configurator abs.ConfiguratorLike
+	account      gcf.TagLike
+	protocol     gcf.VersionLike
+	hsm          abs.SecurityModuleLike
+	modules      col.CatalogLike[gcf.VersionLike, abs.SecurityModuleLike]
+	configurator gcf.ConfiguratorLike
 }
 
 // These constants define the supported versions of the security protocol.
@@ -80,11 +80,11 @@ var algorithms = bal.Catalog(`[
 
 // This method generates a new private notary key and returns the corresponding
 // public notary certificate.
-func (v *notary) GenerateKey() ab2.ContractLike {
+func (v *notary) GenerateKey() abs.ContractLike {
 	var key = bal.Binary(v.hsm.GenerateKeys()) // Returns the new public key.
 	var tag = bal.NewTag()
 	var version = v1              // The first version of this certificate.
-	var previous ab2.CitationLike // No previous version.
+	var previous abs.CitationLike // No previous version.
 	var certificate = doc.Certificate(key, algorithms, tag, version, previous)
 	var bytes = []byte(bal.FormatDocument(certificate))
 	var digest = bal.Binary(v.hsm.DigestBytes(bytes))
@@ -99,23 +99,23 @@ func (v *notary) GenerateKey() ab2.ContractLike {
 
 // This method retrieves a citation to the public notary certificate for the
 // current private notary key.
-func (v *notary) GetCitation() ab2.CitationLike {
+func (v *notary) GetCitation() abs.CitationLike {
 	if !v.configurator.Exists() {
 		panic("The digital notary has not yet been initialized.")
 	}
 	var component = bal.ParseDocument(v.configurator.Load())
 	var attributes = component.ExtractCatalog()
-	var tag = attributes.GetValue(ab2.TagAttribute).ExtractTag()
-	var version = attributes.GetValue(ab2.VersionAttribute).ExtractVersion()
-	var protocol = attributes.GetValue(ab2.ProtocolAttribute).ExtractVersion()
-	var digest = attributes.GetValue(ab2.DigestAttribute).ExtractBinary()
+	var tag = attributes.GetValue(abs.TagAttribute).ExtractTag()
+	var version = attributes.GetValue(abs.VersionAttribute).ExtractVersion()
+	var protocol = attributes.GetValue(abs.ProtocolAttribute).ExtractVersion()
+	var digest = attributes.GetValue(abs.DigestAttribute).ExtractBinary()
 	return doc.Citation(tag, version, protocol, digest)
 }
 
 // This method replaces an existing private notary key with a new one and
 // returns the corresponding public notary certificate digitally signed by the
 // old private notary key. The old private notary key is destroyed.
-func (v *notary) RefreshKey() ab2.ContractLike {
+func (v *notary) RefreshKey() abs.ContractLike {
 	var citation = v.GetCitation()
 	var key = bal.Binary(v.hsm.RotateKeys()) // Returns the new public key.
 	var tag = citation.GetTag()
@@ -143,7 +143,7 @@ func (v *notary) ForgetKey() {
 
 // This method generates a new account credential that can be used for
 // authentication.
-func (v *notary) GenerateCredential(salt abs.BinaryLike) ab2.CredentialLike {
+func (v *notary) GenerateCredential(salt gcf.BinaryLike) abs.CredentialLike {
 	var citation = v.GetCitation()
 	var credential = doc.Credential(salt, v.account, v.protocol, citation)
 	var bytes = bal.FormatDocument(credential)
@@ -154,7 +154,7 @@ func (v *notary) GenerateCredential(salt abs.BinaryLike) ab2.CredentialLike {
 
 // This method uses the current private notary key to notarized the specified
 // component and returns the resulting contract.
-func (v *notary) NotarizeComponent(component abs.ComponentLike) ab2.ContractLike {
+func (v *notary) NotarizeComponent(component gcf.ComponentLike) abs.ContractLike {
 	var citation = v.GetCitation()
 	var contract = doc.Contract(component, v.account, v.protocol, citation)
 	var bytes = bal.FormatDocument(contract)
@@ -165,7 +165,7 @@ func (v *notary) NotarizeComponent(component abs.ComponentLike) ab2.ContractLike
 
 // This method determines whether or not the signature on the specified contract
 // is valid using the specified public notary certificate.
-func (v *notary) SignatureMatches(contract ab2.ContractLike, certificate ab2.CertificateLike) bool {
+func (v *notary) SignatureMatches(contract abs.ContractLike, certificate abs.CertificateLike) bool {
 	// Retrieve the SSM that supports the required security protocol.
 	var protocol = contract.GetProtocol()
 	var ssm = v.modules.GetValue(protocol)
@@ -187,7 +187,7 @@ func (v *notary) SignatureMatches(contract ab2.ContractLike, certificate ab2.Cer
 
 // This method generates a citation to the specified record and returns that
 // citation.
-func (v *notary) CiteRecord(record ab2.RecordLike) ab2.CitationLike {
+func (v *notary) CiteRecord(record abs.RecordLike) abs.CitationLike {
 	var tag = record.GetTag()
 	var version = record.GetVersion()
 	var bytes = bal.FormatDocument(record)
@@ -198,7 +198,7 @@ func (v *notary) CiteRecord(record ab2.RecordLike) ab2.CitationLike {
 
 // This method determines whether or not the specified record citation matches
 // the specified record.
-func (v *notary) CitationMatches(citation ab2.CitationLike, record ab2.RecordLike) bool {
+func (v *notary) CitationMatches(citation abs.CitationLike, record abs.RecordLike) bool {
 	// Retrieve the SSM that supports the required security protocol.
 	var protocol = citation.GetProtocol()
 	var ssm = v.modules.GetValue(protocol)

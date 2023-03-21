@@ -11,27 +11,27 @@
 package documents
 
 import (
-	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
+	gcf "github.com/bali-nebula/go-component-framework/v2/abstractions"
 	bal "github.com/bali-nebula/go-component-framework/v2/bali"
-	ab2 "github.com/bali-nebula/go-digital-notary/v2/abstractions"
+	abs "github.com/bali-nebula/go-digital-notary/v2/abstractions"
 )
 
 // TYPE INTERFACE
 
 // This constructor creates a new type component.
 func Type(
-	name abs.MonikerLike,
-	context abs.ContextLike,
-) ab2.TypeLike {
+	name gcf.MonikerLike,
+	context gcf.ContextLike,
+) abs.TypeLike {
 	return &type_{bal.ComponentWithContext(name, context)}
 }
 
 // TYPE IMPLEMENTATION
 
 type type_ struct {
-	abs.Encapsulated
+	gcf.Encapsulated
 }
 
-func (v *type_) GetName() abs.MonikerLike {
+func (v *type_) GetName() gcf.MonikerLike {
 	return v.ExtractMoniker()
 }

@@ -73,7 +73,6 @@ func TestNotaryLifecycle(t *tes.T) {
 
 	// Extract the citation to the public certificate.
 	var citation = notary.GetCitation()
-	osx.WriteFile("../examples/citation.bali", bal.FormatDocument(citation), 0600)
 
 	// Create and cite a new transaction record.
 	var attributes = bal.Catalog(`[
@@ -91,6 +90,7 @@ func TestNotaryLifecycle(t *tes.T) {
 	osx.WriteFile("../examples/record.bali", bal.FormatDocument(record), 0600)
 	citation = notary.CiteRecord(record)
 	ass.True(t, notary.CitationMatches(citation, record))
+	osx.WriteFile("../examples/citation.bali", bal.FormatDocument(citation), 0600)
 
 	// Notarize the transaction record to create a signed contract.
 	var contract = notary.NotarizeComponent(record)

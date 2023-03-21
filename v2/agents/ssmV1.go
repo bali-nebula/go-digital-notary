@@ -22,10 +22,10 @@ import (
 	sig "crypto/ed25519"
 	dig "crypto/sha512"
 	fmt "fmt"
-	abs "github.com/bali-nebula/go-component-framework/v2/abstractions"
+	gcf "github.com/bali-nebula/go-component-framework/v2/abstractions"
 	age "github.com/bali-nebula/go-component-framework/v2/agents"
 	bal "github.com/bali-nebula/go-component-framework/v2/bali"
-	ab2 "github.com/bali-nebula/go-digital-notary/v2/abstractions"
+	abs "github.com/bali-nebula/go-digital-notary/v2/abstractions"
 )
 
 // SOFTWARE SECURITY MODULE (SSM) INTERFACE
@@ -33,9 +33,9 @@ import (
 // This constructor creates a new software security module. It emulates a
 // hardware security module and may be used for testing or, in a trusted
 // cloud environment where it cannot be tampered with.
-func SSMv1(directory string) ab2.SecurityModuleLike {
-	var configurator abs.ConfiguratorLike
-	var controller abs.ControllerLike
+func SSMv1(directory string) abs.SecurityModuleLike {
+	var configurator gcf.ConfiguratorLike
+	var controller gcf.ControllerLike
 	var v = &ssmV1{} // Assume this is only a trusted security module.
 	if len(directory) > 0 {
 		// Nope, this is pretending to be a hardened security module!
@@ -62,8 +62,8 @@ type ssmV1 struct {
 	publicKey    []byte
 	privateKey   []byte
 	previousKey  []byte
-	controller   abs.ControllerLike
-	configurator abs.ConfiguratorLike
+	controller   gcf.ControllerLike
+	configurator gcf.ConfiguratorLike
 }
 
 // These constants define the possible states for the state machine.
@@ -204,7 +204,7 @@ func (v *ssmV1) getState() string {
 	}
 }
 
-func (v *ssmV1) setState(state abs.ComponentLike) {
+func (v *ssmV1) setState(state gcf.ComponentLike) {
 	switch bal.FormatComponent(state) {
 	case "$keyless":
 		v.controller.SetState(keyless)
