@@ -68,11 +68,11 @@ func TestNotaryLifecycle(t *tes.T) {
 
 	// Generate and validate a new public-private key pair.
 	var certificateV1 = notary.GenerateKey()
-	osx.WriteFile("../examples/certificateV1.bali", bal.FormatDocument(certificateV1), 0600)
+	_ = osx.WriteFile("../examples/certificateV1.bali", bal.FormatDocument(certificateV1), 0600)
 	ass.True(t, notary.SignatureMatches(certificateV1, certificateV1.GetComponent().(abs.CertificateLike)))
 
 	// Extract the citation to the public certificate.
-	var citation = notary.GetCitation()
+	_ = notary.GetCitation()
 
 	// Create and cite a new transaction record.
 	var attributes = bal.Catalog(`[
@@ -87,14 +87,14 @@ func TestNotaryLifecycle(t *tes.T) {
 	var permissions = bal.Moniker("/bali/permissions/public/v1")
 	var previous abs.CitationLike
 	var record = doc.Record(attributes, type_, tag, version, permissions, previous)
-	osx.WriteFile("../examples/record.bali", bal.FormatDocument(record), 0600)
-	citation = notary.CiteRecord(record)
+	_ = osx.WriteFile("../examples/record.bali", bal.FormatDocument(record), 0600)
+	var citation = notary.CiteRecord(record)
 	ass.True(t, notary.CitationMatches(citation, record))
-	osx.WriteFile("../examples/citation.bali", bal.FormatDocument(citation), 0600)
+	_ = osx.WriteFile("../examples/citation.bali", bal.FormatDocument(citation), 0600)
 
 	// Notarize the transaction record to create a signed contract.
 	var contract = notary.NotarizeComponent(record)
-	osx.WriteFile("../examples/contract.bali", bal.FormatDocument(contract), 0600)
+	_ = osx.WriteFile("../examples/contract.bali", bal.FormatDocument(contract), 0600)
 	ass.True(t, notary.SignatureMatches(contract, certificateV1.GetComponent().(abs.CertificateLike)))
 
 	// Pickup where we left off with a new security module and digital notary.
@@ -103,13 +103,13 @@ func TestNotaryLifecycle(t *tes.T) {
 
 	// Refresh and validate the public-private key pair.
 	var certificateV2 = notary.RefreshKey()
-	osx.WriteFile("../examples/certificateV2.bali", bal.FormatDocument(certificateV2), 0600)
+	_ = osx.WriteFile("../examples/certificateV2.bali", bal.FormatDocument(certificateV2), 0600)
 	ass.True(t, notary.SignatureMatches(certificateV2, certificateV1.GetComponent().(abs.CertificateLike)))
 
 	// Generate an authentication credential.
 	var salt = bal.Binary(64)
 	var credential = notary.GenerateCredential(salt)
-	osx.WriteFile("../examples/credential.bali", bal.FormatDocument(credential), 0600)
+	_ = osx.WriteFile("../examples/credential.bali", bal.FormatDocument(credential), 0600)
 	ass.True(t, notary.SignatureMatches(credential, certificateV2.GetComponent().(abs.CertificateLike)))
 
 	// Reset the security module and digital notary to an uninitialized state.

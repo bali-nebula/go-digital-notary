@@ -60,7 +60,7 @@ func (v *contract) GetCertificate() abs.CitationLike {
 }
 
 func (v *contract) GetComponent() gcf.ComponentLike {
-	return v.ExtractCatalog().GetValue(abs.ComponentAttribute).(gcf.ComponentLike)
+	return v.ExtractCatalog().GetValue(abs.ComponentAttribute)
 }
 
 func (v *contract) GetProtocol() gcf.VersionLike {

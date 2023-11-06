@@ -85,9 +85,9 @@ const (
 // This table defines the allowed transitions for the state machine.
 var states = [][]int{
 	{events, generateKeys, signBytes, rotateKeys},
-	{keyless,  loneKey,     invalid,   invalid},
-	{loneKey,  invalid,     loneKey,   twoKeys},
-	{twoKeys,  invalid,     loneKey,   invalid},
+	{keyless, loneKey, invalid, invalid},
+	{loneKey, invalid, loneKey, twoKeys},
+	{twoKeys, invalid, loneKey, invalid},
 }
 
 // These constants define the possible attribute names for the configuration.

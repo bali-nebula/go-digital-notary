@@ -66,8 +66,8 @@ type notary struct {
 // These constants define the supported versions of the security protocol.
 var (
 	v1 = bal.Version("v1")
-	v2 = bal.Version("v2")
-	v3 = bal.Version("v3")
+	//v2 = bal.Version("v2")
+	//v3 = bal.Version("v3")
 )
 
 // This constant captures the algorithms used in this version of the protocol.
