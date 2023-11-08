@@ -5,7 +5,7 @@ go 1.21
 toolchain go1.21.0
 
 require (
-	github.com/bali-nebula/go-component-framework/v2 v2.1.0
+	github.com/bali-nebula/go-component-framework/v2 v2.2.0
 	github.com/craterdog/go-collection-framework/v2 v2.2.0
 	github.com/stretchr/testify v1.8.4
 )
