@@ -1,0 +1,28 @@
+[
+    $document: [
+        $timestamp: <2022-06-03T07:39:54>
+        $consumer: "Derk Norton"
+        $merchant: <https://www.starbucks.com/>
+        $amount: 4.95($currency: $USD)
+    ](
+        $type: <bali:/examples/Document@v1.2.3>
+        $tag: #1ZPDPZALRT90H6YMGYNTQJW9PJCRMVSP
+        $version: v1
+        $permissions: <bali:/permissions/public@v1>
+    )
+    $account: #FX8QBK8VGXS78D4LAKXQPTB62VL6A11L
+    $protocol: v1
+    $certificate: [
+        $tag: #ZQANMT480VVV5CNRAZZNZ7AKJ4WZJBFR
+        $version: v1
+        $protocol: v1
+        $digest: '>
+            Cq90FBb/Pd8ls7qaREtLfsA/oFuYQcaSGBx4HKY9mngTDs9FL7wP27WAakGN
+            wgy5KJo9MEcm5r+aiOG/2SOkdw
+        <'
+    ]($type: <bali:/types/documents/Citation@v1>)
+    $signature: '>
+        1ri9/WAYE4mU2dcwORAhJjbrqkG1gPVY2jYxtw7ohnXxOPGa2VzADj0AW8Wt
+        lo2z7V2DHSvX7T2BkkQvPuZ/AA
+    <'
+]($type: <bali:/types/documents/Contract@v1>)
