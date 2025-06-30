@@ -104,7 +104,9 @@ func (v *contract_) AsString() string {
 	string_ += `    $account: ` + v.GetAccount()
 	string_ += `    $protocol: ` + v.GetProtocol()
 	string_ += `    $certificate: ` + v.GetCertificate().AsString()
-	string_ += `    $signature: ` + v.GetSignature()
+	if uti.IsDefined(v.signature_) {
+		string_ += `    $signature: ` + v.GetSignature()
+	}
 	string_ += `]($type: <bali:/types/documents/Contract@v1>)
 `
 	var contract = bal.ParseSource(string_)

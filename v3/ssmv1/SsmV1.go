@@ -155,8 +155,7 @@ func (v *ssmV1_) RotateKeys() []byte {
 }
 
 func (v *ssmV1_) EraseKeys() {
-	v.controller_.SetState(keyless)
-	v.deleteConfiguration()
+	v.createConfiguration()
 }
 
 // PROTECTED INTERFACE
@@ -265,14 +264,6 @@ func (v *ssmV1_) updateConfiguration() {
 	var source = bal.FormatDocument(document)
 	var filename = v.directory_ + v.filename_
 	uti.WriteFile(filename, source)
-}
-
-func (v *ssmV1_) deleteConfiguration() {
-	v.tag_ = ""
-	v.publicKey_ = nil
-	v.privateKey_ = nil
-	v.previousKey_ = nil
-	uti.RemovePath(v.directory_ + v.filename_)
 }
 
 // Instance Structure

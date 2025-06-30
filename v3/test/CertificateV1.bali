@@ -1,0 +1,29 @@
+[
+    $document: [
+        $digest: "SHA512"
+        $signature: "ED25519"
+        $key: '>
+            wzIWd/D9oZUK+dXGInKOmZamY2y+6GeYIEkD/8IjrFE
+        <'
+    ](
+        $type: <bali:/types/documents/Certificate@v3>
+        $tag: #3T1TBRSZJ68Y257NB4V11NAK2KGAZRT8
+        $version: v1
+        $permissions: <bali:/permissions/Public@v3>
+    )
+    $account: #22FFHDXCCNTD90TQRGNHSZ1L4JPWWX6A
+    $protocol: v1
+    $certificate: [
+        $tag: #3T1TBRSZJ68Y257NB4V11NAK2KGAZRT8
+        $version: v1
+        $protocol: v1
+        $digest: '>
+            7YuOQYPdmF2JRS7SLcsB3kXAwJRlwSTAtqgfqXzjUQxgmdlKx6h0aXtbLzOu
+            IpXZ0DtgaLCAAjd1nRppslW4+g
+        <'
+    ]($type: <bali:/types/documents/Citation@v1>)
+    $signature: '>
+        ySDPIytW7YzDhe1jtH3Gee+A1NxSI48s6PMHhkCyI7TNrZY43VE2lV3B4/Mq
+        eGKvFJYLcS3iC964TnAabyQfAA
+    <'
+]($type: <bali:/types/documents/Contract@v1>)

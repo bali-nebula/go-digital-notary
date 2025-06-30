@@ -2,27 +2,27 @@
     $document: [
         $timestamp: <2022-06-03T07:39:54>
         $consumer: "Derk Norton"
-        $merchant: <https://www.starbucks.com/>
+        $merchant: <https://www.starbucks.com>
         $amount: 4.95($currency: $USD)
     ](
-        $type: <bali:/examples/Document@v1.2.3>
-        $tag: #1ZPDPZALRT90H6YMGYNTQJW9PJCRMVSP
+        $type: <bali:/examples/Record@v1.2.3>
+        $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
         $version: v1
         $permissions: <bali:/permissions/Public@v1>
     )
-    $account: #FX8QBK8VGXS78D4LAKXQPTB62VL6A11L
+    $account: #22FFHDXCCNTD90TQRGNHSZ1L4JPWWX6A
     $protocol: v1
     $certificate: [
-        $tag: #ZQANMT480VVV5CNRAZZNZ7AKJ4WZJBFR
+        $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
         $version: v1
         $protocol: v1
         $digest: '>
-            Cq90FBb/Pd8ls7qaREtLfsA/oFuYQcaSGBx4HKY9mngTDs9FL7wP27WAakGN
-            wgy5KJo9MEcm5r+aiOG/2SOkdw
+            GmKlML1kRBJ4r5/vZkMub4ZF45ZDukdO95TtCKzuLiNeEuE04xqvUrDYxsnY
+            lQbvDjGPPScIUSjZmLaNidaqFQ
         <'
     ]($type: <bali:/types/documents/Citation@v1>)
     $signature: '>
-        1ri9/WAYE4mU2dcwORAhJjbrqkG1gPVY2jYxtw7ohnXxOPGa2VzADj0AW8Wt
-        lo2z7V2DHSvX7T2BkkQvPuZ/AA
+        Mg6jirEWVXRfwv5MrXcWX2EuSvgmcR+1TmmWzEPeYhDaRFJtJgO4sLjNEvGN
+        Cz05swKQHcxuPq/v10RgwHftBw
     <'
 ]($type: <bali:/types/documents/Contract@v1>)
