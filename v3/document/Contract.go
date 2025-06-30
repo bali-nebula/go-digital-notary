@@ -14,7 +14,7 @@ package document
 
 import (
 	fmt "fmt"
-	doc "github.com/bali-nebula/go-bali-documents/v3"
+	bal "github.com/bali-nebula/go-bali-documents/v3"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
@@ -33,7 +33,6 @@ func (c *contractClass_) Contract(
 	account string,
 	protocol string,
 	certificate CitationLike,
-	signature string,
 ) ContractLike {
 	if uti.IsUndefined(document) {
 		panic("The \"document\" attribute is required by this class.")
@@ -47,16 +46,12 @@ func (c *contractClass_) Contract(
 	if uti.IsUndefined(certificate) {
 		panic("The \"certificate\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(signature) {
-		panic("The \"signature\" attribute is required by this class.")
-	}
 	var instance = &contract_{
 		// Initialize the instance attributes.
 		document_:    document,
 		account_:     account,
 		protocol_:    protocol,
 		certificate_: certificate,
-		signature_:   signature,
 	}
 	return instance
 }
@@ -74,56 +69,20 @@ func (c *contractClass_) ContractFromString(
 			panic(message)
 		}
 	}()
-	var component = doc.ParseSource(source).GetComponent()
-	var collection = component.GetAny().(doc.CollectionLike)
-	var attributes = collection.GetAny().(doc.AttributesLike)
-	var associations = attributes.GetAssociations()
-
-	var association = associations.GetValue(1)
-	var element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	var symbol = element.GetAny().(string)
-	if symbol != "$document" {
-		panic("Missing the $document attribute.")
-	}
-	var document = documentClass().DocumentFromString(
-		doc.FormatDocument(association.GetDocument()),
+	var document = bal.ParseSource(source)
+	var account = DocumentClass().ExtractAttribute("$account", document)
+	var protocol = DocumentClass().ExtractAttribute("$protocol", document)
+	var certificate = DocumentClass().ExtractCitation("$certificate", document)
+	var signature = DocumentClass().ExtractAttribute("$signature", document)
+	var component = DocumentClass().ExtractDocument("$document", document)
+	var contract = c.Contract(
+		component,
+		account,
+		protocol,
+		certificate,
 	)
-
-	association = associations.GetValue(2)
-	element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	symbol = element.GetAny().(string)
-	if symbol != "$account" {
-		panic("Missing the $account attribute.")
-	}
-	var account = doc.FormatDocument(association.GetDocument())
-
-	association = associations.GetValue(3)
-	element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	symbol = element.GetAny().(string)
-	if symbol != "$protocol" {
-		panic("Missing the $protocol attribute.")
-	}
-	var protocol = doc.FormatDocument(association.GetDocument())
-
-	association = associations.GetValue(4)
-	element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	symbol = element.GetAny().(string)
-	if symbol != "$certificate" {
-		panic("Missing the $certificate attribute.")
-	}
-	var certificate = citationClass().CitationFromString(
-		doc.FormatDocument(association.GetDocument()),
-	)
-
-	association = associations.GetValue(5)
-	element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	symbol = element.GetAny().(string)
-	if symbol != "$signature" {
-		panic("Missing the $signature attribute.")
-	}
-	var signature = doc.FormatDocument(association.GetDocument())
-
-	return c.Contract(document, account, protocol, certificate, signature)
+	contract.SetSignature(signature)
+	return contract
 }
 
 // Constant Methods
@@ -148,8 +107,8 @@ func (v *contract_) AsString() string {
 	string_ += `    $signature: ` + v.GetSignature()
 	string_ += `]($type: <bali:/types/documents/Contract@v1>)
 `
-	var contract = doc.ParseSource(string_)
-	string_ = doc.FormatDocument(contract)
+	var contract = bal.ParseSource(string_)
+	string_ = bal.FormatDocument(contract)
 	return string_
 }
 
@@ -173,6 +132,12 @@ func (v *contract_) GetCertificate() CitationLike {
 
 func (v *contract_) GetSignature() string {
 	return v.signature_
+}
+
+func (v *contract_) SetSignature(
+	signature string,
+) {
+	v.signature_ = signature
 }
 
 // PROTECTED INTERFACE

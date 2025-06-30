@@ -14,7 +14,7 @@ package document
 
 import (
 	fmt "fmt"
-	doc "github.com/bali-nebula/go-bali-documents/v3"
+	bal "github.com/bali-nebula/go-bali-documents/v3"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
@@ -29,7 +29,7 @@ func DocumentClass() DocumentClassLike {
 // Constructor Methods
 
 func (c *documentClass_) Document(
-	component doc.ComponentLike,
+	component bal.ComponentLike,
 	type_ string,
 	tag string,
 	version string,
@@ -76,57 +76,21 @@ func (c *documentClass_) DocumentFromString(
 			panic(message)
 		}
 	}()
-	var document = doc.ParseSource(source)
+	var document = bal.ParseSource(source)
 	var component = document.GetComponent()
-	var parameters = document.GetOptionalParameters() // Not optional here.
-	var associations = parameters.GetAssociations()
-
-	var association = associations.GetValue(1)
-	var element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	var symbol = element.GetAny().(string)
-	if symbol != "$type" {
-		panic("Missing the $type attribute.")
-	}
-	var type_ = doc.FormatDocument(association.GetDocument())
-
-	association = associations.GetValue(2)
-	element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	symbol = element.GetAny().(string)
-	if symbol != "$tag" {
-		panic("Missing the $tag attribute.")
-	}
-	var tag = doc.FormatDocument(association.GetDocument())
-
-	association = associations.GetValue(3)
-	element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	symbol = element.GetAny().(string)
-	if symbol != "$version" {
-		panic("Missing the $version attribute.")
-	}
-	var version = doc.FormatDocument(association.GetDocument())
-
-	association = associations.GetValue(4)
-	element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	symbol = element.GetAny().(string)
-	if symbol != "$permissions" {
-		panic("Missing the $permissions attribute.")
-	}
-	var permissions = doc.FormatDocument(association.GetDocument())
-
-	var previous CitationLike
-	if associations.GetSize() > 4 {
-		association = associations.GetValue(5)
-		element = association.GetPrimitive().GetAny().(doc.ElementLike)
-		symbol = element.GetAny().(string)
-		if symbol != "$previous" {
-			panic("Missing the $previous attribute.")
-		}
-		previous = citationClass().CitationFromString(
-			doc.FormatDocument(association.GetDocument()),
-		)
-	}
-
-	return c.Document(component, type_, tag, version, permissions, previous)
+	var type_ = DocumentClass().ExtractParameter("$type", document)
+	var tag = DocumentClass().ExtractParameter("$tag", document)
+	var version = DocumentClass().ExtractParameter("$version", document)
+	var permissions = DocumentClass().ExtractParameter("$permissions", document)
+	var previous = DocumentClass().ExtractPrevious("$previous", document)
+	return c.Document(
+		component,
+		type_,
+		tag,
+		version,
+		permissions,
+		previous,
+	)
 }
 
 // Constant Methods
@@ -135,25 +99,136 @@ func (c *documentClass_) DocumentFromString(
 
 func (c *documentClass_) ExtractAttribute(
 	name string,
-	document doc.DocumentLike,
+	document bal.DocumentLike,
 ) string {
 	var attribute string
 	var component = document.GetComponent()
-	var collection = component.GetAny().(doc.CollectionLike)
-	var attributes = collection.GetAny().(doc.AttributesLike)
+	var collection = component.GetAny().(bal.CollectionLike)
+	var attributes = collection.GetAny().(bal.AttributesLike)
 	var associations = attributes.GetAssociations()
 	var iterator = associations.GetIterator()
 	for iterator.HasNext() {
 		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(doc.ElementLike)
+		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
 		var symbol = element.GetAny().(string)
 		if symbol == name {
-			attribute = doc.FormatDocument(association.GetDocument())
+			attribute = bal.FormatDocument(association.GetDocument())
 			attribute = attribute[:len(attribute)-1] // Remove the trailing newline.
 			break
 		}
 	}
 	return attribute
+}
+
+func (c *documentClass_) ExtractCertificate(
+	name string,
+	document bal.DocumentLike,
+) CertificateLike {
+	var certificate CertificateLike
+	var component = document.GetComponent()
+	var collection = component.GetAny().(bal.CollectionLike)
+	var attributes = collection.GetAny().(bal.AttributesLike)
+	var associations = attributes.GetAssociations()
+	var iterator = associations.GetIterator()
+	for iterator.HasNext() {
+		var association = iterator.GetNext()
+		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var symbol = element.GetAny().(string)
+		if symbol == name {
+			var string_ = bal.FormatDocument(association.GetDocument())
+			certificate = CertificateClass().CertificateFromString(string_)
+			break
+		}
+	}
+	return certificate
+}
+
+func (c *documentClass_) ExtractCitation(
+	name string,
+	document bal.DocumentLike,
+) CitationLike {
+	var citation CitationLike
+	var component = document.GetComponent()
+	var collection = component.GetAny().(bal.CollectionLike)
+	var attributes = collection.GetAny().(bal.AttributesLike)
+	var associations = attributes.GetAssociations()
+	var iterator = associations.GetIterator()
+	for iterator.HasNext() {
+		var association = iterator.GetNext()
+		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var symbol = element.GetAny().(string)
+		if symbol == name {
+			var string_ = bal.FormatDocument(association.GetDocument())
+			citation = CitationClass().CitationFromString(string_)
+			break
+		}
+	}
+	return citation
+}
+
+func (c *documentClass_) ExtractDocument(
+	name string,
+	document bal.DocumentLike,
+) DocumentLike {
+	var result DocumentLike
+	var component = document.GetComponent()
+	var collection = component.GetAny().(bal.CollectionLike)
+	var attributes = collection.GetAny().(bal.AttributesLike)
+	var associations = attributes.GetAssociations()
+	var iterator = associations.GetIterator()
+	for iterator.HasNext() {
+		var association = iterator.GetNext()
+		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var symbol = element.GetAny().(string)
+		if symbol == name {
+			var string_ = bal.FormatDocument(association.GetDocument())
+			result = DocumentClass().DocumentFromString(string_)
+			break
+		}
+	}
+	return result
+}
+
+func (c *documentClass_) ExtractParameter(
+	name string,
+	document bal.DocumentLike,
+) string {
+	var parameter string
+	var parameters = document.GetOptionalParameters() // Not optional here.
+	var associations = parameters.GetAssociations()
+	var iterator = associations.GetIterator()
+	for iterator.HasNext() {
+		var association = iterator.GetNext()
+		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var symbol = element.GetAny().(string)
+		if symbol == name {
+			parameter = bal.FormatDocument(association.GetDocument())
+			parameter = parameter[:len(parameter)-1] // Remove the trailing newline.
+			break
+		}
+	}
+	return parameter
+}
+
+func (c *documentClass_) ExtractPrevious(
+	name string,
+	document bal.DocumentLike,
+) CitationLike {
+	var previous CitationLike
+	var parameters = document.GetOptionalParameters() // Not optional here.
+	var associations = parameters.GetAssociations()
+	var iterator = associations.GetIterator()
+	for iterator.HasNext() {
+		var association = iterator.GetNext()
+		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var symbol = element.GetAny().(string)
+		if symbol == name {
+			var string_ = bal.FormatDocument(association.GetDocument())
+			previous = CitationClass().CitationFromString(string_)
+			break
+		}
+	}
+	return previous
 }
 
 // INSTANCE INTERFACE
@@ -165,8 +240,8 @@ func (v *document_) GetClass() DocumentClassLike {
 }
 
 func (v *document_) AsString() string {
-	var document = doc.Document(v.GetComponent(), nil, "")
-	var string_ = doc.FormatDocument(document)
+	var document = bal.Document(v.GetComponent(), nil, "")
+	var string_ = bal.FormatDocument(document)
 	string_ = string_[:len(string_)-1] // Remove the trailing newline.
 	string_ += `(
 `
@@ -180,13 +255,13 @@ func (v *document_) AsString() string {
 	}
 	string_ += `)
 `
-	string_ = doc.FormatDocument(doc.ParseSource(string_))
+	string_ = bal.FormatDocument(bal.ParseSource(string_))
 	return string_
 }
 
 // Attribute Methods
 
-func (v *document_) GetComponent() doc.ComponentLike {
+func (v *document_) GetComponent() bal.ComponentLike {
 	return v.component_
 }
 
@@ -220,7 +295,7 @@ func (v *document_) GetOptionalPrevious() CitationLike {
 
 type document_ struct {
 	// Declare the instance attributes.
-	component_   doc.ComponentLike
+	component_   bal.ComponentLike
 	type_        string
 	tag_         string
 	version_     string

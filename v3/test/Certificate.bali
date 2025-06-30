@@ -8,7 +8,7 @@
     $type: <bali:/types/documents/Certificate@v3>
     $tag: #ZQANMT480VVV5CNRAZZNZ7AKJ4WZJBFR
     $version: v2
-    $permissions: <bali:/permissions/public@v3>
+    $permissions: <bali:/permissions/Public@v3>
     $previous: [
         $tag: #ZQANMT480VVV5CNRAZZNZ7AKJ4WZJBFR
         $version: v1

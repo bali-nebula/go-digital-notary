@@ -8,7 +8,7 @@
         $type: <bali:/examples/Document@v1.2.3>
         $tag: #1ZPDPZALRT90H6YMGYNTQJW9PJCRMVSP
         $version: v1
-        $permissions: <bali:/permissions/public@v1>
+        $permissions: <bali:/permissions/Public@v1>
     )
     $account: #FX8QBK8VGXS78D4LAKXQPTB62VL6A11L
     $protocol: v1

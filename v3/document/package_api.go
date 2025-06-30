@@ -29,7 +29,7 @@ on interfaces, not on each other.
 package document
 
 import (
-	doc "github.com/bali-nebula/go-bali-documents/v3"
+	bal "github.com/bali-nebula/go-bali-documents/v3"
 )
 
 // TYPE DECLARATIONS
@@ -49,11 +49,9 @@ type CertificateClassLike interface {
 		digest string,
 		signature string,
 		key string,
-		type_ string,
 		tag string,
 		version string,
-		permissions string,
-		previous CitationLike,
+		optionalPrevious CitationLike,
 	) CertificateLike
 	CertificateFromString(
 		source string,
@@ -90,7 +88,6 @@ type ContractClassLike interface {
 		account string,
 		protocol string,
 		certificate CitationLike,
-		signature string,
 	) ContractLike
 	ContractFromString(
 		source string,
@@ -105,7 +102,7 @@ concrete document-like class.
 type DocumentClassLike interface {
 	// Constructor Methods
 	Document(
-		component doc.ComponentLike,
+		component bal.ComponentLike,
 		type_ string,
 		tag string,
 		version string,
@@ -119,8 +116,28 @@ type DocumentClassLike interface {
 	// Function Methods
 	ExtractAttribute(
 		name string,
-		document doc.DocumentLike,
+		document bal.DocumentLike,
 	) string
+	ExtractCertificate(
+		name string,
+		document bal.DocumentLike,
+	) CertificateLike
+	ExtractCitation(
+		name string,
+		document bal.DocumentLike,
+	) CitationLike
+	ExtractDocument(
+		name string,
+		document bal.DocumentLike,
+	) DocumentLike
+	ExtractParameter(
+		name string,
+		document bal.DocumentLike,
+	) string
+	ExtractPrevious(
+		name string,
+		document bal.DocumentLike,
+	) CitationLike
 }
 
 // INSTANCE DECLARATIONS
@@ -177,6 +194,9 @@ type ContractLike interface {
 	GetProtocol() string
 	GetCertificate() CitationLike
 	GetSignature() string
+	SetSignature(
+		signature string,
+	)
 }
 
 /*
@@ -190,7 +210,7 @@ type DocumentLike interface {
 	AsString() string
 
 	// Attribute Methods
-	GetComponent() doc.ComponentLike
+	GetComponent() bal.ComponentLike
 
 	// Aspect Interfaces
 	Parameterized

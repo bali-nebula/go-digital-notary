@@ -29,7 +29,6 @@ on interfaces, not on each other.
 package ssmv1
 
 import (
-	not "github.com/bali-nebula/go-digital-notary/v3/notary"
 	fra "github.com/craterdog/go-component-framework/v7"
 )
 
@@ -97,7 +96,32 @@ type SsmV1Like interface {
 	GetClass() SsmV1ClassLike
 
 	// Aspect Interfaces
-	not.V1Secure
+	V1Secure
 }
 
 // ASPECT DECLARATIONS
+
+/*
+V1Secure declares the set of method signatures that must be supported by all
+version 1 compatible security modules.
+*/
+type V1Secure interface {
+	GetProtocolVersion() string
+	GetDigestAlgorithm() string
+	GetSignatureAlgorithm() string
+	DigestBytes(
+		bytes []byte,
+	) []byte
+	IsValid(
+		key []byte,
+		signature []byte,
+		bytes []byte,
+	) bool
+	GetTag() string
+	GenerateKeys() []byte
+	SignBytes(
+		bytes []byte,
+	) []byte
+	RotateKeys() []byte
+	EraseKeys()
+}

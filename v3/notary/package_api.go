@@ -30,15 +30,10 @@ package notary
 
 import (
 	doc "github.com/bali-nebula/go-digital-notary/v3/document"
+	ssm "github.com/bali-nebula/go-digital-notary/v3/ssmv1"
 )
 
 // TYPE DECLARATIONS
-
-/*
-Salt is a constrained type representing the random salt added to a hash
-generation.
-*/
-type Salt []byte
 
 // FUNCTIONAL DECLARATIONS
 
@@ -48,12 +43,19 @@ type Salt []byte
 NotaryClassLike is a class interface that declares the complete set of class
 constructors, constants and functions that must be supported by each concrete
 notary-like class.
+
+A notary may be used to digitally sign digital records using a hardware security
+module (HSM). It may also be used to validate the signature on a contract that
+was signed using the current or any previous version of the security protocol
+used by any digital notary. The HSM will be used to validate all current version
+signatures while a software security module (SSM) will be used to validate
+previous version signatures.
 */
 type NotaryClassLike interface {
 	// Constructor Methods
 	Notary(
-		directory string,
-		hsm V1Secure,
+		optionalDirectory string,
+		hsm ssm.V1Secure,
 	) NotaryLike
 }
 
@@ -71,9 +73,7 @@ type NotaryLike interface {
 	GetCitation() doc.CitationLike
 	RefreshKey() doc.ContractLike
 	ForgetKey()
-	GenerateCredential(
-		salt Salt,
-	) doc.ContractLike
+	GenerateCredential() doc.ContractLike
 	NotarizeDocument(
 		document doc.DocumentLike,
 	) doc.ContractLike
@@ -91,26 +91,3 @@ type NotaryLike interface {
 }
 
 // ASPECT DECLARATIONS
-
-/*
-V1Secure declares the set of method signatures that must be supported by all
-version 1 compatible security modules.
-*/
-type V1Secure interface {
-	GetProtocol() string
-	DigestBytes(
-		bytes []byte,
-	) []byte
-	IsValid(
-		key []byte,
-		signature []byte,
-		bytes []byte,
-	) bool
-	GetTag() string
-	GenerateKeys() []byte
-	SignBytes(
-		bytes []byte,
-	) []byte
-	RotateKeys() []byte
-	EraseKeys()
-}

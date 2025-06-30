@@ -7,5 +7,5 @@
     $type: <bali:/examples/Document@v1.2.3>
     $tag: #1ZPDPZALRT90H6YMGYNTQJW9PJCRMVSP
     $version: v1
-    $permissions: <bali:/permissions/public@v1>
+    $permissions: <bali:/permissions/Public@v1>
 )

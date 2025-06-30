@@ -36,10 +36,10 @@ func SsmV1Class() SsmV1ClassLike {
 func (c *ssmV1Class_) SsmV1(
 	directory string,
 ) SsmV1Like {
+	fmt.Println("WARNING: Using a SOFTWARE security module instead of a HARDWARE security module.")
 	if uti.IsUndefined(directory) {
 		panic("The \"directory\" attribute is required by this class.")
 	}
-	fmt.Println("WARNING: Using a SOFTWARE security module instead of a HARDWARE security module.")
 	if !sts.HasSuffix(directory, "/") {
 		directory += "/"
 	}
@@ -74,10 +74,18 @@ func (v *ssmV1_) GetClass() SsmV1ClassLike {
 
 // Attribute Methods
 
-// not.V1Secure Methods
+// V1Secure Methods
 
-func (v *ssmV1_) GetProtocol() string {
+func (v *ssmV1_) GetProtocolVersion() string {
 	return "v1"
+}
+
+func (v *ssmV1_) GetDigestAlgorithm() string {
+	return "SHA512"
+}
+
+func (v *ssmV1_) GetSignatureAlgorithm() string {
+	return "ED25519"
 }
 
 func (v *ssmV1_) DigestBytes(

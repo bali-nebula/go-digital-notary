@@ -21,7 +21,9 @@ import (
 func TestSSM(t *tes.T) {
 	var bytes = []byte{0x0, 0x1, 0x2, 0x3, 0x4}
 	var module = ssm.SsmV1Class().SsmV1("../test/")
-	ass.Equal(t, "v1", module.GetProtocol())
+	ass.Equal(t, "v1", module.GetProtocolVersion())
+	ass.Equal(t, "SHA512", module.GetDigestAlgorithm())
+	ass.Equal(t, "ED25519", module.GetSignatureAlgorithm())
 	ass.Equal(t, 64, len(module.DigestBytes(bytes)))
 
 	var publicKey = module.GenerateKeys()

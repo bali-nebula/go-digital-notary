@@ -14,7 +14,7 @@ package document
 
 import (
 	fmt "fmt"
-	doc "github.com/bali-nebula/go-bali-documents/v3"
+	bal "github.com/bali-nebula/go-bali-documents/v3"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
@@ -32,11 +32,9 @@ func (c *certificateClass_) Certificate(
 	digest string,
 	signature string,
 	key string,
-	type_ string,
 	tag string,
 	version string,
-	permissions string,
-	previous CitationLike,
+	optionalPrevious CitationLike,
 ) CertificateLike {
 	if uti.IsUndefined(digest) {
 		panic("The \"digest\" attribute is required by this class.")
@@ -47,18 +45,14 @@ func (c *certificateClass_) Certificate(
 	if uti.IsUndefined(key) {
 		panic("The \"key\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(type_) {
-		panic("The \"type_\" attribute is required by this class.")
-	}
 	if uti.IsUndefined(tag) {
 		panic("The \"tag\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(version) {
 		panic("The \"version\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(permissions) {
-		panic("The \"permissions\" attribute is required by this class.")
-	}
+	var type_ = "<bali:/types/documents/Certificate@v3>"
+	var permissions = "<bali:/permissions/Public@v3>"
 	var instance = &certificate_{
 		// Initialize the instance attributes.
 		digest_:      digest,
@@ -68,7 +62,7 @@ func (c *certificateClass_) Certificate(
 		tag_:         tag,
 		version_:     version,
 		permissions_: permissions,
-		previous_:    previous,
+		previous_:    optionalPrevious,
 	}
 	return instance
 }
@@ -86,81 +80,39 @@ func (c *certificateClass_) CertificateFromString(
 			panic(message)
 		}
 	}()
-	var document = doc.ParseSource(source)
-	var component = document.GetComponent()
-	var collection = component.GetAny().(doc.CollectionLike)
-	var attributes = collection.GetAny().(doc.AttributesLike)
-	var associations = attributes.GetAssociations()
-
-	var association = associations.GetValue(1)
-	var element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	var symbol = element.GetAny().(string)
-	if symbol != "$digest" {
-		panic("Missing the $digest attribute.")
-	}
-	var digest = doc.FormatDocument(association.GetDocument())
-
-	association = associations.GetValue(2)
-	element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	symbol = element.GetAny().(string)
-	if symbol != "$signature" {
-		panic("Missing the $signature attribute.")
-	}
-	var signature = doc.FormatDocument(association.GetDocument())
-
-	association = associations.GetValue(3)
-	element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	symbol = element.GetAny().(string)
-	if symbol != "$key" {
-		panic("Missing the $key attribute.")
-	}
-	var key = doc.FormatDocument(association.GetDocument())
+	var document = bal.ParseSource(source)
+	var digest = DocumentClass().ExtractAttribute("$digest", document)
+	var signature = DocumentClass().ExtractAttribute("$signature", document)
+	var key = DocumentClass().ExtractAttribute("$key", document)
 
 	var parameters = document.GetOptionalParameters() // Not optional here.
-	associations = parameters.GetAssociations()
-
-	association = associations.GetValue(1)
-	element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	symbol = element.GetAny().(string)
-	if symbol != "$type" {
-		panic("Missing the $type attribute.")
-	}
-	var type_ = doc.FormatDocument(association.GetDocument())
-
-	association = associations.GetValue(2)
-	element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	symbol = element.GetAny().(string)
+	var associations = parameters.GetAssociations()
+	var association = associations.GetValue(2)
+	var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+	var symbol = element.GetAny().(string)
 	if symbol != "$tag" {
 		panic("Missing the $tag attribute.")
 	}
-	var tag = doc.FormatDocument(association.GetDocument())
+	var tag = bal.FormatDocument(association.GetDocument())
 
 	association = associations.GetValue(3)
-	element = association.GetPrimitive().GetAny().(doc.ElementLike)
+	element = association.GetPrimitive().GetAny().(bal.ElementLike)
 	symbol = element.GetAny().(string)
 	if symbol != "$version" {
 		panic("Missing the $version attribute.")
 	}
-	var version = doc.FormatDocument(association.GetDocument())
-
-	association = associations.GetValue(4)
-	element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	symbol = element.GetAny().(string)
-	if symbol != "$permissions" {
-		panic("Missing the $permissions attribute.")
-	}
-	var permissions = doc.FormatDocument(association.GetDocument())
+	var version = bal.FormatDocument(association.GetDocument())
 
 	var previous CitationLike
 	if associations.GetSize() > 4 {
 		association = associations.GetValue(5)
-		element = association.GetPrimitive().GetAny().(doc.ElementLike)
+		element = association.GetPrimitive().GetAny().(bal.ElementLike)
 		symbol = element.GetAny().(string)
 		if symbol != "$previous" {
 			panic("Missing the $previous attribute.")
 		}
 		previous = citationClass().CitationFromString(
-			doc.FormatDocument(association.GetDocument()),
+			bal.FormatDocument(association.GetDocument()),
 		)
 	}
 
@@ -168,10 +120,8 @@ func (c *certificateClass_) CertificateFromString(
 		digest,
 		signature,
 		key,
-		type_,
 		tag,
 		version,
-		permissions,
 		previous)
 }
 
@@ -206,7 +156,7 @@ func (v *certificate_) AsString() string {
 	}
 	string_ += `)
 `
-	string_ = doc.FormatDocument(doc.ParseSource(string_))
+	string_ = bal.FormatDocument(bal.ParseSource(string_))
 	return string_
 }
 

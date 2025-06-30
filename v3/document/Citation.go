@@ -14,7 +14,7 @@ package document
 
 import (
 	fmt "fmt"
-	doc "github.com/bali-nebula/go-bali-documents/v3"
+	bal "github.com/bali-nebula/go-bali-documents/v3"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
@@ -69,43 +69,11 @@ func (c *citationClass_) CitationFromString(
 			panic(message)
 		}
 	}()
-	var component = doc.ParseSource(source).GetComponent()
-	var collection = component.GetAny().(doc.CollectionLike)
-	var attributes = collection.GetAny().(doc.AttributesLike)
-	var associations = attributes.GetAssociations()
-
-	var association = associations.GetValue(1)
-	var element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	var symbol = element.GetAny().(string)
-	if symbol != "$tag" {
-		panic("Missing the $tag attribute.")
-	}
-	var tag = doc.FormatDocument(association.GetDocument())
-
-	association = associations.GetValue(2)
-	element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	symbol = element.GetAny().(string)
-	if symbol != "$version" {
-		panic("Missing the $version attribute.")
-	}
-	var version = doc.FormatDocument(association.GetDocument())
-
-	association = associations.GetValue(3)
-	element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	symbol = element.GetAny().(string)
-	if symbol != "$protocol" {
-		panic("Missing the $protocol attribute.")
-	}
-	var protocol = doc.FormatDocument(association.GetDocument())
-
-	association = associations.GetValue(4)
-	element = association.GetPrimitive().GetAny().(doc.ElementLike)
-	symbol = element.GetAny().(string)
-	if symbol != "$digest" {
-		panic("Missing the $digest attribute.")
-	}
-	var digest = doc.FormatDocument(association.GetDocument())
-
+	var document = bal.ParseSource(source)
+	var tag = DocumentClass().ExtractAttribute("$tag", document)
+	var version = DocumentClass().ExtractAttribute("$version", document)
+	var protocol = DocumentClass().ExtractAttribute("$protocol", document)
+	var digest = DocumentClass().ExtractAttribute("$digest", document)
 	return c.Citation(tag, version, protocol, digest)
 }
 
@@ -130,8 +98,8 @@ func (v *citation_) AsString() string {
 	string_ += `    $digest: ` + v.GetDigest()
 	string_ += `]($type: <bali:/types/documents/Citation@v1>)
 `
-	var citation = doc.ParseSource(string_)
-	string_ = doc.FormatDocument(citation)
+	var citation = bal.ParseSource(string_)
+	string_ = bal.FormatDocument(citation)
 	return string_
 }
 
