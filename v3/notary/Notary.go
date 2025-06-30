@@ -192,7 +192,6 @@ func (v *notary_) RefreshKey() doc.ContractLike {
 
 func (v *notary_) ForgetKey() {
 	v.hsm_.EraseKeys()
-	uti.RemovePath(v.filename_)
 }
 
 func (v *notary_) GenerateCredential() doc.ContractLike {

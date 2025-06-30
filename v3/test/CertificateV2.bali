@@ -3,7 +3,7 @@
         $digest: "SHA512"
         $signature: "ED25519"
         $key: '>
-            yswM+otPufS08hhGJIZr1gRurbNVTYGbtYnKv4jwipQ
+            vijCUWUYneUYApzQ4ePIU1vWc2BLaorcKgXhkU/K6V0
         <'
     ](
         $type: <bali:/types/documents/Certificate@v3>
@@ -20,19 +20,19 @@
             <'
         ]($type: <bali:/types/documents/Citation@v1>)
     )
-    $account: #V301R65MPL433RDYX6M2VD18DL9XJ3K0
+    $account: #2JQZ1QX0CQG7WVQ1P6NZXK2DKP2PDPPX
     $protocol: v1
     $certificate: [
         $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
         $version: v2
         $protocol: v1
         $digest: '>
-            Ml1G6FQ2GX2ak23zZQ/HJRu60jru+ikI2j33RYNph8woqWrYdMyZalv/NMzx
-            IHgVwkuvimulcGhFMilXEcBe7A
+            pui1USKthRDTTHRnCznhAl+i6guTdTp8/vpV+lurrefXPtL+nv74GScP8hR6
+            DBOrR/sbEywZhhiqCEJCcwzS0A
         <'
     ]($type: <bali:/types/documents/Citation@v1>)
     $signature: '>
-        9wRbmuuw/RhUY6KekH5hOYHUfWSe0Frx7eRRyS5g+Lkt4dkMGWL941bmtHPV
-        lnOMYxWUnikkkPevQbQ3ro1KBw
+        HtZM+SixVXunspjFe3g3lWKYAHhIBl4UyZB1BBqqxw+NnMSDdATEdoZ7P9dI
+        zHjb/onWUmoqY2xu1IL6W0LzCg
     <'
 ]($type: <bali:/types/documents/Contract@v1>)

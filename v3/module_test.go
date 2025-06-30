@@ -10,22 +10,81 @@
 ................................................................................
 */
 
-package notary_test
+package module_test
 
 import (
-	doc "github.com/bali-nebula/go-digital-notary/v3/document"
-	not "github.com/bali-nebula/go-digital-notary/v3/notary"
-	ssm "github.com/bali-nebula/go-digital-notary/v3/ssmv1"
+	fmt "fmt"
+	bal "github.com/bali-nebula/go-bali-documents/v3"
+	not "github.com/bali-nebula/go-digital-notary/v3"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	ass "github.com/stretchr/testify/assert"
 	tes "testing"
 )
 
-const directory = "../test/"
-
 // Create the security module and digital notary.
-var module = ssm.SsmV1Class().SsmV1(directory)
-var notary = not.NotaryClass().Notary(directory, module)
+const directory = "./test/"
+var module = not.SsmV1(directory)
+var notary = not.Notary(directory, module)
+
+func TestParsingCitations(t *tes.T) {
+	var filename = directory + "Citation.bali"
+	fmt.Println(filename)
+	var source = uti.ReadFile(filename)
+	var citation = not.CitationFromString(source)
+	var formatted = citation.AsString()
+	ass.Equal(t, source, formatted)
+}
+
+func TestParsingCertificates(t *tes.T) {
+	var filename = directory + "Certificate.bali"
+	fmt.Println(filename)
+	var source = uti.ReadFile(filename)
+	var certificate = not.CertificateFromString(source)
+	var formatted = certificate.AsString()
+	ass.Equal(t, source, formatted)
+}
+
+func TestParsingDocuments(t *tes.T) {
+	var filename = directory + "Document.bali"
+	fmt.Println(filename)
+	var source = uti.ReadFile(filename)
+	var document = not.DocumentFromString(source)
+	var formatted = document.AsString()
+	ass.Equal(t, source, formatted)
+	var attribute = not.DocumentClass().ExtractAttribute(
+		"$consumer",
+		bal.ParseSource(source),
+	)
+	ass.Equal(t, `"Derk Norton"`, attribute)
+}
+
+func TestParsingContracts(t *tes.T) {
+	var filename = directory + "Contract.bali"
+	fmt.Println(filename)
+	var source = uti.ReadFile(filename)
+	var contract = not.ContractFromString(source)
+	var formatted = contract.AsString()
+	ass.Equal(t, source, formatted)
+}
+
+func TestSSM(t *tes.T) {
+	var bytes = []byte{0x0, 0x1, 0x2, 0x3, 0x4}
+	ass.Equal(t, "v1", module.GetProtocolVersion())
+	ass.Equal(t, "SHA512", module.GetDigestAlgorithm())
+	ass.Equal(t, "ED25519", module.GetSignatureAlgorithm())
+	ass.Equal(t, 64, len(module.DigestBytes(bytes)))
+
+	var publicKey = module.GenerateKeys()
+
+	var signature = module.SignBytes(bytes)
+	ass.True(t, module.IsValid(publicKey, signature, bytes))
+
+	var newPublicKey = module.RotateKeys()
+	signature = module.SignBytes(newPublicKey)
+	ass.True(t, module.IsValid(publicKey, signature, newPublicKey))
+
+	module.EraseKeys()
+}
 
 func TestNotaryInitialization(t *tes.T) {
 	// Should not be able to retrieve the certificate citation without any keys.
@@ -39,6 +98,7 @@ func TestNotaryInitialization(t *tes.T) {
 		notary.ForgetKey()
 	}()
 	notary.ForgetKey()
+	uti.RemovePath(directory + "Citation.bali")
 	notary.GetCitation()
 }
 
@@ -63,7 +123,7 @@ func TestNotaryLifecycle(t *tes.T) {
 	notary.ForgetKey()
 	var contractV1 = notary.GenerateKey()
 	uti.WriteFile(directory + "CertificateV1.bali", contractV1.AsString())
-	var certificateV1 = doc.CertificateClass().CertificateFromString(
+	var certificateV1 = not.CertificateFromString(
 		contractV1.GetDocument().AsString(),
 	)
 	ass.True(
@@ -78,7 +138,7 @@ func TestNotaryLifecycle(t *tes.T) {
 	notary.GetCitation()
 
 	// Create and cite a new transaction document.
-	var transaction = doc.DocumentClass().DocumentFromString(
+	var transaction = not.DocumentFromString(
 		`[
     $timestamp: <2022-06-03T07:39:54>
     $consumer: "Derk Norton"
@@ -108,8 +168,8 @@ func TestNotaryLifecycle(t *tes.T) {
 	)
 
 	// Pickup where we left off with a new security module and digital notary.
-	module = ssm.SsmV1Class().SsmV1(directory)
-	notary = not.NotaryClass().Notary(directory, module)
+	module = not.SsmV1(directory)
+	notary = not.Notary(directory, module)
 
 	// Refresh and validate the public-private key pair.
 	var contractV2 = notary.RefreshKey()
@@ -125,7 +185,7 @@ func TestNotaryLifecycle(t *tes.T) {
 	// Generate an authentication credential.
 	var credential = notary.GenerateCredential()
 	uti.WriteFile(directory + "Credential.bali", credential.AsString())
-	var certificateV2 = doc.CertificateClass().CertificateFromString(
+	var certificateV2 = not.CertificateFromString(
 		contractV2.GetDocument().AsString(),
 	)
 	ass.True(
@@ -138,15 +198,5 @@ func TestNotaryLifecycle(t *tes.T) {
 
 	// Reset the security module and digital notary to an uninitialized state.
 	notary.ForgetKey()
-
-	// Confirm that an error is raised if we try to retrieve the certificate citation.
-	defer func() {
-		if e := recover(); e != nil {
-			var message = e.(string)
-			ass.Equal(t, "The digital notary has not yet been initialized.", message)
-		} else {
-			ass.Fail(t, "Test should result in recovered panic.")
-		}
-	}()
 	notary.GetCitation()
 }

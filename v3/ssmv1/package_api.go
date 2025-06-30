@@ -28,45 +28,9 @@ on interfaces, not on each other.
 */
 package ssmv1
 
-import (
-	fra "github.com/craterdog/go-component-framework/v7"
-)
+import ()
 
 // TYPE DECLARATIONS
-
-/*
-These constants define the possible states for the state machine.
-*/
-const (
-	invalid fra.State = iota
-	keyless
-	loneKey
-	twoKeys
-)
-
-/*
-These constants define the possible events for the state machine.
-*/
-const (
-	none fra.Event = iota
-	generateKeys
-	signBytes
-	rotateKeys
-)
-
-/*
-This list defines the event headings for the state machine.
-*/
-var events = []fra.Event{generateKeys, signBytes, rotateKeys}
-
-/*
-This table defines the allowed transitions for the state machine.
-*/
-var transitions = map[fra.State]fra.Transitions{
-	keyless: fra.Transitions{loneKey, invalid, invalid},
-	loneKey: fra.Transitions{invalid, loneKey, twoKeys},
-	twoKeys: fra.Transitions{invalid, loneKey, invalid},
-}
 
 // FUNCTIONAL DECLARATIONS
 

@@ -10,7 +10,7 @@
         $version: v1
         $permissions: <bali:/permissions/Public@v1>
     )
-    $account: #22FFHDXCCNTD90TQRGNHSZ1L4JPWWX6A
+    $account: #JLD5YF7LMVCTHVS730V2KD1N7DZFANCX
     $protocol: v1
     $certificate: [
         $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
@@ -22,7 +22,7 @@
         <'
     ]($type: <bali:/types/documents/Citation@v1>)
     $signature: '>
-        Mg6jirEWVXRfwv5MrXcWX2EuSvgmcR+1TmmWzEPeYhDaRFJtJgO4sLjNEvGN
-        Cz05swKQHcxuPq/v10RgwHftBw
+        egqPg0qCGLZdfMZ6EKvtexrjv68dNi4Lzn84TLua4Y8lt59VcBiGAQzJKqRm
+        KJ0lMWD0Hp8rfXFQO5FOoo/ZDA
     <'
 ]($type: <bali:/types/documents/Contract@v1>)
