@@ -270,18 +270,39 @@ func (v *notary_) SignatureMatches(
 func (v *notary_) CiteDocument(
 	document doc.DocumentLike,
 ) doc.CitationLike {
-	var result_ doc.CitationLike
-	// TBD - Add the method implementation.
-	return result_
+	var tag = document.GetTag()
+	var version = document.GetVersion()
+	var source = document.AsString()
+	var bytes = []byte(source)
+	var digest = fra.Binary(v.hsm_.DigestBytes(bytes)).AsString()
+	var citation = doc.CitationClass().Citation(
+		tag,
+		version,
+		v.protocol_,
+		digest,
+	)
+	return citation
 }
 
 func (v *notary_) CitationMatches(
 	citation doc.CitationLike,
 	document doc.DocumentLike,
 ) bool {
-	var result_ bool
-	// TBD - Add the method implementation.
-	return result_
+	// Retrieve the SSM that supports the required security protocol.
+	var protocol = citation.GetProtocol()
+	var ssm = v.modules_.GetValue(protocol)
+	if ssm == nil {
+		var message = fmt.Sprintf(
+			"The required security protocol (%v) is not supported by this digital notary.\n",
+			protocol)
+		panic(message)
+	}
+
+	// Compare the citation digest with a digest of the record.
+	var source = document.AsString()
+	var bytes = []byte(source)
+	var digest = fra.Binary(ssm.DigestBytes(bytes)).AsString()
+	return digest == citation.GetDigest()
 }
 
 // Attribute Methods
