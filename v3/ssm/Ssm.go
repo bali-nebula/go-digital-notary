@@ -136,10 +136,6 @@ func (v *ssm_) EraseKeys() {
 
 // Trusted Methods
 
-func (v *ssm_) GetProtocolVersion() string {
-	return "v1"
-}
-
 func (v *ssm_) GetDigestAlgorithm() string {
 	return "SHA512"
 }

@@ -43,12 +43,9 @@ NotaryClassLike is a class interface that declares the complete set of class
 constructors, constants and functions that must be supported by each concrete
 notary-like class.
 
-A notary may be used to digitally sign digital records using a hardware security
-module (HSM). It may also be used to validate the signature on a contract that
-was signed using the current or any previous version of the security protocol
-used by any digital notary. The HSM will be used to validate all current version
-signatures while a software security module (SSM) will be used to validate
-previous version signatures.
+A notary may be used to digitally sign digital documents using a hardware
+security module (HSM). It may also be used to validate the signature on a
+contract that was signed using this or any other digital notary.
 */
 type NotaryClassLike interface {
 	// Constructor Methods

@@ -12,7 +12,7 @@
 
 /*
 Package "ssm" provides implementations of a software security module (SSM)
-that are compliant with version 1 of the Bali Nebula security protocol.
+that are compliant with Bali Nebula security protocol.
 
 For detailed documentation on this package refer to the wiki:
   - https://github.com/bali-nebula/go-digital-notary/wiki
@@ -42,6 +42,10 @@ import (
 SsmClassLike is a class interface that declares the complete set of class
 constructors, constants and functions that must be supported by each concrete
 software-security-module-like class.
+
+A software security module (SSM) may be used in place of a hardware security
+module (HSM) for testing purposes, or in a physically secure environment like
+the cloud.
 */
 type SsmClassLike interface {
 	// Constructor Methods
