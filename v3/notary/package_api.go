@@ -30,7 +30,6 @@ package notary
 
 import (
 	doc "github.com/bali-nebula/go-digital-notary/v3/document"
-	ssm "github.com/bali-nebula/go-digital-notary/v3/ssmv2"
 )
 
 // TYPE DECLARATIONS
@@ -54,7 +53,8 @@ previous version signatures.
 type NotaryClassLike interface {
 	// Constructor Methods
 	Notary(
-		hsm ssm.V2Secure,
+		ssm Trusted,
+		hsm Hardened,
 	) NotaryLike
 }
 
@@ -90,3 +90,39 @@ type NotaryLike interface {
 }
 
 // ASPECT DECLARATIONS
+
+/*
+Trusted declares the set of method signatures that must be supported by all
+trusted security modules.  No private key is needed by this interface.
+*/
+type Trusted interface {
+	GetDigestAlgorithm() string
+	GetSignatureAlgorithm() string
+	DigestBytes(
+		bytes []byte,
+	) []byte
+	IsValid(
+		key []byte,
+		signature []byte,
+		bytes []byte,
+	) bool
+}
+
+/*
+Hardened declares the set of method signatures that must be supported by all
+hardened security modules.  This interface requires a private key.
+*/
+type Hardened interface {
+	GetTag() string
+	GetDigestAlgorithm() string
+	GetSignatureAlgorithm() string
+	DigestBytes(
+		bytes []byte,
+	) []byte
+	GenerateKeys() []byte
+	SignBytes(
+		bytes []byte,
+	) []byte
+	RotateKeys() []byte
+	EraseKeys()
+}

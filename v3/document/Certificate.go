@@ -29,21 +29,17 @@ func CertificateClass() CertificateClassLike {
 // Constructor Methods
 
 func (c *certificateClass_) Certificate(
-	digest string,
-	signature string,
-	key string,
+	algorithm string,
+	publicKey string,
 	tag string,
 	version string,
 	optionalPrevious CitationLike,
 ) CertificateLike {
-	if uti.IsUndefined(digest) {
-		panic("The \"digest\" attribute is required by this class.")
+	if uti.IsUndefined(algorithm) {
+		panic("The \"algorithm\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(signature) {
-		panic("The \"signature\" attribute is required by this class.")
-	}
-	if uti.IsUndefined(key) {
-		panic("The \"key\" attribute is required by this class.")
+	if uti.IsUndefined(publicKey) {
+		panic("The \"publicKey\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(tag) {
 		panic("The \"tag\" attribute is required by this class.")
@@ -55,9 +51,8 @@ func (c *certificateClass_) Certificate(
 	var permissions = "<bali:/permissions/Public@v3>"
 	var instance = &certificate_{
 		// Initialize the instance attributes.
-		digest_:      digest,
-		signature_:   signature,
-		key_:         key,
+		algorithm_:   algorithm,
+		publicKey_:   publicKey,
 		type_:        type_,
 		tag_:         tag,
 		version_:     version,
@@ -81,9 +76,8 @@ func (c *certificateClass_) CertificateFromString(
 		}
 	}()
 	var document = bal.ParseSource(source)
-	var digest = DocumentClass().ExtractAttribute("$digest", document)
-	var signature = DocumentClass().ExtractAttribute("$signature", document)
-	var key = DocumentClass().ExtractAttribute("$key", document)
+	var algorithm = DocumentClass().ExtractAlgorithm("$algorithm", document)
+	var publicKey = DocumentClass().ExtractAttribute("$publicKey", document)
 
 	var parameters = document.GetOptionalParameters() // Not optional here.
 	var associations = parameters.GetAssociations()
@@ -117,9 +111,8 @@ func (c *certificateClass_) CertificateFromString(
 	}
 
 	return c.Certificate(
-		digest,
-		signature,
-		key,
+		algorithm,
+		publicKey,
 		tag,
 		version,
 		previous)
@@ -140,9 +133,8 @@ func (v *certificate_) GetClass() CertificateClassLike {
 func (v *certificate_) AsString() string {
 	var string_ = `[
 `
-	string_ += `    $digest: ` + v.GetDigest()
-	string_ += `    $signature: ` + v.GetSignature()
-	string_ += `    $key: ` + v.GetKey()
+	string_ += `    $algorithm: "` + v.GetAlgorithm() + `"`
+	string_ += `    $publicKey: ` + v.GetPublicKey()
 	string_ += `
 ](
 `
@@ -162,16 +154,12 @@ func (v *certificate_) AsString() string {
 
 // Attribute Methods
 
-func (v *certificate_) GetDigest() string {
-	return v.digest_
+func (v *certificate_) GetAlgorithm() string {
+	return v.algorithm_
 }
 
-func (v *certificate_) GetSignature() string {
-	return v.signature_
-}
-
-func (v *certificate_) GetKey() string {
-	return v.key_
+func (v *certificate_) GetPublicKey() string {
+	return v.publicKey_
 }
 
 // Parameterized Methods
@@ -204,9 +192,8 @@ func (v *certificate_) GetOptionalPrevious() CitationLike {
 
 type certificate_ struct {
 	// Declare the instance attributes.
-	digest_      string
-	signature_   string
-	key_         string
+	algorithm_   string
+	publicKey_   string
 	type_        string
 	tag_         string
 	version_     string

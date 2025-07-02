@@ -65,12 +65,11 @@ func TestParsingContracts(t *tes.T) {
 }
 
 // Create the security module and digital notary.
-var module = not.SsmV2()
-var notary = not.Notary(module)
+var module = not.Ssm()
+var notary = not.Notary(module, module)
 
 func TestSSM(t *tes.T) {
 	var bytes = []byte{0x0, 0x1, 0x2, 0x3, 0x4}
-	ass.Equal(t, "v2", module.GetProtocolVersion())
 	ass.Equal(t, "SHA512", module.GetDigestAlgorithm())
 	ass.Equal(t, "ED25519", module.GetSignatureAlgorithm())
 	ass.Equal(t, 64, len(module.DigestBytes(bytes)))
@@ -168,8 +167,8 @@ func TestNotaryLifecycle(t *tes.T) {
 	)
 
 	// Pickup where we left off with a new security module and digital notary.
-	module = not.SsmV2()
-	notary = not.Notary(module)
+	module = not.Ssm()
+	notary = not.Notary(module, module)
 
 	// Refresh and validate the public-private key pair.
 	var contractV2 = notary.RefreshKey()

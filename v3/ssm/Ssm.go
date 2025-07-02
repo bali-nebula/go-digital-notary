@@ -10,7 +10,7 @@
 ................................................................................
 */
 
-package ssmv2
+package ssm
 
 import (
 	sig "crypto/ed25519"
@@ -27,22 +27,21 @@ import (
 
 // Access Function
 
-func SsmV2Class() SsmV2ClassLike {
-	return ssmV2Class()
+func SsmClass() SsmClassLike {
+	return ssmClass()
 }
 
 // Constructor Methods
 
-func (c *ssmV2Class_) SsmV2() SsmV2Like {
-	fmt.Println("WARNING: Using a V2 SOFTWARE security module instead of a HARDWARE security module.")
+func (c *ssmClass_) Ssm() SsmLike {
 	var directory = uti.HomeDirectory()
 	if !sts.HasSuffix(directory, "/") {
 		directory += "/"
 	}
-	directory += ".bali/ssmv2/"
+	directory += ".bali/ssm/"
 	uti.MakeDirectory(directory)
 	var controller = fra.Controller(c.events_, c.transitions_, c.keyless_)
-	var instance = &ssmV2_{
+	var instance = &ssm_{
 		// Initialize the instance attributes.
 		directory_:  directory,
 		filename_:   "Configuration.bali",
@@ -65,49 +64,26 @@ func (c *ssmV2Class_) SsmV2() SsmV2Like {
 
 // Principal Methods
 
-func (v *ssmV2_) GetClass() SsmV2ClassLike {
-	return ssmV2Class()
+func (v *ssm_) GetClass() SsmClassLike {
+	return ssmClass()
 }
 
 // Attribute Methods
 
-// V2Secure Methods
+// Hardened Methods
 
-func (v *ssmV2_) GetProtocolVersion() string {
-	return "v2"
-}
-
-func (v *ssmV2_) GetDigestAlgorithm() string {
-	return "SHA512"
-}
-
-func (v *ssmV2_) GetSignatureAlgorithm() string {
-	return "ED25519"
-}
-
-func (v *ssmV2_) DigestBytes(
-	bytes []byte,
-) []byte {
-	var array = dig.Sum512(bytes)
-	var digest = array[:] // Convert the [64]byte array to a slice.
-	return digest
-}
-
-func (v *ssmV2_) IsValid(
-	key []byte,
-	signature []byte,
-	bytes []byte,
-) bool {
-	return sig.Verify(sig.PublicKey(key), bytes, signature)
-}
-
-func (v *ssmV2_) GetTag() string {
+func (v *ssm_) GetTag() string {
 	return v.tag_
 }
 
-func (v *ssmV2_) GenerateKeys() []byte {
+func (v *ssm_) GetSignatureAlgorithm() string {
+	return "ED25519"
+}
+
+func (v *ssm_) GenerateKeys() []byte {
+	fmt.Println("WARNING: Using a SOFTWARE security module to generate keys.")
 	var err error
-	v.controller_.ProcessEvent(ssmV2Class().generateKeys_)
+	v.controller_.ProcessEvent(ssmClass().generateKeys_)
 	v.publicKey_, v.privateKey_, err = sig.GenerateKey(nil)
 	if err != nil {
 		var message = fmt.Sprintf(
@@ -120,10 +96,11 @@ func (v *ssmV2_) GenerateKeys() []byte {
 	return v.publicKey_
 }
 
-func (v *ssmV2_) SignBytes(
+func (v *ssm_) SignBytes(
 	bytes []byte,
 ) []byte {
-	v.controller_.ProcessEvent(ssmV2Class().signBytes_)
+	fmt.Println("WARNING: Using a SOFTWARE security module to sign bytes.")
+	v.controller_.ProcessEvent(ssmClass().signBytes_)
 	var privateKey = v.privateKey_
 	if v.previousKey_ != nil {
 		// Use the old key one more time to sign the new one.
@@ -135,9 +112,10 @@ func (v *ssmV2_) SignBytes(
 	return signature
 }
 
-func (v *ssmV2_) RotateKeys() []byte {
+func (v *ssm_) RotateKeys() []byte {
 	var err error
-	v.controller_.ProcessEvent(ssmV2Class().rotateKeys_)
+	fmt.Println("WARNING: Using a SOFTWARE security module to rotate keys.")
+	v.controller_.ProcessEvent(ssmClass().rotateKeys_)
 	v.previousKey_ = v.privateKey_
 	v.publicKey_, v.privateKey_, err = sig.GenerateKey(nil)
 	if err != nil {
@@ -151,15 +129,42 @@ func (v *ssmV2_) RotateKeys() []byte {
 	return v.publicKey_
 }
 
-func (v *ssmV2_) EraseKeys() {
+func (v *ssm_) EraseKeys() {
+	fmt.Println("WARNING: Using a SOFTWARE security module to erase keys.")
 	v.createConfiguration()
+}
+
+// Trusted Methods
+
+func (v *ssm_) GetProtocolVersion() string {
+	return "v1"
+}
+
+func (v *ssm_) GetDigestAlgorithm() string {
+	return "SHA512"
+}
+
+func (v *ssm_) DigestBytes(
+	bytes []byte,
+) []byte {
+	var array = dig.Sum512(bytes)
+	var digest = array[:] // Convert the [64]byte array to a slice.
+	return digest
+}
+
+func (v *ssm_) IsValid(
+	key []byte,
+	signature []byte,
+	bytes []byte,
+) bool {
+	return sig.Verify(sig.PublicKey(key), bytes, signature)
 }
 
 // PROTECTED INTERFACE
 
 // Private Methods
 
-func (v *ssmV2_) extractAttributes(
+func (v *ssm_) extractAttributes(
 	document bal.DocumentLike,
 ) {
 	v.tag_ = doc.DocumentClass().ExtractAttribute("$tag", document)
@@ -170,7 +175,7 @@ func (v *ssmV2_) extractAttributes(
 	v.controller_.SetState(state)
 }
 
-func (v *ssmV2_) extractDocument() bal.DocumentLike {
+func (v *ssm_) extractDocument() bal.DocumentLike {
 	var tag = v.tag_
 	var state = v.getState()
 	var publicKey = fra.Binary(v.publicKey_).AsString()
@@ -191,7 +196,7 @@ func (v *ssmV2_) extractDocument() bal.DocumentLike {
 	return document
 }
 
-func (v *ssmV2_) extractKey(
+func (v *ssm_) extractKey(
 	name string,
 	document bal.DocumentLike,
 ) []byte {
@@ -203,7 +208,7 @@ func (v *ssmV2_) extractKey(
 	return fra.BinaryFromString(key).AsIntrinsic()
 }
 
-func (v *ssmV2_) extractState(
+func (v *ssm_) extractState(
 	document bal.DocumentLike,
 ) fra.State {
 	var documentClass = doc.DocumentClass()
@@ -211,31 +216,31 @@ func (v *ssmV2_) extractState(
 	var attribute = documentClass.ExtractAttribute("$state", document)
 	switch attribute {
 	case "$Keyless":
-		state = ssmV2Class().keyless_
+		state = ssmClass().keyless_
 	case "$LoneKey":
-		state = ssmV2Class().loneKey_
+		state = ssmClass().loneKey_
 	case "$TwoKeys":
-		state = ssmV2Class().twoKeys_
+		state = ssmClass().twoKeys_
 	case "$Invalid":
-		state = ssmV2Class().invalid_
+		state = ssmClass().invalid_
 	}
 	return state
 }
 
-func (v *ssmV2_) getState() string {
+func (v *ssm_) getState() string {
 	switch v.controller_.GetState() {
-	case ssmV2Class().keyless_:
+	case ssmClass().keyless_:
 		return "$Keyless"
-	case ssmV2Class().loneKey_:
+	case ssmClass().loneKey_:
 		return "$LoneKey"
-	case ssmV2Class().twoKeys_:
+	case ssmClass().twoKeys_:
 		return "$TwoKeys"
 	default:
 		return "$Invalid"
 	}
 }
 
-func (v *ssmV2_) createConfiguration() {
+func (v *ssm_) createConfiguration() {
 	v.tag_ = fra.TagWithSize(20).AsString() // Results in a 32 character tag.
 	var document = bal.ParseSource(`[
     $tag: ` + v.tag_ + `
@@ -250,14 +255,14 @@ func (v *ssmV2_) createConfiguration() {
 	uti.WriteFile(filename, source)
 }
 
-func (v *ssmV2_) readConfiguration() {
+func (v *ssm_) readConfiguration() {
 	var filename = v.directory_ + v.filename_
 	var source = uti.ReadFile(filename)
 	var document = bal.ParseSource(source)
 	v.extractAttributes(document)
 }
 
-func (v *ssmV2_) updateConfiguration() {
+func (v *ssm_) updateConfiguration() {
 	if v.controller_.GetState() == "$Invalid" {
 		panic("Invalid State")
 	}
@@ -269,7 +274,7 @@ func (v *ssmV2_) updateConfiguration() {
 
 // Instance Structure
 
-type ssmV2_ struct {
+type ssm_ struct {
 	// Declare the instance attributes.
 	tag_         string
 	publicKey_   []byte
@@ -282,7 +287,7 @@ type ssmV2_ struct {
 
 // Class Structure
 
-type ssmV2Class_ struct {
+type ssmClass_ struct {
 	// Declare the class constants.
 	invalid_      fra.State
 	keyless_      fra.State
@@ -297,11 +302,11 @@ type ssmV2Class_ struct {
 
 // Class Reference
 
-func ssmV2Class() *ssmV2Class_ {
-	return ssmV2ClassReference_
+func ssmClass() *ssmClass_ {
+	return ssmClassReference_
 }
 
-var ssmV2ClassReference_ = &ssmV2Class_{
+var ssmClassReference_ = &ssmClass_{
 	// Initialize the class constants.
 	keyless_:      "$Keyless",
 	loneKey_:      "$LoneKey",

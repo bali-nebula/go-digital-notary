@@ -31,8 +31,7 @@ func CitationClass() CitationClassLike {
 func (c *citationClass_) Citation(
 	tag string,
 	version string,
-	protocol string,
-	digest string,
+	digest DigestLike,
 ) CitationLike {
 	if uti.IsUndefined(tag) {
 		panic("The \"tag\" attribute is required by this class.")
@@ -40,18 +39,14 @@ func (c *citationClass_) Citation(
 	if uti.IsUndefined(version) {
 		panic("The \"version\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(protocol) {
-		panic("The \"protocol\" attribute is required by this class.")
-	}
 	if uti.IsUndefined(digest) {
 		panic("The \"digest\" attribute is required by this class.")
 	}
 	var instance = &citation_{
 		// Initialize the instance attributes.
-		tag_:      tag,
-		version_:  version,
-		protocol_: protocol,
-		digest_:   digest,
+		tag_:     tag,
+		version_: version,
+		digest_:  digest,
 	}
 	return instance
 }
@@ -72,9 +67,8 @@ func (c *citationClass_) CitationFromString(
 	var document = bal.ParseSource(source)
 	var tag = DocumentClass().ExtractAttribute("$tag", document)
 	var version = DocumentClass().ExtractAttribute("$version", document)
-	var protocol = DocumentClass().ExtractAttribute("$protocol", document)
-	var digest = DocumentClass().ExtractAttribute("$digest", document)
-	return c.Citation(tag, version, protocol, digest)
+	var digest = DocumentClass().ExtractDigest("$digest", document)
+	return c.Citation(tag, version, digest)
 }
 
 // Constant Methods
@@ -94,8 +88,7 @@ func (v *citation_) AsString() string {
 `
 	string_ += `    $tag: ` + v.GetTag()
 	string_ += `    $version: ` + v.GetVersion()
-	string_ += `    $protocol: ` + v.GetProtocol()
-	string_ += `    $digest: ` + v.GetDigest()
+	string_ += `    $digest: ` + v.GetDigest().AsString()
 	string_ += `]($type: <bali:/types/documents/Citation@v3>)
 `
 	var citation = bal.ParseSource(string_)
@@ -113,11 +106,7 @@ func (v *citation_) GetVersion() string {
 	return v.version_
 }
 
-func (v *citation_) GetProtocol() string {
-	return v.protocol_
-}
-
-func (v *citation_) GetDigest() string {
+func (v *citation_) GetDigest() DigestLike {
 	return v.digest_
 }
 
@@ -129,10 +118,9 @@ func (v *citation_) GetDigest() string {
 
 type citation_ struct {
 	// Declare the instance attributes.
-	tag_      string
-	version_  string
-	protocol_ string
-	digest_   string
+	tag_     string
+	version_ string
+	digest_  DigestLike
 }
 
 // Class Structure

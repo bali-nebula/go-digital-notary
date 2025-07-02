@@ -31,7 +31,6 @@ func ContractClass() ContractClassLike {
 func (c *contractClass_) Contract(
 	document DocumentLike,
 	account string,
-	protocol string,
 	certificate CitationLike,
 ) ContractLike {
 	if uti.IsUndefined(document) {
@@ -40,9 +39,6 @@ func (c *contractClass_) Contract(
 	if uti.IsUndefined(account) {
 		panic("The \"account\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(protocol) {
-		panic("The \"protocol\" attribute is required by this class.")
-	}
 	if uti.IsUndefined(certificate) {
 		panic("The \"certificate\" attribute is required by this class.")
 	}
@@ -50,7 +46,6 @@ func (c *contractClass_) Contract(
 		// Initialize the instance attributes.
 		document_:    document,
 		account_:     account,
-		protocol_:    protocol,
 		certificate_: certificate,
 	}
 	return instance
@@ -71,14 +66,12 @@ func (c *contractClass_) ContractFromString(
 	}()
 	var document = bal.ParseSource(source)
 	var account = DocumentClass().ExtractAttribute("$account", document)
-	var protocol = DocumentClass().ExtractAttribute("$protocol", document)
 	var certificate = DocumentClass().ExtractCitation("$certificate", document)
-	var signature = DocumentClass().ExtractAttribute("$signature", document)
+	var signature = DocumentClass().ExtractSignature("$signature", document)
 	var component = DocumentClass().ExtractDocument("$document", document)
 	var contract = c.Contract(
 		component,
 		account,
-		protocol,
 		certificate,
 	)
 	contract.SetSignature(signature)
@@ -102,10 +95,9 @@ func (v *contract_) AsString() string {
 `
 	string_ += `    $document: ` + v.GetDocument().AsString()
 	string_ += `    $account: ` + v.GetAccount()
-	string_ += `    $protocol: ` + v.GetProtocol()
 	string_ += `    $certificate: ` + v.GetCertificate().AsString()
 	if uti.IsDefined(v.signature_) {
-		string_ += `    $signature: ` + v.GetSignature()
+		string_ += `    $signature: ` + v.GetSignature().AsString()
 	}
 	string_ += `]($type: <bali:/types/documents/Contract@v3>)
 `
@@ -124,20 +116,16 @@ func (v *contract_) GetAccount() string {
 	return v.account_
 }
 
-func (v *contract_) GetProtocol() string {
-	return v.protocol_
-}
-
 func (v *contract_) GetCertificate() CitationLike {
 	return v.certificate_
 }
 
-func (v *contract_) GetSignature() string {
+func (v *contract_) GetSignature() SignatureLike {
 	return v.signature_
 }
 
 func (v *contract_) SetSignature(
-	signature string,
+	signature SignatureLike,
 ) {
 	v.signature_ = signature
 }
@@ -152,9 +140,8 @@ type contract_ struct {
 	// Declare the instance attributes.
 	document_    DocumentLike
 	account_     string
-	protocol_    string
 	certificate_ CitationLike
-	signature_   string
+	signature_   SignatureLike
 }
 
 // Class Structure

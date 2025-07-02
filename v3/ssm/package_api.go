@@ -11,8 +11,8 @@
 */
 
 /*
-Package "ssmv2" provides implementations of a software security module (SSM)
-that are compliant with version 2 of the Bali Nebula security protocol.
+Package "ssm" provides implementations of a software security module (SSM)
+that are compliant with version 1 of the Bali Nebula security protocol.
 
 For detailed documentation on this package refer to the wiki:
   - https://github.com/bali-nebula/go-digital-notary/wiki
@@ -26,9 +26,11 @@ be developed and used seamlessly since the interface declarations only depend on
 other interfaces and intrinsic types—and the class implementations only depend
 on interfaces, not on each other.
 */
-package ssmv2
+package ssm
 
-import ()
+import (
+	not "github.com/bali-nebula/go-digital-notary/v3/notary"
+)
 
 // TYPE DECLARATIONS
 
@@ -37,53 +39,29 @@ import ()
 // CLASS DECLARATIONS
 
 /*
-SsmV2ClassLike is a class interface that declares the complete set of class
+SsmClassLike is a class interface that declares the complete set of class
 constructors, constants and functions that must be supported by each concrete
 software-security-module-like class.
 */
-type SsmV2ClassLike interface {
+type SsmClassLike interface {
 	// Constructor Methods
-	SsmV2() SsmV2Like
+	Ssm() SsmLike
 }
 
 // INSTANCE DECLARATIONS
 
 /*
-SsmV2Like is an instance interface that declares the complete set of principal,
+SsmLike is an instance interface that declares the complete set of principal,
 attribute and aspect methods that must be supported by each instance of a
 concrete software-security-module-like class.
 */
-type SsmV2Like interface {
+type SsmLike interface {
 	// Principal Methods
-	GetClass() SsmV2ClassLike
+	GetClass() SsmClassLike
 
 	// Aspect Interfaces
-	V2Secure
+	not.Hardened
+	not.Trusted
 }
 
 // ASPECT DECLARATIONS
-
-/*
-V2Secure declares the set of method signatures that must be supported by all
-version 2 compatible security modules.
-*/
-type V2Secure interface {
-	GetProtocolVersion() string
-	GetDigestAlgorithm() string
-	GetSignatureAlgorithm() string
-	DigestBytes(
-		bytes []byte,
-	) []byte
-	IsValid(
-		key []byte,
-		signature []byte,
-		bytes []byte,
-	) bool
-	GetTag() string
-	GenerateKeys() []byte
-	SignBytes(
-		bytes []byte,
-	) []byte
-	RotateKeys() []byte
-	EraseKeys()
-}

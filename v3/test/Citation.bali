@@ -1,9 +1,11 @@
 [
     $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
     $version: v2
-    $protocol: v2
-    $digest: '>
-        5WZpk3Dnwp7aUIEO9cSG0KfWJVXE7/Q+Yyfw2Zmbjzeq8TDws99lwqnavuVX
-        IyW7HwDwhmFp3QAx0W6BWjXJxw
-    <'
+    $digest: [
+        $algorithm: "SHA512"
+        $base64: '>
+            5WZpk3Dnwp7aUIEO9cSG0KfWJVXE7/Q+Yyfw2Zmbjzeq8TDws99lwqnavuVX
+            IyW7HwDwhmFp3QAx0W6BWjXJxw
+        <'
+    ]
 ]($type: <bali:/types/documents/Citation@v3>)

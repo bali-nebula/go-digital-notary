@@ -32,7 +32,7 @@ import (
 	bal "github.com/bali-nebula/go-bali-documents/v3"
 	doc "github.com/bali-nebula/go-digital-notary/v3/document"
 	not "github.com/bali-nebula/go-digital-notary/v3/notary"
-	ssm "github.com/bali-nebula/go-digital-notary/v3/ssmv2"
+	ssm "github.com/bali-nebula/go-digital-notary/v3/ssm"
 )
 
 // TYPE ALIASES
@@ -43,14 +43,18 @@ type (
 	CertificateClassLike = doc.CertificateClassLike
 	CitationClassLike    = doc.CitationClassLike
 	ContractClassLike    = doc.ContractClassLike
+	DigestClassLike      = doc.DigestClassLike
 	DocumentClassLike    = doc.DocumentClassLike
+	SignatureClassLike   = doc.SignatureClassLike
 )
 
 type (
 	CertificateLike = doc.CertificateLike
 	CitationLike    = doc.CitationLike
 	ContractLike    = doc.ContractLike
+	DigestLike      = doc.DigestLike
 	DocumentLike    = doc.DocumentLike
+	SignatureLike   = doc.SignatureLike
 )
 
 type (
@@ -67,18 +71,19 @@ type (
 	NotaryLike = not.NotaryLike
 )
 
-// Ssmv2
+type (
+	Trusted  = not.Trusted
+	Hardened = not.Hardened
+)
+
+// Ssm
 
 type (
-	SsmV2ClassLike = ssm.SsmV2ClassLike
+	SsmClassLike = ssm.SsmClassLike
 )
 
 type (
-	SsmV2Like = ssm.SsmV2Like
-)
-
-type (
-	V2Secure = ssm.V2Secure
+	SsmLike = ssm.SsmLike
 )
 
 // CLASS ACCESSORS
@@ -90,17 +95,15 @@ func CertificateClass() CertificateClassLike {
 }
 
 func Certificate(
-	digest string,
-	signature string,
-	key string,
+	algorithm string,
+	publicKey string,
 	tag string,
 	version string,
 	optionalPrevious doc.CitationLike,
 ) CertificateLike {
 	return CertificateClass().Certificate(
-		digest,
-		signature,
-		key,
+		algorithm,
+		publicKey,
 		tag,
 		version,
 		optionalPrevious,
@@ -122,13 +125,11 @@ func CitationClass() CitationClassLike {
 func Citation(
 	tag string,
 	version string,
-	protocol string,
-	digest string,
+	digest doc.DigestLike,
 ) CitationLike {
 	return CitationClass().Citation(
 		tag,
 		version,
-		protocol,
 		digest,
 	)
 }
@@ -148,13 +149,11 @@ func ContractClass() ContractClassLike {
 func Contract(
 	document doc.DocumentLike,
 	account string,
-	protocol string,
 	certificate doc.CitationLike,
 ) ContractLike {
 	return ContractClass().Contract(
 		document,
 		account,
-		protocol,
 		certificate,
 	)
 }
@@ -163,6 +162,28 @@ func ContractFromString(
 	source string,
 ) ContractLike {
 	return ContractClass().ContractFromString(
+		source,
+	)
+}
+
+func DigestClass() DigestClassLike {
+	return doc.DigestClass()
+}
+
+func Digest(
+	algorithm string,
+	base64 string,
+) DigestLike {
+	return DigestClass().Digest(
+		algorithm,
+		base64,
+	)
+}
+
+func DigestFromString(
+	source string,
+) DigestLike {
+	return DigestClass().DigestFromString(
 		source,
 	)
 }
@@ -197,6 +218,28 @@ func DocumentFromString(
 	)
 }
 
+func SignatureClass() SignatureClassLike {
+	return doc.SignatureClass()
+}
+
+func Signature(
+	algorithm string,
+	base64 string,
+) SignatureLike {
+	return SignatureClass().Signature(
+		algorithm,
+		base64,
+	)
+}
+
+func SignatureFromString(
+	source string,
+) SignatureLike {
+	return SignatureClass().SignatureFromString(
+		source,
+	)
+}
+
 // Notary
 
 func NotaryClass() NotaryClassLike {
@@ -204,21 +247,23 @@ func NotaryClass() NotaryClassLike {
 }
 
 func Notary(
-	hsm ssm.V2Secure,
+	ssm not.Trusted,
+	hsm not.Hardened,
 ) NotaryLike {
 	return NotaryClass().Notary(
+		ssm,
 		hsm,
 	)
 }
 
-// Ssmv2
+// Ssm
 
-func SsmV2Class() SsmV2ClassLike {
-	return ssm.SsmV2Class()
+func SsmClass() SsmClassLike {
+	return ssm.SsmClass()
 }
 
-func SsmV2() SsmV2Like {
-	return SsmV2Class().SsmV2()
+func Ssm() SsmLike {
+	return SsmClass().Ssm()
 }
 
 // GLOBAL FUNCTIONS

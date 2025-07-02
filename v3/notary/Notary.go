@@ -16,7 +16,6 @@ import (
 	fmt "fmt"
 	bal "github.com/bali-nebula/go-bali-documents/v3"
 	doc "github.com/bali-nebula/go-digital-notary/v3/document"
-	ssm "github.com/bali-nebula/go-digital-notary/v3/ssmv2"
 	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	sts "strings"
@@ -33,8 +32,12 @@ func NotaryClass() NotaryClassLike {
 // Constructor Methods
 
 func (c *notaryClass_) Notary(
-	hsm ssm.V2Secure,
+	ssm Trusted,
+	hsm Hardened,
 ) NotaryLike {
+	if uti.IsUndefined(ssm) {
+		panic("The \"ssm\" attribute is required by this class.")
+	}
 	if uti.IsUndefined(hsm) {
 		panic("The \"hsm\" attribute is required by this class.")
 	}
@@ -48,23 +51,18 @@ func (c *notaryClass_) Notary(
 	uti.MakeDirectory(directory)
 	var filename = directory + "Citation.bali"
 	var account = hsm.GetTag()
-	var protocol = hsm.GetProtocolVersion()
-
-	// Initialize the modules catalog with all versions of software security
-	// modules. The modules must be ordered with latest version first.
-	var modules = fra.Catalog[string, ssm.V2Secure]()
-	//modules.SetValue("v3", SsmV3())
-	modules.SetValue("v2", hsm)
-	//modules.SetValue("v1", SsmV1())
+	if !uti.PathExists(filename) {
+		// There is no way to retrieve the citation to the certificate.
+		hsm.EraseKeys()
+	}
 
 	// Create the new notary.
 	var instance = &notary_{
 		// Initialize the instance attributes.
 		filename_: filename,
 		account_:  account,
-		protocol_: protocol,
+		ssm_:      ssm,
 		hsm_:      hsm,
-		modules_:  modules,
 	}
 	return instance
 }
@@ -83,29 +81,33 @@ func (v *notary_) GetClass() NotaryClassLike {
 
 func (v *notary_) GenerateKey() doc.ContractLike {
 	// Create a new certificate.
-	var digest = `"` + v.hsm_.GetDigestAlgorithm() + `"`
-	var signature = `"` + v.hsm_.GetSignatureAlgorithm() + `"`
+	var algorithm = v.hsm_.GetSignatureAlgorithm()
 	var bytes = v.hsm_.GenerateKeys() // Returns the new public key.
-	var key = fra.Binary(bytes).AsString()
+	var publicKey = fra.Binary(bytes).AsString()
 	var tag = fra.TagWithSize(20).AsString()
 	var version = "v1" // This is the first version of this certificate.
 	var previous doc.CitationLike
 	var certificate = doc.CertificateClass().Certificate(
-		digest,
-		signature,
-		key,
+		algorithm,
+		publicKey,
 		tag,
 		version,
 		previous,
 	)
 
-	// Create a citation to the new certificate.
+	// Create a digest of the new certificate.
+	algorithm = v.hsm_.GetDigestAlgorithm()
 	bytes = []byte(certificate.AsString())
-	digest = fra.Binary(v.hsm_.DigestBytes(bytes)).AsString()
+	var base64 = fra.Binary(v.hsm_.DigestBytes(bytes)).AsString()
+	var digest = doc.DigestClass().Digest(
+		algorithm,
+		base64,
+	)
+
+	// Create a citation to the new certificate.
 	var citation = doc.CitationClass().Citation(
 		tag,
 		version,
-		v.protocol_,
 		digest,
 	)
 
@@ -119,12 +121,16 @@ func (v *notary_) GenerateKey() doc.ContractLike {
 	var contract = doc.ContractClass().Contract(
 		document,
 		v.account_,
-		v.protocol_,
 		citation,
 	)
+	algorithm = v.hsm_.GetSignatureAlgorithm()
 	source = contract.AsString()
 	bytes = v.hsm_.SignBytes([]byte(source))
-	signature = fra.Binary(bytes).AsString()
+	base64 = fra.Binary(bytes).AsString()
+	var signature = doc.SignatureClass().Signature(
+		algorithm,
+		base64,
+	)
 	contract.SetSignature(signature)
 	return contract
 }
@@ -139,12 +145,10 @@ func (v *notary_) GetCitation() doc.CitationLike {
 }
 
 func (v *notary_) RefreshKey() doc.ContractLike {
-	var digest = `"` + v.hsm_.GetDigestAlgorithm() + `"`
-	var signature = `"` + v.hsm_.GetSignatureAlgorithm() + `"`
-
 	// Generate a new key pair.
+	var algorithm = v.hsm_.GetSignatureAlgorithm()
 	var bytes = v.hsm_.RotateKeys() // Returns the new public key.
-	var key = fra.Binary(bytes).AsString()
+	var publicKey = fra.Binary(bytes).AsString()
 
 	// Generate a the next version of the certificate.
 	var citation = v.GetCitation()
@@ -154,21 +158,24 @@ func (v *notary_) RefreshKey() doc.ContractLike {
 	version = fra.VersionClass().GetNextVersion(current, 0).AsString()
 	var previous = citation
 	var certificate = doc.CertificateClass().Certificate(
-		digest,
-		signature,
-		key,
+		algorithm,
+		publicKey,
 		tag,
 		version,
 		previous,
 	)
 
 	// Create a citation to the new version of the certificate.
+	algorithm = v.hsm_.GetDigestAlgorithm()
 	bytes = []byte(certificate.AsString())
-	digest = fra.Binary(v.hsm_.DigestBytes(bytes)).AsString()
+	var base64 = fra.Binary(v.hsm_.DigestBytes(bytes)).AsString()
+	var digest = doc.DigestClass().Digest(
+		algorithm,
+		base64,
+	)
 	citation = doc.CitationClass().Citation(
 		tag,
 		version,
-		v.protocol_,
 		digest,
 	)
 
@@ -182,12 +189,16 @@ func (v *notary_) RefreshKey() doc.ContractLike {
 	var contract = doc.ContractClass().Contract(
 		document,
 		v.account_,
-		v.protocol_,
 		citation,
 	)
+	algorithm = v.hsm_.GetSignatureAlgorithm()
 	source = contract.AsString()
 	bytes = v.hsm_.SignBytes([]byte(source))
-	signature = fra.Binary(bytes).AsString()
+	base64 = fra.Binary(bytes).AsString()
+	var signature = doc.SignatureClass().Signature(
+		algorithm,
+		base64,
+	)
 	contract.SetSignature(signature)
 	return contract
 }
@@ -199,7 +210,7 @@ func (v *notary_) ForgetKey() {
 
 func (v *notary_) GenerateCredential() doc.ContractLike {
 	// Create the credential document including timestamp component.
-	var timestamp = fra.MomentClass().Now().AsString()
+	var timestamp = fra.Now().AsString()
 	var component = bal.Component(bal.Element(timestamp))
 	var type_ = "<bali:/types/documents/Credential@v3>"
 	var tag = fra.TagWithSize(20).AsString()
@@ -220,12 +231,16 @@ func (v *notary_) GenerateCredential() doc.ContractLike {
 	var contract = doc.ContractClass().Contract(
 		document,
 		v.account_,
-		v.protocol_,
 		citation,
 	)
+	var algorithm = v.hsm_.GetSignatureAlgorithm()
 	var source = contract.AsString()
 	var bytes = []byte(source)
-	var signature = fra.Binary(v.hsm_.SignBytes(bytes)).AsString()
+	var base64 = fra.Binary(v.hsm_.SignBytes(bytes)).AsString()
+	var signature = doc.SignatureClass().Signature(
+		algorithm,
+		base64,
+	)
 	contract.SetSignature(signature)
 	return contract
 }
@@ -238,12 +253,16 @@ func (v *notary_) NotarizeDocument(
 	var contract = doc.ContractClass().Contract(
 		document,
 		v.account_,
-		v.protocol_,
 		citation,
 	)
+	var algorithm = v.hsm_.GetSignatureAlgorithm()
 	var source = contract.AsString()
 	var bytes = []byte(source)
-	var signature = fra.Binary(v.hsm_.SignBytes(bytes)).AsString()
+	var base64 = fra.Binary(v.hsm_.SignBytes(bytes)).AsString()
+	var signature = doc.SignatureClass().Signature(
+		algorithm,
+		base64,
+	)
 	contract.SetSignature(signature)
 	return contract
 }
@@ -252,26 +271,24 @@ func (v *notary_) SignatureMatches(
 	contract doc.ContractLike,
 	certificate doc.CertificateLike,
 ) bool {
-	// Retrieve the SSM that supports the required security protocol.
-	var protocol = contract.GetProtocol()
-	var ssm = v.modules_.GetValue(protocol)
-	if ssm == nil {
+	// Validate the signature on the contract using the public certificate.
+	if certificate.GetAlgorithm() != v.ssm_.GetSignatureAlgorithm() {
 		var message = fmt.Sprintf(
-			"The required security protocol (%v) is not supported by this digital notary.\n",
-			protocol)
+			"The certificate signature algorithm %q is incompatible with the SSM algorithm %q.",
+			certificate.GetAlgorithm(),
+			v.ssm_.GetSignatureAlgorithm(),
+		)
 		panic(message)
 	}
-
-	// Validate the signature on the contract using the public certificate.
-	var key = certificate.GetKey()
+	var publicKey = certificate.GetPublicKey()
 	var signature = contract.GetSignature()
-	contract.SetSignature("")
+	contract.SetSignature(nil)
 	var source = contract.AsString()
-	var bytes = []byte(source)
+	var sourceBytes = []byte(source)
 	contract.SetSignature(signature)
-	var keyBytes = fra.BinaryFromString(key).AsIntrinsic()
-	var signatureBytes = fra.BinaryFromString(signature).AsIntrinsic()
-	return ssm.IsValid(keyBytes, signatureBytes, bytes)
+	var keyBytes = fra.BinaryFromString(publicKey).AsIntrinsic()
+	var signatureBytes = fra.BinaryFromString(signature.GetBase64()).AsIntrinsic()
+	return v.ssm_.IsValid(keyBytes, signatureBytes, sourceBytes)
 }
 
 func (v *notary_) CiteDocument(
@@ -279,13 +296,17 @@ func (v *notary_) CiteDocument(
 ) doc.CitationLike {
 	var tag = document.GetTag()
 	var version = document.GetVersion()
+	var algorithm = v.ssm_.GetDigestAlgorithm()
 	var source = document.AsString()
 	var bytes = []byte(source)
-	var digest = fra.Binary(v.hsm_.DigestBytes(bytes)).AsString()
+	var base64 = fra.Binary(v.ssm_.DigestBytes(bytes)).AsString()
+	var digest = doc.DigestClass().Digest(
+		algorithm,
+		base64,
+	)
 	var citation = doc.CitationClass().Citation(
 		tag,
 		version,
-		v.protocol_,
 		digest,
 	)
 	return citation
@@ -295,21 +316,22 @@ func (v *notary_) CitationMatches(
 	citation doc.CitationLike,
 	document doc.DocumentLike,
 ) bool {
-	// Retrieve the SSM that supports the required security protocol.
-	var protocol = citation.GetProtocol()
-	var ssm = v.modules_.GetValue(protocol)
-	if ssm == nil {
-		var message = fmt.Sprintf(
-			"The required security protocol (%v) is not supported by this digital notary.\n",
-			protocol)
-		panic(message)
-	}
-
 	// Compare the citation digest with a digest of the record.
+	var algorithm = v.ssm_.GetDigestAlgorithm()
 	var source = document.AsString()
 	var bytes = []byte(source)
-	var digest = fra.Binary(ssm.DigestBytes(bytes)).AsString()
-	return digest == citation.GetDigest()
+	var base64 = fra.Binary(v.ssm_.DigestBytes(bytes)).AsString()
+	var digest = doc.DigestClass().Digest(
+		algorithm,
+		base64,
+	)
+	if digest.GetAlgorithm() != citation.GetDigest().GetAlgorithm() {
+		return false
+	}
+	if digest.GetBase64() != citation.GetDigest().GetBase64() {
+		return false
+	}
+	return true
 }
 
 // Attribute Methods
@@ -324,9 +346,8 @@ type notary_ struct {
 	// Declare the instance attributes.
 	filename_ string
 	account_  string
-	protocol_ string
-	hsm_      ssm.V2Secure
-	modules_  fra.CatalogLike[string, ssm.V2Secure]
+	ssm_      Trusted
+	hsm_      Hardened
 }
 
 // Class Structure

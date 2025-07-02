@@ -46,9 +46,8 @@ concrete certificate-like class.
 type CertificateClassLike interface {
 	// Constructor Methods
 	Certificate(
-		digest string,
-		signature string,
-		key string,
+		algorithm string,
+		publicKey string,
 		tag string,
 		version string,
 		optionalPrevious CitationLike,
@@ -68,8 +67,7 @@ type CitationClassLike interface {
 	Citation(
 		tag string,
 		version string,
-		protocol string,
-		digest string,
+		digest DigestLike,
 	) CitationLike
 	CitationFromString(
 		source string,
@@ -86,12 +84,27 @@ type ContractClassLike interface {
 	Contract(
 		document DocumentLike,
 		account string,
-		protocol string,
 		certificate CitationLike,
 	) ContractLike
 	ContractFromString(
 		source string,
 	) ContractLike
+}
+
+/*
+DigestClassLike is a class interface that declares the complete set of
+class constructors, constants and functions that must be supported by each
+concrete digest-like class.
+*/
+type DigestClassLike interface {
+	// Constructor Methods
+	Digest(
+		algorithm string,
+		base64 string,
+	) DigestLike
+	DigestFromString(
+		source string,
+	) DigestLike
 }
 
 /*
@@ -114,6 +127,10 @@ type DocumentClassLike interface {
 	) DocumentLike
 
 	// Function Methods
+	ExtractAlgorithm(
+		name string,
+		document bal.DocumentLike,
+	) string
 	ExtractAttribute(
 		name string,
 		document bal.DocumentLike,
@@ -126,6 +143,10 @@ type DocumentClassLike interface {
 		name string,
 		document bal.DocumentLike,
 	) CitationLike
+	ExtractDigest(
+		name string,
+		document bal.DocumentLike,
+	) DigestLike
 	ExtractDocument(
 		name string,
 		document bal.DocumentLike,
@@ -138,6 +159,26 @@ type DocumentClassLike interface {
 		name string,
 		document bal.DocumentLike,
 	) CitationLike
+	ExtractSignature(
+		name string,
+		document bal.DocumentLike,
+	) SignatureLike
+}
+
+/*
+SignatureClassLike is a class interface that declares the complete set of
+class constructors, constants and functions that must be supported by each
+concrete signature-like class.
+*/
+type SignatureClassLike interface {
+	// Constructor Methods
+	Signature(
+		algorithm string,
+		base64 string,
+	) SignatureLike
+	SignatureFromString(
+		source string,
+	) SignatureLike
 }
 
 // INSTANCE DECLARATIONS
@@ -153,9 +194,8 @@ type CertificateLike interface {
 	AsString() string
 
 	// Attribute Methods
-	GetDigest() string
-	GetSignature() string
-	GetKey() string
+	GetAlgorithm() string
+	GetPublicKey() string
 
 	// Aspect Interfaces
 	Parameterized
@@ -174,8 +214,7 @@ type CitationLike interface {
 	// Attribute Methods
 	GetTag() string
 	GetVersion() string
-	GetProtocol() string
-	GetDigest() string
+	GetDigest() DigestLike
 }
 
 /*
@@ -191,12 +230,26 @@ type ContractLike interface {
 	// Attribute Methods
 	GetDocument() DocumentLike
 	GetAccount() string
-	GetProtocol() string
 	GetCertificate() CitationLike
-	GetSignature() string
+	GetSignature() SignatureLike
 	SetSignature(
-		signature string,
+		signature SignatureLike,
 	)
+}
+
+/*
+DigestLike is an instance interface that declares the complete set of
+principal, attribute and aspect methods that must be supported by each instance
+of a concrete digest-like class.
+*/
+type DigestLike interface {
+	// Principal Methods
+	GetClass() DigestClassLike
+	AsString() string
+
+	// Attribute Methods
+	GetAlgorithm() string
+	GetBase64() string
 }
 
 /*
@@ -214,6 +267,21 @@ type DocumentLike interface {
 
 	// Aspect Interfaces
 	Parameterized
+}
+
+/*
+SignatureLike is an instance interface that declares the complete set of
+principal, attribute and aspect methods that must be supported by each instance
+of a concrete signature-like class.
+*/
+type SignatureLike interface {
+	// Principal Methods
+	GetClass() SignatureClassLike
+	AsString() string
+
+	// Attribute Methods
+	GetAlgorithm() string
+	GetBase64() string
 }
 
 // ASPECT DECLARATIONS

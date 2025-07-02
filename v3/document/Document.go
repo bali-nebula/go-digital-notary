@@ -97,6 +97,29 @@ func (c *documentClass_) DocumentFromString(
 
 // Function Methods
 
+func (c *documentClass_) ExtractAlgorithm(
+	name string,
+	document bal.DocumentLike,
+) string {
+	var attribute string
+	var component = document.GetComponent()
+	var collection = component.GetAny().(bal.CollectionLike)
+	var attributes = collection.GetAny().(bal.AttributesLike)
+	var associations = attributes.GetAssociations()
+	var iterator = associations.GetIterator()
+	for iterator.HasNext() {
+		var association = iterator.GetNext()
+		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var symbol = element.GetAny().(string)
+		if symbol == name {
+			attribute = bal.FormatDocument(association.GetDocument())
+			attribute = attribute[1 : len(attribute)-2] // Remove the quotes.
+			break
+		}
+	}
+	return attribute
+}
+
 func (c *documentClass_) ExtractAttribute(
 	name string,
 	document bal.DocumentLike,
@@ -166,6 +189,29 @@ func (c *documentClass_) ExtractCitation(
 	return citation
 }
 
+func (c *documentClass_) ExtractDigest(
+	name string,
+	document bal.DocumentLike,
+) DigestLike {
+	var digest DigestLike
+	var component = document.GetComponent()
+	var collection = component.GetAny().(bal.CollectionLike)
+	var attributes = collection.GetAny().(bal.AttributesLike)
+	var associations = attributes.GetAssociations()
+	var iterator = associations.GetIterator()
+	for iterator.HasNext() {
+		var association = iterator.GetNext()
+		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var symbol = element.GetAny().(string)
+		if symbol == name {
+			var string_ = bal.FormatDocument(association.GetDocument())
+			digest = DigestClass().DigestFromString(string_)
+			break
+		}
+	}
+	return digest
+}
+
 func (c *documentClass_) ExtractDocument(
 	name string,
 	document bal.DocumentLike,
@@ -229,6 +275,29 @@ func (c *documentClass_) ExtractPrevious(
 		}
 	}
 	return previous
+}
+
+func (c *documentClass_) ExtractSignature(
+	name string,
+	document bal.DocumentLike,
+) SignatureLike {
+	var signature SignatureLike
+	var component = document.GetComponent()
+	var collection = component.GetAny().(bal.CollectionLike)
+	var attributes = collection.GetAny().(bal.AttributesLike)
+	var associations = attributes.GetAssociations()
+	var iterator = associations.GetIterator()
+	for iterator.HasNext() {
+		var association = iterator.GetNext()
+		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var symbol = element.GetAny().(string)
+		if symbol == name {
+			var string_ = bal.FormatDocument(association.GetDocument())
+			signature = SignatureClass().SignatureFromString(string_)
+			break
+		}
+	}
+	return signature
 }
 
 // INSTANCE INTERFACE

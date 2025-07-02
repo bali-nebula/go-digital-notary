@@ -11,18 +11,22 @@
         $permissions: <bali:/permissions/Public@v3>
     )
     $account: #TZ4SVSJ0RL5ACFX7GLW9HG5NYR8GCRK5
-    $protocol: v2
     $certificate: [
         $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
         $version: v1
-        $protocol: v2
-        $digest: '>
-            GmKlML1kRBJ4r5/vZkMub4ZF45ZDukdO95TtCKzuLiNeEuE04xqvUrDYxsnY
-            lQbvDjGPPScIUSjZmLaNidaqFQ
-        <'
+        $digest: [
+            $algorithm: "SHA512"
+            $base64: '>
+                GmKlML1kRBJ4r5/vZkMub4ZF45ZDukdO95TtCKzuLiNeEuE04xqvUrDYxsnY
+                lQbvDjGPPScIUSjZmLaNidaqFQ
+            <'
+        ]
     ]($type: <bali:/types/documents/Citation@v3>)
-    $signature: '>
-        5j8Tc5OsKQlMYGltKYL7CSDVzyUmvsPVvUEGWIo7IHDo3iCZaPaCcPRKQRrZ
-        2LCKremx0iP6iZiwRegkP+iVAQ
-    <'
+    $signature: [
+        $algorithm: "ED25519"
+        $base64: '>
+            5j8Tc5OsKQlMYGltKYL7CSDVzyUmvsPVvUEGWIo7IHDo3iCZaPaCcPRKQRrZ
+            2LCKremx0iP6iZiwRegkP+iVAQ
+        <'
+    ]
 ]($type: <bali:/types/documents/Contract@v3>)

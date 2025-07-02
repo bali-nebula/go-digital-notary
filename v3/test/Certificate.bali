@@ -1,7 +1,6 @@
 [
-    $digest: "SHA512"
-    $signature: "ED25519"
-    $key: '>
+    $algorithm: "ED25519"
+    $publicKey: '>
         oKWrrSJi3yyYcNO7WtiF0LxYOIx9UGAcx9bw7jxr/Ac
     <'
 ](
@@ -12,10 +11,12 @@
     $previous: [
         $tag: #ZQANMT480VVV5CNRAZZNZ7AKJ4WZJBFR
         $version: v1
-        $protocol: v2
-        $digest: '>
-            Cq90FBb/Pd8ls7qaREtLfsA/oFuYQcaSGBx4HKY9mngTDs9FL7wP27WAakGN
-            wgy5KJo9MEcm5r+aiOG/2SOkdw
-        <'
+        $digest: [
+            $algorithm: "SHA512"
+            $base64: '>
+                Cq90FBb/Pd8ls7qaREtLfsA/oFuYQcaSGBx4HKY9mngTDs9FL7wP27WAakGN
+                wgy5KJo9MEcm5r+aiOG/2SOkdw
+            <'
+        ]
     ]($type: <bali:/types/documents/Citation@v3>)
 )
