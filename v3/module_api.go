@@ -32,7 +32,7 @@ import (
 	bal "github.com/bali-nebula/go-bali-documents/v3"
 	doc "github.com/bali-nebula/go-digital-notary/v3/document"
 	not "github.com/bali-nebula/go-digital-notary/v3/notary"
-	ssm "github.com/bali-nebula/go-digital-notary/v3/ssmv1"
+	ssm "github.com/bali-nebula/go-digital-notary/v3/ssmv2"
 )
 
 // TYPE ALIASES
@@ -67,18 +67,18 @@ type (
 	NotaryLike = not.NotaryLike
 )
 
-// Ssmv1
+// Ssmv2
 
 type (
-	SsmV1ClassLike = ssm.SsmV1ClassLike
+	SsmV2ClassLike = ssm.SsmV2ClassLike
 )
 
 type (
-	SsmV1Like = ssm.SsmV1Like
+	SsmV2Like = ssm.SsmV2Like
 )
 
 type (
-	V1Secure = ssm.V1Secure
+	V2Secure = ssm.V2Secure
 )
 
 // CLASS ACCESSORS
@@ -204,27 +204,21 @@ func NotaryClass() NotaryClassLike {
 }
 
 func Notary(
-	optionalDirectory string,
-	hsm ssm.V1Secure,
+	hsm ssm.V2Secure,
 ) NotaryLike {
 	return NotaryClass().Notary(
-		optionalDirectory,
 		hsm,
 	)
 }
 
-// Ssmv1
+// Ssmv2
 
-func SsmV1Class() SsmV1ClassLike {
-	return ssm.SsmV1Class()
+func SsmV2Class() SsmV2ClassLike {
+	return ssm.SsmV2Class()
 }
 
-func SsmV1(
-	directory string,
-) SsmV1Like {
-	return SsmV1Class().SsmV1(
-		directory,
-	)
+func SsmV2() SsmV2Like {
+	return SsmV2Class().SsmV2()
 }
 
 // GLOBAL FUNCTIONS

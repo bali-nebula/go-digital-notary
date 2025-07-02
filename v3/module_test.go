@@ -21,10 +21,7 @@ import (
 	tes "testing"
 )
 
-// Create the security module and digital notary.
 const directory = "./test/"
-var module = not.SsmV1(directory)
-var notary = not.Notary(directory, module)
 
 func TestParsingCitations(t *tes.T) {
 	var filename = directory + "Citation.bali"
@@ -67,9 +64,13 @@ func TestParsingContracts(t *tes.T) {
 	ass.Equal(t, source, formatted)
 }
 
+// Create the security module and digital notary.
+var module = not.SsmV2()
+var notary = not.Notary(module)
+
 func TestSSM(t *tes.T) {
 	var bytes = []byte{0x0, 0x1, 0x2, 0x3, 0x4}
-	ass.Equal(t, "v1", module.GetProtocolVersion())
+	ass.Equal(t, "v2", module.GetProtocolVersion())
 	ass.Equal(t, "SHA512", module.GetDigestAlgorithm())
 	ass.Equal(t, "ED25519", module.GetSignatureAlgorithm())
 	ass.Equal(t, 64, len(module.DigestBytes(bytes)))
@@ -98,7 +99,6 @@ func TestNotaryInitialization(t *tes.T) {
 		notary.ForgetKey()
 	}()
 	notary.ForgetKey()
-	uti.RemovePath(directory + "Citation.bali")
 	notary.GetCitation()
 }
 
@@ -110,7 +110,11 @@ func TestNotaryGenerateKey(t *tes.T) {
 	defer func() {
 		if e := recover(); e != nil {
 			var message = e.(string)
-			ass.Equal(t, "Attempted to transition to an invalid state: 0", message)
+			ass.Equal(
+				t,
+				"Attempted to transition from state \"$LoneKey\" to an invalid state on event \"$GenerateKeys\".",
+				message,
+			)
 		} else {
 			ass.Fail(t, "Test should result in recovered panic.")
 		}
@@ -122,7 +126,6 @@ func TestNotaryLifecycle(t *tes.T) {
 	// Generate and validate a new public-private key pair.
 	notary.ForgetKey()
 	var contractV1 = notary.GenerateKey()
-	uti.WriteFile(directory + "CertificateV1.bali", contractV1.AsString())
 	var certificateV1 = not.CertificateFromString(
 		contractV1.GetDocument().AsString(),
 	)
@@ -148,17 +151,14 @@ func TestNotaryLifecycle(t *tes.T) {
 	$type: <bali:/examples/Record@v1.2.3>
 	$tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
 	$version: v1
-	$permissions: <bali:/permissions/Public@v1>
+	$permissions: <bali:/permissions/Public@v3>
 )`,
-)
-	uti.WriteFile(directory + "/Transaction.bali", transaction.AsString())
+	)
 	var citation = notary.CiteDocument(transaction)
 	ass.True(t, notary.CitationMatches(citation, transaction))
-	uti.WriteFile(directory + "/Citation.bali", citation.AsString())
 
 	// Notarize the transaction document to create a signed contract.
 	var contract = notary.NotarizeDocument(transaction)
-	uti.WriteFile(directory + "Contract.bali", contract.AsString())
 	ass.True(
 		t,
 		notary.SignatureMatches(
@@ -168,12 +168,11 @@ func TestNotaryLifecycle(t *tes.T) {
 	)
 
 	// Pickup where we left off with a new security module and digital notary.
-	module = not.SsmV1(directory)
-	notary = not.Notary(directory, module)
+	module = not.SsmV2()
+	notary = not.Notary(module)
 
 	// Refresh and validate the public-private key pair.
 	var contractV2 = notary.RefreshKey()
-	uti.WriteFile(directory + "CertificateV2.bali", contractV2.AsString())
 	ass.True(
 		t,
 		notary.SignatureMatches(
@@ -184,7 +183,6 @@ func TestNotaryLifecycle(t *tes.T) {
 
 	// Generate an authentication credential.
 	var credential = notary.GenerateCredential()
-	uti.WriteFile(directory + "Credential.bali", credential.AsString())
 	var certificateV2 = not.CertificateFromString(
 		contractV2.GetDocument().AsString(),
 	)
@@ -198,5 +196,4 @@ func TestNotaryLifecycle(t *tes.T) {
 
 	// Reset the security module and digital notary to an uninitialized state.
 	notary.ForgetKey()
-	notary.GetCitation()
 }

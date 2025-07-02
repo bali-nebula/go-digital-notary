@@ -16,9 +16,10 @@ import (
 	fmt "fmt"
 	bal "github.com/bali-nebula/go-bali-documents/v3"
 	doc "github.com/bali-nebula/go-digital-notary/v3/document"
-	ssm "github.com/bali-nebula/go-digital-notary/v3/ssmv1"
+	ssm "github.com/bali-nebula/go-digital-notary/v3/ssmv2"
 	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
+	sts "strings"
 )
 
 // CLASS INTERFACE
@@ -32,28 +33,29 @@ func NotaryClass() NotaryClassLike {
 // Constructor Methods
 
 func (c *notaryClass_) Notary(
-	optionalDirectory string,
-	hsm ssm.V1Secure,
+	hsm ssm.V2Secure,
 ) NotaryLike {
-	if uti.IsUndefined(optionalDirectory) {
-		optionalDirectory = uti.HomeDirectory()
-	}
-	var filename = optionalDirectory + "Citation.bali"
 	if uti.IsUndefined(hsm) {
 		panic("The \"hsm\" attribute is required by this class.")
 	}
+
+	// Initialize the notary attributes.
+	var directory = uti.HomeDirectory()
+	if !sts.HasSuffix(directory, "/") {
+		directory += "/"
+	}
+	directory += ".bali/notary/"
+	uti.MakeDirectory(directory)
+	var filename = directory + "Citation.bali"
 	var account = hsm.GetTag()
+	var protocol = hsm.GetProtocolVersion()
 
 	// Initialize the modules catalog with all versions of software security
 	// modules. The modules must be ordered with latest version first.
-	var modules = fra.Catalog[string, ssm.V1Secure]()
-	//modules.SetValue("v3", SsmV3(optionalDirectory))
-	//modules.SetValue("v2", SsmV2(optionalDirectory))
-	modules.SetValue("v1", hsm)
-
-	// Replace the corresponding SSM with the HSM
-	var protocol = hsm.GetProtocolVersion()
-	modules.SetValue(protocol, hsm)
+	var modules = fra.Catalog[string, ssm.V2Secure]()
+	//modules.SetValue("v3", SsmV3())
+	modules.SetValue("v2", hsm)
+	//modules.SetValue("v1", SsmV1())
 
 	// Create the new notary.
 	var instance = &notary_{
@@ -81,8 +83,8 @@ func (v *notary_) GetClass() NotaryClassLike {
 
 func (v *notary_) GenerateKey() doc.ContractLike {
 	// Create a new certificate.
-	var digest =`"` + v.hsm_.GetDigestAlgorithm() + `"`
-	var signature =`"` + v.hsm_.GetSignatureAlgorithm() + `"`
+	var digest = `"` + v.hsm_.GetDigestAlgorithm() + `"`
+	var signature = `"` + v.hsm_.GetSignatureAlgorithm() + `"`
 	var bytes = v.hsm_.GenerateKeys() // Returns the new public key.
 	var key = fra.Binary(bytes).AsString()
 	var tag = fra.TagWithSize(20).AsString()
@@ -137,8 +139,8 @@ func (v *notary_) GetCitation() doc.CitationLike {
 }
 
 func (v *notary_) RefreshKey() doc.ContractLike {
-	var digest =`"` + v.hsm_.GetDigestAlgorithm() + `"`
-	var signature =`"` + v.hsm_.GetSignatureAlgorithm() + `"`
+	var digest = `"` + v.hsm_.GetDigestAlgorithm() + `"`
+	var signature = `"` + v.hsm_.GetSignatureAlgorithm() + `"`
 
 	// Generate a new key pair.
 	var bytes = v.hsm_.RotateKeys() // Returns the new public key.
@@ -192,6 +194,7 @@ func (v *notary_) RefreshKey() doc.ContractLike {
 
 func (v *notary_) ForgetKey() {
 	v.hsm_.EraseKeys()
+	uti.RemovePath(v.filename_)
 }
 
 func (v *notary_) GenerateCredential() doc.ContractLike {
@@ -322,8 +325,8 @@ type notary_ struct {
 	filename_ string
 	account_  string
 	protocol_ string
-	hsm_      ssm.V1Secure
-	modules_  fra.CatalogLike[string, ssm.V1Secure]
+	hsm_      ssm.V2Secure
+	modules_  fra.CatalogLike[string, ssm.V2Secure]
 }
 
 // Class Structure

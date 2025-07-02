@@ -8,21 +8,21 @@
         $type: <bali:/examples/Record@v1.2.3>
         $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
         $version: v1
-        $permissions: <bali:/permissions/Public@v1>
+        $permissions: <bali:/permissions/Public@v3>
     )
-    $account: #JLD5YF7LMVCTHVS730V2KD1N7DZFANCX
-    $protocol: v1
+    $account: #TZ4SVSJ0RL5ACFX7GLW9HG5NYR8GCRK5
+    $protocol: v2
     $certificate: [
         $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
         $version: v1
-        $protocol: v1
+        $protocol: v2
         $digest: '>
             GmKlML1kRBJ4r5/vZkMub4ZF45ZDukdO95TtCKzuLiNeEuE04xqvUrDYxsnY
             lQbvDjGPPScIUSjZmLaNidaqFQ
         <'
-    ]($type: <bali:/types/documents/Citation@v1>)
+    ]($type: <bali:/types/documents/Citation@v3>)
     $signature: '>
-        egqPg0qCGLZdfMZ6EKvtexrjv68dNi4Lzn84TLua4Y8lt59VcBiGAQzJKqRm
-        KJ0lMWD0Hp8rfXFQO5FOoo/ZDA
+        5j8Tc5OsKQlMYGltKYL7CSDVzyUmvsPVvUEGWIo7IHDo3iCZaPaCcPRKQRrZ
+        2LCKremx0iP6iZiwRegkP+iVAQ
     <'
-]($type: <bali:/types/documents/Contract@v1>)
+]($type: <bali:/types/documents/Contract@v3>)

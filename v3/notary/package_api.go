@@ -30,7 +30,7 @@ package notary
 
 import (
 	doc "github.com/bali-nebula/go-digital-notary/v3/document"
-	ssm "github.com/bali-nebula/go-digital-notary/v3/ssmv1"
+	ssm "github.com/bali-nebula/go-digital-notary/v3/ssmv2"
 )
 
 // TYPE DECLARATIONS
@@ -54,8 +54,7 @@ previous version signatures.
 type NotaryClassLike interface {
 	// Constructor Methods
 	Notary(
-		optionalDirectory string,
-		hsm ssm.V1Secure,
+		hsm ssm.V2Secure,
 	) NotaryLike
 }
 

@@ -10,7 +10,7 @@
 ................................................................................
 */
 
-package ssmv1
+package ssmv2
 
 import (
 	sig "crypto/ed25519"
@@ -27,28 +27,25 @@ import (
 
 // Access Function
 
-func SsmV1Class() SsmV1ClassLike {
-	return ssmV1Class()
+func SsmV2Class() SsmV2ClassLike {
+	return ssmV2Class()
 }
 
 // Constructor Methods
 
-func (c *ssmV1Class_) SsmV1(
-	directory string,
-) SsmV1Like {
-	fmt.Println("WARNING: Using a SOFTWARE security module instead of a HARDWARE security module.")
-	if uti.IsUndefined(directory) {
-		panic("The \"directory\" attribute is required by this class.")
-	}
+func (c *ssmV2Class_) SsmV2() SsmV2Like {
+	fmt.Println("WARNING: Using a V2 SOFTWARE security module instead of a HARDWARE security module.")
+	var directory = uti.HomeDirectory()
 	if !sts.HasSuffix(directory, "/") {
 		directory += "/"
 	}
+	directory += ".bali/ssmv2/"
 	uti.MakeDirectory(directory)
-	var controller = fra.Controller(events, transitions)
-	var instance = &ssmV1_{
+	var controller = fra.Controller(c.events_, c.transitions_, c.keyless_)
+	var instance = &ssmV2_{
 		// Initialize the instance attributes.
 		directory_:  directory,
-		filename_:   "SsmV1.bali",
+		filename_:   "Configuration.bali",
 		controller_: controller,
 	}
 	var filename = directory + instance.filename_
@@ -68,27 +65,27 @@ func (c *ssmV1Class_) SsmV1(
 
 // Principal Methods
 
-func (v *ssmV1_) GetClass() SsmV1ClassLike {
-	return ssmV1Class()
+func (v *ssmV2_) GetClass() SsmV2ClassLike {
+	return ssmV2Class()
 }
 
 // Attribute Methods
 
-// V1Secure Methods
+// V2Secure Methods
 
-func (v *ssmV1_) GetProtocolVersion() string {
-	return "v1"
+func (v *ssmV2_) GetProtocolVersion() string {
+	return "v2"
 }
 
-func (v *ssmV1_) GetDigestAlgorithm() string {
+func (v *ssmV2_) GetDigestAlgorithm() string {
 	return "SHA512"
 }
 
-func (v *ssmV1_) GetSignatureAlgorithm() string {
+func (v *ssmV2_) GetSignatureAlgorithm() string {
 	return "ED25519"
 }
 
-func (v *ssmV1_) DigestBytes(
+func (v *ssmV2_) DigestBytes(
 	bytes []byte,
 ) []byte {
 	var array = dig.Sum512(bytes)
@@ -96,7 +93,7 @@ func (v *ssmV1_) DigestBytes(
 	return digest
 }
 
-func (v *ssmV1_) IsValid(
+func (v *ssmV2_) IsValid(
 	key []byte,
 	signature []byte,
 	bytes []byte,
@@ -104,13 +101,13 @@ func (v *ssmV1_) IsValid(
 	return sig.Verify(sig.PublicKey(key), bytes, signature)
 }
 
-func (v *ssmV1_) GetTag() string {
+func (v *ssmV2_) GetTag() string {
 	return v.tag_
 }
 
-func (v *ssmV1_) GenerateKeys() []byte {
+func (v *ssmV2_) GenerateKeys() []byte {
 	var err error
-	v.controller_.ProcessEvent(generateKeys)
+	v.controller_.ProcessEvent(ssmV2Class().generateKeys_)
 	v.publicKey_, v.privateKey_, err = sig.GenerateKey(nil)
 	if err != nil {
 		var message = fmt.Sprintf(
@@ -123,10 +120,10 @@ func (v *ssmV1_) GenerateKeys() []byte {
 	return v.publicKey_
 }
 
-func (v *ssmV1_) SignBytes(
+func (v *ssmV2_) SignBytes(
 	bytes []byte,
 ) []byte {
-	v.controller_.ProcessEvent(signBytes)
+	v.controller_.ProcessEvent(ssmV2Class().signBytes_)
 	var privateKey = v.privateKey_
 	if v.previousKey_ != nil {
 		// Use the old key one more time to sign the new one.
@@ -138,9 +135,9 @@ func (v *ssmV1_) SignBytes(
 	return signature
 }
 
-func (v *ssmV1_) RotateKeys() []byte {
+func (v *ssmV2_) RotateKeys() []byte {
 	var err error
-	v.controller_.ProcessEvent(rotateKeys)
+	v.controller_.ProcessEvent(ssmV2Class().rotateKeys_)
 	v.previousKey_ = v.privateKey_
 	v.publicKey_, v.privateKey_, err = sig.GenerateKey(nil)
 	if err != nil {
@@ -154,49 +151,15 @@ func (v *ssmV1_) RotateKeys() []byte {
 	return v.publicKey_
 }
 
-func (v *ssmV1_) EraseKeys() {
+func (v *ssmV2_) EraseKeys() {
 	v.createConfiguration()
 }
 
 // PROTECTED INTERFACE
 
-/*
-These constants define the possible states for the state machine.
-*/
-const (
-	invalid fra.State = iota
-	keyless
-	loneKey
-	twoKeys
-)
-
-/*
-These constants define the possible events for the state machine.
-*/
-const (
-	none fra.Event = iota
-	generateKeys
-	signBytes
-	rotateKeys
-)
-
-/*
-This list defines the event headings for the state machine.
-*/
-var events = []fra.Event{generateKeys, signBytes, rotateKeys}
-
-/*
-This table defines the allowed transitions for the state machine.
-*/
-var transitions = map[fra.State]fra.Transitions{
-	keyless: fra.Transitions{loneKey, invalid, invalid},
-	loneKey: fra.Transitions{invalid, loneKey, twoKeys},
-	twoKeys: fra.Transitions{invalid, loneKey, invalid},
-}
-
 // Private Methods
 
-func (v *ssmV1_) extractAttributes(
+func (v *ssmV2_) extractAttributes(
 	document bal.DocumentLike,
 ) {
 	v.tag_ = doc.DocumentClass().ExtractAttribute("$tag", document)
@@ -207,7 +170,7 @@ func (v *ssmV1_) extractAttributes(
 	v.controller_.SetState(state)
 }
 
-func (v *ssmV1_) extractDocument() bal.DocumentLike {
+func (v *ssmV2_) extractDocument() bal.DocumentLike {
 	var tag = v.tag_
 	var state = v.getState()
 	var publicKey = fra.Binary(v.publicKey_).AsString()
@@ -228,7 +191,7 @@ func (v *ssmV1_) extractDocument() bal.DocumentLike {
 	return document
 }
 
-func (v *ssmV1_) extractKey(
+func (v *ssmV2_) extractKey(
 	name string,
 	document bal.DocumentLike,
 ) []byte {
@@ -240,42 +203,43 @@ func (v *ssmV1_) extractKey(
 	return fra.BinaryFromString(key).AsIntrinsic()
 }
 
-func (v *ssmV1_) extractState(
+func (v *ssmV2_) extractState(
 	document bal.DocumentLike,
 ) fra.State {
 	var documentClass = doc.DocumentClass()
 	var state fra.State
-	switch documentClass.ExtractAttribute("$state", document) {
-	case "$keyless":
-		state = keyless
-	case "$loneKey":
-		state = loneKey
-	case "$twoKeys":
-		state = twoKeys
-	case "$invalid":
-		state = invalid
+	var attribute = documentClass.ExtractAttribute("$state", document)
+	switch attribute {
+	case "$Keyless":
+		state = ssmV2Class().keyless_
+	case "$LoneKey":
+		state = ssmV2Class().loneKey_
+	case "$TwoKeys":
+		state = ssmV2Class().twoKeys_
+	case "$Invalid":
+		state = ssmV2Class().invalid_
 	}
 	return state
 }
 
-func (v *ssmV1_) getState() string {
+func (v *ssmV2_) getState() string {
 	switch v.controller_.GetState() {
-	case keyless:
-		return "$keyless"
-	case loneKey:
-		return "$loneKey"
-	case twoKeys:
-		return "$twoKeys"
+	case ssmV2Class().keyless_:
+		return "$Keyless"
+	case ssmV2Class().loneKey_:
+		return "$LoneKey"
+	case ssmV2Class().twoKeys_:
+		return "$TwoKeys"
 	default:
-		return "$invalid"
+		return "$Invalid"
 	}
 }
 
-func (v *ssmV1_) createConfiguration() {
+func (v *ssmV2_) createConfiguration() {
 	v.tag_ = fra.TagWithSize(20).AsString() // Results in a 32 character tag.
 	var document = bal.ParseSource(`[
     $tag: ` + v.tag_ + `
-    $state: $keyless
+    $state: $Keyless
     $publicKey: none
     $privateKey: none
     $previousKey: none
@@ -286,14 +250,17 @@ func (v *ssmV1_) createConfiguration() {
 	uti.WriteFile(filename, source)
 }
 
-func (v *ssmV1_) readConfiguration() {
+func (v *ssmV2_) readConfiguration() {
 	var filename = v.directory_ + v.filename_
 	var source = uti.ReadFile(filename)
 	var document = bal.ParseSource(source)
 	v.extractAttributes(document)
 }
 
-func (v *ssmV1_) updateConfiguration() {
+func (v *ssmV2_) updateConfiguration() {
+	if v.controller_.GetState() == "$Invalid" {
+		panic("Invalid State")
+	}
 	var document = v.extractDocument()
 	var source = bal.FormatDocument(document)
 	var filename = v.directory_ + v.filename_
@@ -302,7 +269,7 @@ func (v *ssmV1_) updateConfiguration() {
 
 // Instance Structure
 
-type ssmV1_ struct {
+type ssmV2_ struct {
 	// Declare the instance attributes.
 	tag_         string
 	publicKey_   []byte
@@ -315,16 +282,37 @@ type ssmV1_ struct {
 
 // Class Structure
 
-type ssmV1Class_ struct {
+type ssmV2Class_ struct {
 	// Declare the class constants.
+	invalid_      fra.State
+	keyless_      fra.State
+	loneKey_      fra.State
+	twoKeys_      fra.State
+	generateKeys_ fra.Event
+	signBytes_    fra.Event
+	rotateKeys_   fra.Event
+	events_       []fra.Event
+	transitions_  map[fra.State]fra.Transitions
 }
 
 // Class Reference
 
-func ssmV1Class() *ssmV1Class_ {
-	return ssmV1ClassReference_
+func ssmV2Class() *ssmV2Class_ {
+	return ssmV2ClassReference_
 }
 
-var ssmV1ClassReference_ = &ssmV1Class_{
+var ssmV2ClassReference_ = &ssmV2Class_{
 	// Initialize the class constants.
+	keyless_:      "$Keyless",
+	loneKey_:      "$LoneKey",
+	twoKeys_:      "$TwoKeys",
+	generateKeys_: "$GenerateKeys",
+	signBytes_:    "$SignBytes",
+	rotateKeys_:   "$RotateKeys",
+	events_:       []fra.Event{"$GenerateKeys", "$SignBytes", "$RotateKeys"},
+	transitions_: map[fra.State]fra.Transitions{
+		"$Keyless": fra.Transitions{"$LoneKey", "$Invalid", "$Invalid"},
+		"$LoneKey": fra.Transitions{"$Invalid", "$LoneKey", "$TwoKeys"},
+		"$TwoKeys": fra.Transitions{"$Invalid", "$LoneKey", "$Invalid"},
+	},
 }

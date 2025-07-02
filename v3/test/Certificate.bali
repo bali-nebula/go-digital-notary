@@ -12,10 +12,10 @@
     $previous: [
         $tag: #ZQANMT480VVV5CNRAZZNZ7AKJ4WZJBFR
         $version: v1
-        $protocol: v1
+        $protocol: v2
         $digest: '>
             Cq90FBb/Pd8ls7qaREtLfsA/oFuYQcaSGBx4HKY9mngTDs9FL7wP27WAakGN
             wgy5KJo9MEcm5r+aiOG/2SOkdw
         <'
-    ]($type: <bali:/types/documents/Citation@v1>)
+    ]($type: <bali:/types/documents/Citation@v3>)
 )
