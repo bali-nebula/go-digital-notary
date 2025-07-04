@@ -1,7 +1,7 @@
-github.com/bali-nebula/go-bali-documents/v3 v3.8.0 h1:KIWKieoe9GIEfOn+ZrqXbGYSk80eCuruL+TLYCrJyWs=
-github.com/bali-nebula/go-bali-documents/v3 v3.8.0/go.mod h1:QV03N6B7nI+sCdBQS/iyW6UFmboF9Q/L4ZwO4Wi0y2s=
-github.com/craterdog/go-component-framework/v7 v7.9.0 h1:zQY4qQLPa6IDoxVYAfGPRv+EglCAyODS7+IBa7I9T3c=
-github.com/craterdog/go-component-framework/v7 v7.9.0/go.mod h1:8WoIWdhgc2a+V8NTf63L76S/Kw6s0du5vOu9zJZZrQI=
+github.com/bali-nebula/go-bali-documents/v3 v3.9.0 h1:U5Sw1mdEgPnk6E2mxD4FRu+HK5InOhTSwFWc99PPuVc=
+github.com/bali-nebula/go-bali-documents/v3 v3.9.0/go.mod h1:Gl8Xuyu2Pmx/0UpET2S9uB4uES2UreqmxpTWKAT5sWA=
+github.com/craterdog/go-component-framework/v7 v7.10.0 h1:ztd5ID3gzbUBr746urbdnBf3CH9d5apkUYCftyO40yQ=
+github.com/craterdog/go-component-framework/v7 v7.10.0/go.mod h1:8WoIWdhgc2a+V8NTf63L76S/Kw6s0du5vOu9zJZZrQI=
 github.com/craterdog/go-missing-utilities/v7 v7.11.0 h1:e6OyWjcakZH86VhvZm7+mLF9s3O1r5pL0TPeDOu9U60=
 github.com/craterdog/go-missing-utilities/v7 v7.11.0/go.mod h1:uEyTYeiSq4hzoJn9dPPZxGUKVjKU90v0xh0WhTnhRVs=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
