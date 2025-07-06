@@ -99,7 +99,7 @@ func (v *contract_) AsString() string {
 	if uti.IsDefined(v.signature_) {
 		string_ += `    $signature: ` + v.GetSignature().AsString()
 	}
-	string_ += `]($type: <bali:/types/documents/Contract@v3>)
+	string_ += `]($type: <bali:/types/documents/Contract:v3>)
 `
 	var contract = bal.ParseSource(string_)
 	string_ = bal.FormatDocument(contract)

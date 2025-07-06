@@ -89,7 +89,7 @@ func (v *citation_) AsString() string {
 	string_ += `    $tag: ` + v.GetTag()
 	string_ += `    $version: ` + v.GetVersion()
 	string_ += `    $digest: ` + v.GetDigest().AsString()
-	string_ += `]($type: <bali:/types/documents/Citation@v3>)
+	string_ += `]($type: <bali:/types/documents/Citation:v3>)
 `
 	var citation = bal.ParseSource(string_)
 	string_ = bal.FormatDocument(citation)

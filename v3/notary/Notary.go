@@ -212,10 +212,10 @@ func (v *notary_) GenerateCredential() doc.ContractLike {
 	// Create the credential document including timestamp component.
 	var timestamp = fra.Now().AsString()
 	var component = bal.Component(bal.Element(timestamp))
-	var type_ = "<bali:/types/documents/Credential@v3>"
+	var type_ = "<bali:/types/documents/Credential:v3>"
 	var tag = fra.TagWithSize(20).AsString()
 	var version = "v1"
-	var permissions = "<bali:/permissions/Public@v3>"
+	var permissions = "<bali:/permissions/Public:v3>"
 	var previous doc.CitationLike
 	var document = doc.DocumentClass().Document(
 		component,

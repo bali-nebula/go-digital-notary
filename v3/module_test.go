@@ -147,10 +147,10 @@ func TestNotaryLifecycle(t *tes.T) {
     $merchant: <https://www.starbucks.com>
     $amount: 4.95($currency: $USD)
 ](
-	$type: <bali:/examples/Record@v1.2.3>
+	$type: <bali:/examples/Record:v1.2.3>
 	$tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
 	$version: v1
-	$permissions: <bali:/permissions/Public@v3>
+	$permissions: <bali:/permissions/Public:v3>
 )`,
 	)
 	var citation = notary.CiteDocument(transaction)

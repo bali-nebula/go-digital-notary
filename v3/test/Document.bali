@@ -4,8 +4,8 @@
     $merchant: <https://www.starbucks.com/>
     $amount: 4.95($currency: $USD)
 ](
-    $type: <bali:/examples/Document@v1.2.3>
+    $type: <bali:/examples/Document:v1.2.3>
     $tag: #1ZPDPZALRT90H6YMGYNTQJW9PJCRMVSP
     $version: v1
-    $permissions: <bali:/permissions/Public@v3>
+    $permissions: <bali:/permissions/Public:v3>
 )
