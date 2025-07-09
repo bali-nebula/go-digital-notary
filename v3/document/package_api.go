@@ -29,7 +29,7 @@ on interfaces, not on each other.
 package document
 
 import (
-	bal "github.com/bali-nebula/go-bali-documents/v3"
+	bal "github.com/bali-nebula/go-document-notation/v3"
 )
 
 // TYPE DECLARATIONS

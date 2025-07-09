@@ -14,7 +14,7 @@ package document
 
 import (
 	fmt "fmt"
-	bal "github.com/bali-nebula/go-bali-documents/v3"
+	bal "github.com/bali-nebula/go-document-notation/v3"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 

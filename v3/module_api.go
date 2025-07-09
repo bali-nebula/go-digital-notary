@@ -31,10 +31,10 @@ For detailed documentation on this entire module refer to the wiki:
 package module
 
 import (
-	bal "github.com/bali-nebula/go-bali-documents/v3"
 	doc "github.com/bali-nebula/go-digital-notary/v3/document"
 	not "github.com/bali-nebula/go-digital-notary/v3/notary"
 	ssm "github.com/bali-nebula/go-digital-notary/v3/ssm"
+	bal "github.com/bali-nebula/go-document-notation/v3"
 )
 
 // TYPE ALIASES

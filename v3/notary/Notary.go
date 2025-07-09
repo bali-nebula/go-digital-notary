@@ -14,8 +14,8 @@ package notary
 
 import (
 	fmt "fmt"
-	bal "github.com/bali-nebula/go-bali-documents/v3"
 	doc "github.com/bali-nebula/go-digital-notary/v3/document"
+	bal "github.com/bali-nebula/go-document-notation/v3"
 	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	sts "strings"

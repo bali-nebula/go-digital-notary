@@ -14,8 +14,8 @@ package module_test
 
 import (
 	fmt "fmt"
-	bal "github.com/bali-nebula/go-bali-documents/v3"
 	not "github.com/bali-nebula/go-digital-notary/v3"
+	bal "github.com/bali-nebula/go-document-notation/v3"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	ass "github.com/stretchr/testify/assert"
 	tes "testing"
