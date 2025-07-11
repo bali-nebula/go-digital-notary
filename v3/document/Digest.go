@@ -15,6 +15,7 @@ package document
 import (
 	fmt "fmt"
 	bal "github.com/bali-nebula/go-document-notation/v3"
+	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
@@ -29,8 +30,8 @@ func DigestClass() DigestClassLike {
 // Constructor Methods
 
 func (c *digestClass_) Digest(
-	algorithm string,
-	base64 string,
+	algorithm fra.QuoteLike,
+	base64 fra.BinaryLike,
 ) DigestLike {
 	if uti.IsUndefined(algorithm) {
 		panic("The \"algorithm\" attribute is required by this class.")
@@ -60,8 +61,10 @@ func (c *digestClass_) DigestFromString(
 		}
 	}()
 	var document = bal.ParseSource(source)
-	var algorithm = DocumentClass().ExtractAlgorithm("$algorithm", document)
-	var base64 = DocumentClass().ExtractAttribute("$base64", document)
+	var algorithm = DocumentClass().ExtractAlgorithm(document)
+	var base64 = fra.BinaryFromString(
+		DocumentClass().ExtractAttribute("$base64", document),
+	)
 	return c.Digest(algorithm, base64)
 }
 
@@ -80,8 +83,8 @@ func (v *digest_) GetClass() DigestClassLike {
 func (v *digest_) AsString() string {
 	var string_ = `[
 `
-	string_ += `    $algorithm: "` + v.GetAlgorithm() + `"`
-	string_ += `    $base64: ` + v.GetBase64()
+	string_ += `    $algorithm: ` + v.GetAlgorithm().AsString()
+	string_ += `    $base64: ` + v.GetBase64().AsString()
 	string_ += `]
 `
 	var digest = bal.ParseSource(string_)
@@ -91,11 +94,11 @@ func (v *digest_) AsString() string {
 
 // Attribute Methods
 
-func (v *digest_) GetAlgorithm() string {
+func (v *digest_) GetAlgorithm() fra.QuoteLike {
 	return v.algorithm_
 }
 
-func (v *digest_) GetBase64() string {
+func (v *digest_) GetBase64() fra.BinaryLike {
 	return v.base64_
 }
 
@@ -107,8 +110,8 @@ func (v *digest_) GetBase64() string {
 
 type digest_ struct {
 	// Declare the instance attributes.
-	algorithm_ string
-	base64_    string
+	algorithm_ fra.QuoteLike
+	base64_    fra.BinaryLike
 }
 
 // Class Structure

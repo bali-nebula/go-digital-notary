@@ -15,6 +15,7 @@ package document
 import (
 	fmt "fmt"
 	bal "github.com/bali-nebula/go-document-notation/v3"
+	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
@@ -30,7 +31,7 @@ func ContractClass() ContractClassLike {
 
 func (c *contractClass_) Contract(
 	document DocumentLike,
-	account string,
+	account fra.TagLike,
 	certificate CitationLike,
 ) ContractLike {
 	if uti.IsUndefined(document) {
@@ -65,10 +66,12 @@ func (c *contractClass_) ContractFromString(
 		}
 	}()
 	var document = bal.ParseSource(source)
-	var account = DocumentClass().ExtractAttribute("$account", document)
-	var certificate = DocumentClass().ExtractCitation("$certificate", document)
-	var signature = DocumentClass().ExtractSignature("$signature", document)
-	var component = DocumentClass().ExtractDocument("$document", document)
+	var account = fra.TagFromString(
+		DocumentClass().ExtractAttribute("$account", document),
+	)
+	var certificate = DocumentClass().ExtractCertificate(document)
+	var signature = DocumentClass().ExtractSignature(document)
+	var component = DocumentClass().ExtractDocument(document)
 	var contract = c.Contract(
 		component,
 		account,
@@ -94,7 +97,7 @@ func (v *contract_) AsString() string {
 	var string_ = `[
 `
 	string_ += `    $document: ` + v.GetDocument().AsString()
-	string_ += `    $account: ` + v.GetAccount()
+	string_ += `    $account: ` + v.GetAccount().AsString()
 	string_ += `    $certificate: ` + v.GetCertificate().AsString()
 	if uti.IsDefined(v.signature_) {
 		string_ += `    $signature: ` + v.GetSignature().AsString()
@@ -112,7 +115,7 @@ func (v *contract_) GetDocument() DocumentLike {
 	return v.document_
 }
 
-func (v *contract_) GetAccount() string {
+func (v *contract_) GetAccount() fra.TagLike {
 	return v.account_
 }
 
@@ -139,7 +142,7 @@ func (v *contract_) SetSignature(
 type contract_ struct {
 	// Declare the instance attributes.
 	document_    DocumentLike
-	account_     string
+	account_     fra.TagLike
 	certificate_ CitationLike
 	signature_   SignatureLike
 }

@@ -15,6 +15,7 @@ package document
 import (
 	fmt "fmt"
 	bal "github.com/bali-nebula/go-document-notation/v3"
+	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
@@ -29,8 +30,8 @@ func CitationClass() CitationClassLike {
 // Constructor Methods
 
 func (c *citationClass_) Citation(
-	tag string,
-	version string,
+	tag fra.TagLike,
+	version fra.VersionLike,
 	digest DigestLike,
 ) CitationLike {
 	if uti.IsUndefined(tag) {
@@ -65,9 +66,13 @@ func (c *citationClass_) CitationFromString(
 		}
 	}()
 	var document = bal.ParseSource(source)
-	var tag = DocumentClass().ExtractAttribute("$tag", document)
-	var version = DocumentClass().ExtractAttribute("$version", document)
-	var digest = DocumentClass().ExtractDigest("$digest", document)
+	var tag = fra.TagFromString(
+		DocumentClass().ExtractAttribute("$tag", document),
+	)
+	var version = fra.VersionFromString(
+		DocumentClass().ExtractAttribute("$version", document),
+	)
+	var digest = DocumentClass().ExtractDigest(document)
 	return c.Citation(tag, version, digest)
 }
 
@@ -86,8 +91,8 @@ func (v *citation_) GetClass() CitationClassLike {
 func (v *citation_) AsString() string {
 	var string_ = `[
 `
-	string_ += `    $tag: ` + v.GetTag()
-	string_ += `    $version: ` + v.GetVersion()
+	string_ += `    $tag: ` + v.GetTag().AsString()
+	string_ += `    $version: ` + v.GetVersion().AsString()
 	string_ += `    $digest: ` + v.GetDigest().AsString()
 	string_ += `]($type: <bali:/types/documents/Citation:v3>)
 `
@@ -98,11 +103,11 @@ func (v *citation_) AsString() string {
 
 // Attribute Methods
 
-func (v *citation_) GetTag() string {
+func (v *citation_) GetTag() fra.TagLike {
 	return v.tag_
 }
 
-func (v *citation_) GetVersion() string {
+func (v *citation_) GetVersion() fra.VersionLike {
 	return v.version_
 }
 
@@ -118,8 +123,8 @@ func (v *citation_) GetDigest() DigestLike {
 
 type citation_ struct {
 	// Declare the instance attributes.
-	tag_     string
-	version_ string
+	tag_     fra.TagLike
+	version_ fra.VersionLike
 	digest_  DigestLike
 }
 

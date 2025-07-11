@@ -30,6 +30,7 @@ package document
 
 import (
 	bal "github.com/bali-nebula/go-document-notation/v3"
+	fra "github.com/craterdog/go-component-framework/v7"
 )
 
 // TYPE DECLARATIONS
@@ -46,10 +47,10 @@ concrete certificate-like class.
 type CertificateClassLike interface {
 	// Constructor Methods
 	Certificate(
-		algorithm string,
-		publicKey string,
-		tag string,
-		version string,
+		algorithm fra.QuoteLike,
+		publicKey fra.BinaryLike,
+		tag fra.TagLike,
+		version fra.VersionLike,
 		optionalPrevious CitationLike,
 	) CertificateLike
 	CertificateFromString(
@@ -65,8 +66,8 @@ concrete citation-like class.
 type CitationClassLike interface {
 	// Constructor Methods
 	Citation(
-		tag string,
-		version string,
+		tag fra.TagLike,
+		version fra.VersionLike,
 		digest DigestLike,
 	) CitationLike
 	CitationFromString(
@@ -83,7 +84,7 @@ type ContractClassLike interface {
 	// Constructor Methods
 	Contract(
 		document DocumentLike,
-		account string,
+		account fra.TagLike,
 		certificate CitationLike,
 	) ContractLike
 	ContractFromString(
@@ -99,8 +100,8 @@ concrete digest-like class.
 type DigestClassLike interface {
 	// Constructor Methods
 	Digest(
-		algorithm string,
-		base64 string,
+		algorithm fra.QuoteLike,
+		base64 fra.BinaryLike,
 	) DigestLike
 	DigestFromString(
 		source string,
@@ -116,10 +117,10 @@ type DocumentClassLike interface {
 	// Constructor Methods
 	Document(
 		component bal.ComponentLike,
-		type_ string,
-		tag string,
-		version string,
-		permissions string,
+		type_ fra.ResourceLike,
+		tag fra.TagLike,
+		version fra.VersionLike,
+		permissions fra.ResourceLike,
 		previous CitationLike,
 	) DocumentLike
 	DocumentFromString(
@@ -128,41 +129,39 @@ type DocumentClassLike interface {
 
 	// Function Methods
 	ExtractAlgorithm(
-		name string,
 		document bal.DocumentLike,
-	) string
+	) fra.QuoteLike
 	ExtractAttribute(
 		name string,
 		document bal.DocumentLike,
 	) string
 	ExtractCertificate(
-		name string,
-		document bal.DocumentLike,
-	) CertificateLike
-	ExtractCitation(
-		name string,
 		document bal.DocumentLike,
 	) CitationLike
 	ExtractDigest(
-		name string,
 		document bal.DocumentLike,
 	) DigestLike
 	ExtractDocument(
-		name string,
 		document bal.DocumentLike,
 	) DocumentLike
-	ExtractParameter(
-		name string,
+	ExtractPermissions(
 		document bal.DocumentLike,
-	) string
+	) fra.ResourceLike
 	ExtractPrevious(
-		name string,
 		document bal.DocumentLike,
 	) CitationLike
 	ExtractSignature(
-		name string,
 		document bal.DocumentLike,
 	) SignatureLike
+	ExtractTag(
+		document bal.DocumentLike,
+	) fra.TagLike
+	ExtractType(
+		document bal.DocumentLike,
+	) fra.ResourceLike
+	ExtractVersion(
+		document bal.DocumentLike,
+	) fra.VersionLike
 }
 
 /*
@@ -173,8 +172,8 @@ concrete signature-like class.
 type SignatureClassLike interface {
 	// Constructor Methods
 	Signature(
-		algorithm string,
-		base64 string,
+		algorithm fra.QuoteLike,
+		base64 fra.BinaryLike,
 	) SignatureLike
 	SignatureFromString(
 		source string,
@@ -194,8 +193,8 @@ type CertificateLike interface {
 	AsString() string
 
 	// Attribute Methods
-	GetAlgorithm() string
-	GetPublicKey() string
+	GetAlgorithm() fra.QuoteLike
+	GetPublicKey() fra.BinaryLike
 
 	// Aspect Interfaces
 	Parameterized
@@ -212,8 +211,8 @@ type CitationLike interface {
 	AsString() string
 
 	// Attribute Methods
-	GetTag() string
-	GetVersion() string
+	GetTag() fra.TagLike
+	GetVersion() fra.VersionLike
 	GetDigest() DigestLike
 }
 
@@ -229,7 +228,7 @@ type ContractLike interface {
 
 	// Attribute Methods
 	GetDocument() DocumentLike
-	GetAccount() string
+	GetAccount() fra.TagLike
 	GetCertificate() CitationLike
 	GetSignature() SignatureLike
 	SetSignature(
@@ -248,8 +247,8 @@ type DigestLike interface {
 	AsString() string
 
 	// Attribute Methods
-	GetAlgorithm() string
-	GetBase64() string
+	GetAlgorithm() fra.QuoteLike
+	GetBase64() fra.BinaryLike
 }
 
 /*
@@ -280,8 +279,8 @@ type SignatureLike interface {
 	AsString() string
 
 	// Attribute Methods
-	GetAlgorithm() string
-	GetBase64() string
+	GetAlgorithm() fra.QuoteLike
+	GetBase64() fra.BinaryLike
 }
 
 // ASPECT DECLARATIONS
@@ -291,9 +290,9 @@ Parameterized declares the set of method signatures that must be supported by
 all parameterized documents.
 */
 type Parameterized interface {
-	GetType() string
-	GetTag() string
-	GetVersion() string
-	GetPermissions() string
+	GetType() fra.ResourceLike
+	GetTag() fra.TagLike
+	GetVersion() fra.VersionLike
+	GetPermissions() fra.ResourceLike
 	GetOptionalPrevious() CitationLike
 }

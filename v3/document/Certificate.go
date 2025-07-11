@@ -15,6 +15,7 @@ package document
 import (
 	fmt "fmt"
 	bal "github.com/bali-nebula/go-document-notation/v3"
+	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
@@ -29,10 +30,10 @@ func CertificateClass() CertificateClassLike {
 // Constructor Methods
 
 func (c *certificateClass_) Certificate(
-	algorithm string,
-	publicKey string,
-	tag string,
-	version string,
+	algorithm fra.QuoteLike,
+	publicKey fra.BinaryLike,
+	tag fra.TagLike,
+	version fra.VersionLike,
 	optionalPrevious CitationLike,
 ) CertificateLike {
 	if uti.IsUndefined(algorithm) {
@@ -47,8 +48,8 @@ func (c *certificateClass_) Certificate(
 	if uti.IsUndefined(version) {
 		panic("The \"version\" attribute is required by this class.")
 	}
-	var type_ = "<bali:/types/documents/Certificate:v3>"
-	var permissions = "<bali:/permissions/Public:v3>"
+	var type_ = fra.Resource("<bali:/types/documents/Certificate:v3>")
+	var permissions = fra.Resource("<bali:/permissions/Public:v3>")
 	var instance = &certificate_{
 		// Initialize the instance attributes.
 		algorithm_:   algorithm,
@@ -76,8 +77,10 @@ func (c *certificateClass_) CertificateFromString(
 		}
 	}()
 	var document = bal.ParseSource(source)
-	var algorithm = DocumentClass().ExtractAlgorithm("$algorithm", document)
-	var publicKey = DocumentClass().ExtractAttribute("$publicKey", document)
+	var algorithm = DocumentClass().ExtractAlgorithm(document)
+	var publicKey = fra.BinaryFromString(
+		DocumentClass().ExtractAttribute("$publicKey", document),
+	)
 
 	var parameters = document.GetOptionalParameters() // Not optional here.
 	var associations = parameters.GetAssociations()
@@ -87,7 +90,7 @@ func (c *certificateClass_) CertificateFromString(
 	if symbol != "$tag" {
 		panic("Missing the $tag attribute.")
 	}
-	var tag = bal.FormatDocument(association.GetDocument())
+	var tag = fra.TagFromString(bal.FormatDocument(association.GetDocument()))
 
 	association = associations.GetValue(3)
 	element = association.GetPrimitive().GetAny().(bal.ElementLike)
@@ -95,7 +98,9 @@ func (c *certificateClass_) CertificateFromString(
 	if symbol != "$version" {
 		panic("Missing the $version attribute.")
 	}
-	var version = bal.FormatDocument(association.GetDocument())
+	var version = fra.VersionFromString(
+		bal.FormatDocument(association.GetDocument()),
+	)
 
 	var previous CitationLike
 	if associations.GetSize() > 4 {
@@ -133,15 +138,15 @@ func (v *certificate_) GetClass() CertificateClassLike {
 func (v *certificate_) AsString() string {
 	var string_ = `[
 `
-	string_ += `    $algorithm: "` + v.GetAlgorithm() + `"`
-	string_ += `    $publicKey: ` + v.GetPublicKey()
+	string_ += `    $algorithm: ` + v.GetAlgorithm().AsString()
+	string_ += `    $publicKey: ` + v.GetPublicKey().AsString()
 	string_ += `
 ](
 `
-	string_ += `    $type: ` + v.GetType()
-	string_ += `    $tag: ` + v.GetTag()
-	string_ += `    $version: ` + v.GetVersion()
-	string_ += `    $permissions: ` + v.GetPermissions()
+	string_ += `    $type: ` + v.GetType().AsString()
+	string_ += `    $tag: ` + v.GetTag().AsString()
+	string_ += `    $version: ` + v.GetVersion().AsString()
+	string_ += `    $permissions: ` + v.GetPermissions().AsString()
 	var previous = v.GetOptionalPrevious()
 	if uti.IsDefined(previous) {
 		string_ += `    $previous: ` + previous.AsString()
@@ -154,29 +159,29 @@ func (v *certificate_) AsString() string {
 
 // Attribute Methods
 
-func (v *certificate_) GetAlgorithm() string {
+func (v *certificate_) GetAlgorithm() fra.QuoteLike {
 	return v.algorithm_
 }
 
-func (v *certificate_) GetPublicKey() string {
+func (v *certificate_) GetPublicKey() fra.BinaryLike {
 	return v.publicKey_
 }
 
 // Parameterized Methods
 
-func (v *certificate_) GetType() string {
+func (v *certificate_) GetType() fra.ResourceLike {
 	return v.type_
 }
 
-func (v *certificate_) GetTag() string {
+func (v *certificate_) GetTag() fra.TagLike {
 	return v.tag_
 }
 
-func (v *certificate_) GetVersion() string {
+func (v *certificate_) GetVersion() fra.VersionLike {
 	return v.version_
 }
 
-func (v *certificate_) GetPermissions() string {
+func (v *certificate_) GetPermissions() fra.ResourceLike {
 	return v.permissions_
 }
 
@@ -192,12 +197,12 @@ func (v *certificate_) GetOptionalPrevious() CitationLike {
 
 type certificate_ struct {
 	// Declare the instance attributes.
-	algorithm_   string
-	publicKey_   string
-	type_        string
-	tag_         string
-	version_     string
-	permissions_ string
+	algorithm_   fra.QuoteLike
+	publicKey_   fra.BinaryLike
+	type_        fra.ResourceLike
+	tag_         fra.TagLike
+	version_     fra.VersionLike
+	permissions_ fra.ResourceLike
 	previous_    CitationLike
 }
 

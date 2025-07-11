@@ -35,6 +35,7 @@ import (
 	not "github.com/bali-nebula/go-digital-notary/v3/notary"
 	ssm "github.com/bali-nebula/go-digital-notary/v3/ssm"
 	bal "github.com/bali-nebula/go-document-notation/v3"
+	fra "github.com/craterdog/go-component-framework/v7"
 )
 
 // TYPE ALIASES
@@ -97,10 +98,10 @@ func CertificateClass() CertificateClassLike {
 }
 
 func Certificate(
-	algorithm string,
-	publicKey string,
-	tag string,
-	version string,
+	algorithm fra.QuoteLike,
+	publicKey fra.BinaryLike,
+	tag fra.TagLike,
+	version fra.VersionLike,
 	optionalPrevious doc.CitationLike,
 ) CertificateLike {
 	return CertificateClass().Certificate(
@@ -125,8 +126,8 @@ func CitationClass() CitationClassLike {
 }
 
 func Citation(
-	tag string,
-	version string,
+	tag fra.TagLike,
+	version fra.VersionLike,
 	digest doc.DigestLike,
 ) CitationLike {
 	return CitationClass().Citation(
@@ -150,7 +151,7 @@ func ContractClass() ContractClassLike {
 
 func Contract(
 	document doc.DocumentLike,
-	account string,
+	account fra.TagLike,
 	certificate doc.CitationLike,
 ) ContractLike {
 	return ContractClass().Contract(
@@ -173,8 +174,8 @@ func DigestClass() DigestClassLike {
 }
 
 func Digest(
-	algorithm string,
-	base64 string,
+	algorithm fra.QuoteLike,
+	base64 fra.BinaryLike,
 ) DigestLike {
 	return DigestClass().Digest(
 		algorithm,
@@ -196,10 +197,10 @@ func DocumentClass() DocumentClassLike {
 
 func Document(
 	component bal.ComponentLike,
-	type_ string,
-	tag string,
-	version string,
-	permissions string,
+	type_ fra.ResourceLike,
+	tag fra.TagLike,
+	version fra.VersionLike,
+	permissions fra.ResourceLike,
 	previous doc.CitationLike,
 ) DocumentLike {
 	return DocumentClass().Document(
@@ -225,8 +226,8 @@ func SignatureClass() SignatureClassLike {
 }
 
 func Signature(
-	algorithm string,
-	base64 string,
+	algorithm fra.QuoteLike,
+	base64 fra.BinaryLike,
 ) SignatureLike {
 	return SignatureClass().Signature(
 		algorithm,

@@ -50,7 +50,7 @@ func (c *notaryClass_) Notary(
 	directory += ".bali/notary/"
 	uti.MakeDirectory(directory)
 	var filename = directory + "Citation.bali"
-	var account = hsm.GetTag()
+	var account = fra.TagFromString(hsm.GetTag())
 	if !uti.PathExists(filename) {
 		// There is no way to retrieve the citation to the certificate.
 		hsm.EraseKeys()
@@ -81,11 +81,11 @@ func (v *notary_) GetClass() NotaryClassLike {
 
 func (v *notary_) GenerateKey() doc.ContractLike {
 	// Create a new certificate.
-	var algorithm = v.hsm_.GetSignatureAlgorithm()
+	var algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var bytes = v.hsm_.GenerateKeys() // Returns the new public key.
-	var publicKey = fra.Binary(bytes).AsString()
-	var tag = fra.TagWithSize(20).AsString()
-	var version = "v1" // This is the first version of this certificate.
+	var publicKey = fra.Binary(bytes)
+	var tag = fra.TagWithSize(20)
+	var version = fra.VersionFromString("v1")
 	var previous doc.CitationLike
 	var certificate = doc.CertificateClass().Certificate(
 		algorithm,
@@ -96,9 +96,9 @@ func (v *notary_) GenerateKey() doc.ContractLike {
 	)
 
 	// Create a digest of the new certificate.
-	algorithm = v.hsm_.GetDigestAlgorithm()
+	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetDigestAlgorithm() + `"`)
 	bytes = []byte(certificate.AsString())
-	var base64 = fra.Binary(v.hsm_.DigestBytes(bytes)).AsString()
+	var base64 = fra.Binary(v.hsm_.DigestBytes(bytes))
 	var digest = doc.DigestClass().Digest(
 		algorithm,
 		base64,
@@ -123,10 +123,10 @@ func (v *notary_) GenerateKey() doc.ContractLike {
 		v.account_,
 		citation,
 	)
-	algorithm = v.hsm_.GetSignatureAlgorithm()
+	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	source = contract.AsString()
 	bytes = v.hsm_.SignBytes([]byte(source))
-	base64 = fra.Binary(bytes).AsString()
+	base64 = fra.Binary(bytes)
 	var signature = doc.SignatureClass().Signature(
 		algorithm,
 		base64,
@@ -146,16 +146,15 @@ func (v *notary_) GetCitation() doc.CitationLike {
 
 func (v *notary_) RefreshKey() doc.ContractLike {
 	// Generate a new key pair.
-	var algorithm = v.hsm_.GetSignatureAlgorithm()
+	var algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var bytes = v.hsm_.RotateKeys() // Returns the new public key.
-	var publicKey = fra.Binary(bytes).AsString()
+	var publicKey = fra.Binary(bytes)
 
 	// Generate a the next version of the certificate.
 	var citation = v.GetCitation()
 	var tag = citation.GetTag()
-	var version = citation.GetVersion()
-	var current = fra.VersionFromString(version)
-	version = fra.VersionClass().GetNextVersion(current, 0).AsString()
+	var current = citation.GetVersion()
+	var version = fra.VersionClass().GetNextVersion(current, 0)
 	var previous = citation
 	var certificate = doc.CertificateClass().Certificate(
 		algorithm,
@@ -166,9 +165,9 @@ func (v *notary_) RefreshKey() doc.ContractLike {
 	)
 
 	// Create a citation to the new version of the certificate.
-	algorithm = v.hsm_.GetDigestAlgorithm()
+	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetDigestAlgorithm() + `"`)
 	bytes = []byte(certificate.AsString())
-	var base64 = fra.Binary(v.hsm_.DigestBytes(bytes)).AsString()
+	var base64 = fra.Binary(v.hsm_.DigestBytes(bytes))
 	var digest = doc.DigestClass().Digest(
 		algorithm,
 		base64,
@@ -191,10 +190,10 @@ func (v *notary_) RefreshKey() doc.ContractLike {
 		v.account_,
 		citation,
 	)
-	algorithm = v.hsm_.GetSignatureAlgorithm()
+	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	source = contract.AsString()
 	bytes = v.hsm_.SignBytes([]byte(source))
-	base64 = fra.Binary(bytes).AsString()
+	base64 = fra.Binary(bytes)
 	var signature = doc.SignatureClass().Signature(
 		algorithm,
 		base64,
@@ -212,10 +211,10 @@ func (v *notary_) GenerateCredential() doc.ContractLike {
 	// Create the credential document including timestamp component.
 	var timestamp = fra.Now().AsString()
 	var component = bal.Component(bal.Element(timestamp))
-	var type_ = "<bali:/types/documents/Credential:v3>"
-	var tag = fra.TagWithSize(20).AsString()
-	var version = "v1"
-	var permissions = "<bali:/permissions/Public:v3>"
+	var type_ = fra.Resource("<bali:/types/documents/Credential:v3>")
+	var tag = fra.TagWithSize(20)
+	var version = fra.VersionFromString("v1")
+	var permissions = fra.Resource("<bali:/permissions/Public:v3>")
 	var previous doc.CitationLike
 	var document = doc.DocumentClass().Document(
 		component,
@@ -233,10 +232,10 @@ func (v *notary_) GenerateCredential() doc.ContractLike {
 		v.account_,
 		citation,
 	)
-	var algorithm = v.hsm_.GetSignatureAlgorithm()
+	var algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var source = contract.AsString()
 	var bytes = []byte(source)
-	var base64 = fra.Binary(v.hsm_.SignBytes(bytes)).AsString()
+	var base64 = fra.Binary(v.hsm_.SignBytes(bytes))
 	var signature = doc.SignatureClass().Signature(
 		algorithm,
 		base64,
@@ -255,10 +254,10 @@ func (v *notary_) NotarizeDocument(
 		v.account_,
 		citation,
 	)
-	var algorithm = v.hsm_.GetSignatureAlgorithm()
+	var algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var source = contract.AsString()
 	var bytes = []byte(source)
-	var base64 = fra.Binary(v.hsm_.SignBytes(bytes)).AsString()
+	var base64 = fra.Binary(v.hsm_.SignBytes(bytes))
 	var signature = doc.SignatureClass().Signature(
 		algorithm,
 		base64,
@@ -272,11 +271,13 @@ func (v *notary_) SignatureMatches(
 	certificate doc.CertificateLike,
 ) bool {
 	// Validate the signature on the contract using the public certificate.
-	if certificate.GetAlgorithm() != v.ssm_.GetSignatureAlgorithm() {
+	var certificateAlgorithm = string(certificate.GetAlgorithm().AsIntrinsic())
+	var ssmAlgorithm = v.ssm_.GetSignatureAlgorithm()
+	if certificateAlgorithm != ssmAlgorithm {
 		var message = fmt.Sprintf(
 			"The certificate signature algorithm %q is incompatible with the SSM algorithm %q.",
-			certificate.GetAlgorithm(),
-			v.ssm_.GetSignatureAlgorithm(),
+			certificateAlgorithm,
+			ssmAlgorithm,
 		)
 		panic(message)
 	}
@@ -286,8 +287,8 @@ func (v *notary_) SignatureMatches(
 	var source = contract.AsString()
 	var sourceBytes = []byte(source)
 	contract.SetSignature(signature)
-	var keyBytes = fra.BinaryFromString(publicKey).AsIntrinsic()
-	var signatureBytes = fra.BinaryFromString(signature.GetBase64()).AsIntrinsic()
+	var keyBytes = publicKey.AsIntrinsic()
+	var signatureBytes = signature.GetBase64().AsIntrinsic()
 	return v.ssm_.IsValid(keyBytes, signatureBytes, sourceBytes)
 }
 
@@ -296,10 +297,10 @@ func (v *notary_) CiteDocument(
 ) doc.CitationLike {
 	var tag = document.GetTag()
 	var version = document.GetVersion()
-	var algorithm = v.ssm_.GetDigestAlgorithm()
+	var algorithm = fra.QuoteFromString(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
 	var source = document.AsString()
 	var bytes = []byte(source)
-	var base64 = fra.Binary(v.ssm_.DigestBytes(bytes)).AsString()
+	var base64 = fra.Binary(v.ssm_.DigestBytes(bytes))
 	var digest = doc.DigestClass().Digest(
 		algorithm,
 		base64,
@@ -317,18 +318,14 @@ func (v *notary_) CitationMatches(
 	document doc.DocumentLike,
 ) bool {
 	// Compare the citation digest with a digest of the record.
-	var algorithm = v.ssm_.GetDigestAlgorithm()
+	var algorithm = fra.QuoteFromString(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
 	var source = document.AsString()
 	var bytes = []byte(source)
-	var base64 = fra.Binary(v.ssm_.DigestBytes(bytes)).AsString()
-	var digest = doc.DigestClass().Digest(
-		algorithm,
-		base64,
-	)
-	if digest.GetAlgorithm() != citation.GetDigest().GetAlgorithm() {
+	var base64 = fra.Binary(v.ssm_.DigestBytes(bytes))
+	if algorithm.AsString() != citation.GetDigest().GetAlgorithm().AsString() {
 		return false
 	}
-	if digest.GetBase64() != citation.GetDigest().GetBase64() {
+	if base64.AsString() != citation.GetDigest().GetBase64().AsString() {
 		return false
 	}
 	return true
@@ -345,7 +342,7 @@ func (v *notary_) CitationMatches(
 type notary_ struct {
 	// Declare the instance attributes.
 	filename_ string
-	account_  string
+	account_  fra.TagLike
 	ssm_      Trusted
 	hsm_      Hardened
 }
