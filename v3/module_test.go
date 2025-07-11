@@ -41,14 +41,14 @@ func TestParsingCertificates(t *tes.T) {
 	ass.Equal(t, source, formatted)
 }
 
-func TestParsingDocuments(t *tes.T) {
-	var filename = directory + "Document.bali"
+func TestParsingDrafts(t *tes.T) {
+	var filename = directory + "Draft.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var document = not.DocumentFromString(source)
-	var formatted = document.AsString()
+	var draft = not.DraftFromString(source)
+	var formatted = draft.AsString()
 	ass.Equal(t, source, formatted)
-	var attribute = not.DocumentClass().ExtractAttribute(
+	var attribute = not.DraftClass().ExtractAttribute(
 		"$consumer",
 		bal.ParseSource(source),
 	)
@@ -126,7 +126,7 @@ func TestNotaryLifecycle(t *tes.T) {
 	notary.ForgetKey()
 	var contractV1 = notary.GenerateKey()
 	var certificateV1 = not.CertificateFromString(
-		contractV1.GetDocument().AsString(),
+		contractV1.GetDraft().AsString(),
 	)
 	ass.True(
 		t,
@@ -140,7 +140,7 @@ func TestNotaryLifecycle(t *tes.T) {
 	notary.GetCitation()
 
 	// Create and cite a new transaction document.
-	var transaction = not.DocumentFromString(
+	var transaction = not.DraftFromString(
 		`[
     $timestamp: <2022-06-03T07:39:54>
     $consumer: "Derk Norton"
@@ -153,11 +153,11 @@ func TestNotaryLifecycle(t *tes.T) {
 	$permissions: <bali:/permissions/Public:v3>
 )`,
 	)
-	var citation = notary.CiteDocument(transaction)
+	var citation = notary.CiteDraft(transaction)
 	ass.True(t, notary.CitationMatches(citation, transaction))
 
 	// Notarize the transaction document to create a signed contract.
-	var contract = notary.NotarizeDocument(transaction)
+	var contract = notary.NotarizeDraft(transaction)
 	ass.True(
 		t,
 		notary.SignatureMatches(
@@ -183,7 +183,7 @@ func TestNotaryLifecycle(t *tes.T) {
 	// Generate an authentication credential.
 	var credential = notary.GenerateCredential()
 	var certificateV2 = not.CertificateFromString(
-		contractV2.GetDocument().AsString(),
+		contractV2.GetDraft().AsString(),
 	)
 	ass.True(
 		t,

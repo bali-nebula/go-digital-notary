@@ -43,7 +43,7 @@ NotaryClassLike is a class interface that declares the complete set of class
 constructors, constants and functions that must be supported by each concrete
 notary-like class.
 
-A notary may be used to digitally sign digital documents using a hardware
+A notary may be used to digitally sign digital draft documents using a hardware
 security module (HSM). It may also be used to validate the signature on a
 contract that was signed using this or any other digital notary.
 */
@@ -70,19 +70,19 @@ type NotaryLike interface {
 	RefreshKey() doc.ContractLike
 	ForgetKey()
 	GenerateCredential() doc.ContractLike
-	NotarizeDocument(
-		document doc.DocumentLike,
+	NotarizeDraft(
+		draft doc.DraftLike,
 	) doc.ContractLike
 	SignatureMatches(
 		contract doc.ContractLike,
 		certificate doc.CertificateLike,
 	) bool
-	CiteDocument(
-		document doc.DocumentLike,
+	CiteDraft(
+		draft doc.DraftLike,
 	) doc.CitationLike
 	CitationMatches(
 		citation doc.CitationLike,
-		document doc.DocumentLike,
+		draft doc.DraftLike,
 	) bool
 }
 

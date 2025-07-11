@@ -11,8 +11,8 @@
 */
 
 /*
-Package "document" provides an implementation of wrappers for Bali Document
-Notation™ documents that are required by digital notarization.
+Package "document" provides an implementation of wrappers for various types of
+Bali Document Notation™ documents that are required by digital notarization.
 
 For detailed documentation on this package refer to the wiki:
   - https://github.com/bali-nebula/go-digital-notary/wiki
@@ -83,7 +83,7 @@ concrete contract-like class.
 type ContractClassLike interface {
 	// Constructor Methods
 	Contract(
-		document DocumentLike,
+		draft DraftLike,
 		account fra.TagLike,
 		certificate CitationLike,
 	) ContractLike
@@ -109,23 +109,23 @@ type DigestClassLike interface {
 }
 
 /*
-DocumentClassLike is a class interface that declares the complete set of
+DraftClassLike is a class interface that declares the complete set of
 class constructors, constants and functions that must be supported by each
-concrete document-like class.
+concrete draft-like class.
 */
-type DocumentClassLike interface {
+type DraftClassLike interface {
 	// Constructor Methods
-	Document(
+	Draft(
 		component bal.ComponentLike,
 		type_ fra.ResourceLike,
 		tag fra.TagLike,
 		version fra.VersionLike,
 		permissions fra.ResourceLike,
 		previous CitationLike,
-	) DocumentLike
-	DocumentFromString(
+	) DraftLike
+	DraftFromString(
 		source string,
-	) DocumentLike
+	) DraftLike
 
 	// Function Methods
 	ExtractAlgorithm(
@@ -141,9 +141,9 @@ type DocumentClassLike interface {
 	ExtractDigest(
 		document bal.DocumentLike,
 	) DigestLike
-	ExtractDocument(
+	ExtractDraft(
 		document bal.DocumentLike,
-	) DocumentLike
+	) DraftLike
 	ExtractPermissions(
 		document bal.DocumentLike,
 	) fra.ResourceLike
@@ -227,7 +227,7 @@ type ContractLike interface {
 	AsString() string
 
 	// Attribute Methods
-	GetDocument() DocumentLike
+	GetDraft() DraftLike
 	GetAccount() fra.TagLike
 	GetCertificate() CitationLike
 	GetSignature() SignatureLike
@@ -252,13 +252,13 @@ type DigestLike interface {
 }
 
 /*
-DocumentLike is an instance interface that declares the complete set of
+DraftLike is an instance interface that declares the complete set of
 principal, attribute and aspect methods that must be supported by each instance
-of a concrete document-like class.
+of a concrete draft-like class.
 */
-type DocumentLike interface {
+type DraftLike interface {
 	// Principal Methods
-	GetClass() DocumentClassLike
+	GetClass() DraftClassLike
 	AsString() string
 
 	// Attribute Methods

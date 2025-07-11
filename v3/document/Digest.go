@@ -61,9 +61,9 @@ func (c *digestClass_) DigestFromString(
 		}
 	}()
 	var document = bal.ParseSource(source)
-	var algorithm = DocumentClass().ExtractAlgorithm(document)
+	var algorithm = DraftClass().ExtractAlgorithm(document)
 	var base64 = fra.BinaryFromString(
-		DocumentClass().ExtractAttribute("$base64", document),
+		DraftClass().ExtractAttribute("$base64", document),
 	)
 	return c.Digest(algorithm, base64)
 }

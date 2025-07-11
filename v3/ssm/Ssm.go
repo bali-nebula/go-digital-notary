@@ -163,7 +163,7 @@ func (v *ssm_) IsValid(
 func (v *ssm_) extractAttributes(
 	document bal.DocumentLike,
 ) {
-	v.tag_ = doc.DocumentClass().ExtractAttribute("$tag", document)
+	v.tag_ = doc.DraftClass().ExtractAttribute("$tag", document)
 	v.publicKey_ = v.extractKey("$publicKey", document)
 	v.privateKey_ = v.extractKey("$privateKey", document)
 	v.previousKey_ = v.extractKey("$previousKey", document)
@@ -171,7 +171,7 @@ func (v *ssm_) extractAttributes(
 	v.controller_.SetState(state)
 }
 
-func (v *ssm_) extractDocument() bal.DocumentLike {
+func (v *ssm_) extractDraft() bal.DocumentLike {
 	var tag = v.tag_
 	var state = v.getState()
 	var publicKey = fra.Binary(v.publicKey_).AsString()
@@ -196,8 +196,7 @@ func (v *ssm_) extractKey(
 	name string,
 	document bal.DocumentLike,
 ) []byte {
-	var documentClass = doc.DocumentClass()
-	var key = documentClass.ExtractAttribute(name, document)
+	var key = doc.DraftClass().ExtractAttribute(name, document)
 	if key == "none" {
 		return nil
 	}
@@ -207,9 +206,8 @@ func (v *ssm_) extractKey(
 func (v *ssm_) extractState(
 	document bal.DocumentLike,
 ) fra.State {
-	var documentClass = doc.DocumentClass()
 	var state fra.State
-	var attribute = documentClass.ExtractAttribute("$state", document)
+	var attribute = doc.DraftClass().ExtractAttribute("$state", document)
 	switch attribute {
 	case "$Keyless":
 		state = ssmClass().keyless_
@@ -262,8 +260,8 @@ func (v *ssm_) updateConfiguration() {
 	if v.controller_.GetState() == "$Invalid" {
 		panic("Invalid State")
 	}
-	var document = v.extractDocument()
-	var source = bal.FormatDocument(document)
+	var draft = v.extractDraft()
+	var source = bal.FormatDocument(draft)
 	var filename = v.directory_ + v.filename_
 	uti.WriteFile(filename, source)
 }

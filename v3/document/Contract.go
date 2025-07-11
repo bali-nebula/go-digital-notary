@@ -30,12 +30,12 @@ func ContractClass() ContractClassLike {
 // Constructor Methods
 
 func (c *contractClass_) Contract(
-	document DocumentLike,
+	draft DraftLike,
 	account fra.TagLike,
 	certificate CitationLike,
 ) ContractLike {
-	if uti.IsUndefined(document) {
-		panic("The \"document\" attribute is required by this class.")
+	if uti.IsUndefined(draft) {
+		panic("The \"draft\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(account) {
 		panic("The \"account\" attribute is required by this class.")
@@ -45,7 +45,7 @@ func (c *contractClass_) Contract(
 	}
 	var instance = &contract_{
 		// Initialize the instance attributes.
-		document_:    document,
+		draft_:       draft,
 		account_:     account,
 		certificate_: certificate,
 	}
@@ -67,11 +67,11 @@ func (c *contractClass_) ContractFromString(
 	}()
 	var document = bal.ParseSource(source)
 	var account = fra.TagFromString(
-		DocumentClass().ExtractAttribute("$account", document),
+		DraftClass().ExtractAttribute("$account", document),
 	)
-	var certificate = DocumentClass().ExtractCertificate(document)
-	var signature = DocumentClass().ExtractSignature(document)
-	var component = DocumentClass().ExtractDocument(document)
+	var certificate = DraftClass().ExtractCertificate(document)
+	var signature = DraftClass().ExtractSignature(document)
+	var component = DraftClass().ExtractDraft(document)
 	var contract = c.Contract(
 		component,
 		account,
@@ -96,7 +96,7 @@ func (v *contract_) GetClass() ContractClassLike {
 func (v *contract_) AsString() string {
 	var string_ = `[
 `
-	string_ += `    $document: ` + v.GetDocument().AsString()
+	string_ += `    $draft: ` + v.GetDraft().AsString()
 	string_ += `    $account: ` + v.GetAccount().AsString()
 	string_ += `    $certificate: ` + v.GetCertificate().AsString()
 	if uti.IsDefined(v.signature_) {
@@ -111,8 +111,8 @@ func (v *contract_) AsString() string {
 
 // Attribute Methods
 
-func (v *contract_) GetDocument() DocumentLike {
-	return v.document_
+func (v *contract_) GetDraft() DraftLike {
+	return v.draft_
 }
 
 func (v *contract_) GetAccount() fra.TagLike {
@@ -141,7 +141,7 @@ func (v *contract_) SetSignature(
 
 type contract_ struct {
 	// Declare the instance attributes.
-	document_    DocumentLike
+	draft_       DraftLike
 	account_     fra.TagLike
 	certificate_ CitationLike
 	signature_   SignatureLike

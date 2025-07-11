@@ -117,9 +117,9 @@ func (v *notary_) GenerateKey() doc.ContractLike {
 
 	// Digitally notarize the certificate.
 	source = certificate.AsString()
-	var document = doc.DocumentClass().DocumentFromString(source)
+	var draft = doc.DraftClass().DraftFromString(source)
 	var contract = doc.ContractClass().Contract(
-		document,
+		draft,
 		v.account_,
 		citation,
 	)
@@ -184,9 +184,9 @@ func (v *notary_) RefreshKey() doc.ContractLike {
 
 	// Digitally notarize the certificate.
 	source = certificate.AsString()
-	var document = doc.DocumentClass().DocumentFromString(source)
+	var draft = doc.DraftClass().DraftFromString(source)
 	var contract = doc.ContractClass().Contract(
-		document,
+		draft,
 		v.account_,
 		citation,
 	)
@@ -216,7 +216,7 @@ func (v *notary_) GenerateCredential() doc.ContractLike {
 	var version = fra.VersionFromString("v1")
 	var permissions = fra.ResourceFromString("<bali:/permissions/Public:v3>")
 	var previous doc.CitationLike
-	var document = doc.DocumentClass().Document(
+	var draft = doc.DraftClass().Draft(
 		component,
 		type_,
 		tag,
@@ -228,7 +228,7 @@ func (v *notary_) GenerateCredential() doc.ContractLike {
 	// Digitally notarize the credential document.
 	var citation = v.GetCitation()
 	var contract = doc.ContractClass().Contract(
-		document,
+		draft,
 		v.account_,
 		citation,
 	)
@@ -244,13 +244,13 @@ func (v *notary_) GenerateCredential() doc.ContractLike {
 	return contract
 }
 
-func (v *notary_) NotarizeDocument(
-	document doc.DocumentLike,
+func (v *notary_) NotarizeDraft(
+	draft doc.DraftLike,
 ) doc.ContractLike {
-	// Digitally notarize the document.
+	// Digitally notarize the draft document.
 	var citation = v.GetCitation()
 	var contract = doc.ContractClass().Contract(
-		document,
+		draft,
 		v.account_,
 		citation,
 	)
@@ -292,13 +292,13 @@ func (v *notary_) SignatureMatches(
 	return v.ssm_.IsValid(keyBytes, signatureBytes, sourceBytes)
 }
 
-func (v *notary_) CiteDocument(
-	document doc.DocumentLike,
+func (v *notary_) CiteDraft(
+	draft doc.DraftLike,
 ) doc.CitationLike {
-	var tag = document.GetTag()
-	var version = document.GetVersion()
+	var tag = draft.GetTag()
+	var version = draft.GetVersion()
 	var algorithm = fra.QuoteFromString(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
-	var source = document.AsString()
+	var source = draft.AsString()
 	var bytes = []byte(source)
 	var base64 = fra.Binary(v.ssm_.DigestBytes(bytes))
 	var digest = doc.DigestClass().Digest(
@@ -315,11 +315,11 @@ func (v *notary_) CiteDocument(
 
 func (v *notary_) CitationMatches(
 	citation doc.CitationLike,
-	document doc.DocumentLike,
+	draft doc.DraftLike,
 ) bool {
-	// Compare the citation digest with a digest of the record.
+	// Compare the citation digest with a digest of the draft document.
 	var algorithm = fra.QuoteFromString(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
-	var source = document.AsString()
+	var source = draft.AsString()
 	var bytes = []byte(source)
 	var base64 = fra.Binary(v.ssm_.DigestBytes(bytes))
 	if algorithm.AsString() != citation.GetDigest().GetAlgorithm().AsString() {

@@ -23,20 +23,20 @@ import (
 
 // Access Function
 
-func DocumentClass() DocumentClassLike {
-	return documentClass()
+func DraftClass() DraftClassLike {
+	return draftClass()
 }
 
 // Constructor Methods
 
-func (c *documentClass_) Document(
+func (c *draftClass_) Draft(
 	component bal.ComponentLike,
 	type_ fra.ResourceLike,
 	tag fra.TagLike,
 	version fra.VersionLike,
 	permissions fra.ResourceLike,
 	previous CitationLike,
-) DocumentLike {
+) DraftLike {
 	if uti.IsUndefined(component) {
 		panic("The \"component\" attribute is required by this class.")
 	}
@@ -52,7 +52,7 @@ func (c *documentClass_) Document(
 	if uti.IsUndefined(permissions) {
 		panic("The \"permissions\" attribute is required by this class.")
 	}
-	var instance = &document_{
+	var instance = &draft_{
 		// Initialize the instance attributes.
 		component_:   component,
 		type_:        type_,
@@ -64,27 +64,27 @@ func (c *documentClass_) Document(
 	return instance
 }
 
-func (c *documentClass_) DocumentFromString(
+func (c *draftClass_) DraftFromString(
 	source string,
-) DocumentLike {
+) DraftLike {
 	defer func() {
 		if e := recover(); e != nil {
 			var message = fmt.Sprintf(
-				"The following invalid document was passed: %s\n%v",
+				"The following invalid draft document was passed: %s\n%v",
 				source,
 				e,
 			)
 			panic(message)
 		}
 	}()
-	var document = bal.ParseSource(source)
-	var component = document.GetComponent()
-	var type_ = c.ExtractType(document)
-	var tag = c.ExtractTag(document)
-	var version = c.ExtractVersion(document)
-	var permissions = c.ExtractPermissions(document)
-	var previous = c.ExtractPrevious(document)
-	return c.Document(
+	var draft = bal.ParseSource(source)
+	var component = draft.GetComponent()
+	var type_ = c.ExtractType(draft)
+	var tag = c.ExtractTag(draft)
+	var version = c.ExtractVersion(draft)
+	var permissions = c.ExtractPermissions(draft)
+	var previous = c.ExtractPrevious(draft)
+	return c.Draft(
 		component,
 		type_,
 		tag,
@@ -98,7 +98,7 @@ func (c *documentClass_) DocumentFromString(
 
 // Function Methods
 
-func (c *documentClass_) ExtractAlgorithm(
+func (c *draftClass_) ExtractAlgorithm(
 	document bal.DocumentLike,
 ) fra.QuoteLike {
 	var attribute fra.QuoteLike
@@ -121,7 +121,7 @@ func (c *documentClass_) ExtractAlgorithm(
 	return attribute
 }
 
-func (c *documentClass_) ExtractAttribute(
+func (c *draftClass_) ExtractAttribute(
 	name string,
 	document bal.DocumentLike,
 ) string {
@@ -144,7 +144,7 @@ func (c *documentClass_) ExtractAttribute(
 	return attribute
 }
 
-func (c *documentClass_) ExtractCertificate(
+func (c *draftClass_) ExtractCertificate(
 	document bal.DocumentLike,
 ) CitationLike {
 	var certificate CitationLike
@@ -166,7 +166,7 @@ func (c *documentClass_) ExtractCertificate(
 	return certificate
 }
 
-func (c *documentClass_) ExtractDigest(
+func (c *draftClass_) ExtractDigest(
 	document bal.DocumentLike,
 ) DigestLike {
 	var digest DigestLike
@@ -180,18 +180,18 @@ func (c *documentClass_) ExtractDigest(
 		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
 		var symbol = element.GetAny().(string)
 		if symbol == "$digest" {
-			var string_ = bal.FormatDocument(association.GetDocument())
-			digest = DigestClass().DigestFromString(string_)
+			var source = bal.FormatDocument(association.GetDocument())
+			digest = DigestClass().DigestFromString(source)
 			break
 		}
 	}
 	return digest
 }
 
-func (c *documentClass_) ExtractDocument(
+func (c *draftClass_) ExtractDraft(
 	document bal.DocumentLike,
-) DocumentLike {
-	var result DocumentLike
+) DraftLike {
+	var draft DraftLike
 	var component = document.GetComponent()
 	var collection = component.GetAny().(bal.CollectionLike)
 	var attributes = collection.GetAny().(bal.AttributesLike)
@@ -201,16 +201,16 @@ func (c *documentClass_) ExtractDocument(
 		var association = iterator.GetNext()
 		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
 		var symbol = element.GetAny().(string)
-		if symbol == "$document" {
-			var string_ = bal.FormatDocument(association.GetDocument())
-			result = c.DocumentFromString(string_)
+		if symbol == "$draft" {
+			var source = bal.FormatDocument(association.GetDocument())
+			draft = c.DraftFromString(source)
 			break
 		}
 	}
-	return result
+	return draft
 }
 
-func (c *documentClass_) ExtractPermissions(
+func (c *draftClass_) ExtractPermissions(
 	document bal.DocumentLike,
 ) fra.ResourceLike {
 	var permissions fra.ResourceLike
@@ -230,7 +230,7 @@ func (c *documentClass_) ExtractPermissions(
 	return permissions
 }
 
-func (c *documentClass_) ExtractPrevious(
+func (c *draftClass_) ExtractPrevious(
 	document bal.DocumentLike,
 ) CitationLike {
 	var previous CitationLike
@@ -242,15 +242,15 @@ func (c *documentClass_) ExtractPrevious(
 		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
 		var symbol = element.GetAny().(string)
 		if symbol == "$previous" {
-			var string_ = bal.FormatDocument(association.GetDocument())
-			previous = CitationClass().CitationFromString(string_)
+			var source = bal.FormatDocument(association.GetDocument())
+			previous = CitationClass().CitationFromString(source)
 			break
 		}
 	}
 	return previous
 }
 
-func (c *documentClass_) ExtractSignature(
+func (c *draftClass_) ExtractSignature(
 	document bal.DocumentLike,
 ) SignatureLike {
 	var signature SignatureLike
@@ -264,15 +264,15 @@ func (c *documentClass_) ExtractSignature(
 		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
 		var symbol = element.GetAny().(string)
 		if symbol == "$signature" {
-			var string_ = bal.FormatDocument(association.GetDocument())
-			signature = SignatureClass().SignatureFromString(string_)
+			var source = bal.FormatDocument(association.GetDocument())
+			signature = SignatureClass().SignatureFromString(source)
 			break
 		}
 	}
 	return signature
 }
 
-func (c *documentClass_) ExtractTag(
+func (c *draftClass_) ExtractTag(
 	document bal.DocumentLike,
 ) fra.TagLike {
 	var tag fra.TagLike
@@ -292,7 +292,7 @@ func (c *documentClass_) ExtractTag(
 	return tag
 }
 
-func (c *documentClass_) ExtractType(
+func (c *draftClass_) ExtractType(
 	document bal.DocumentLike,
 ) fra.ResourceLike {
 	var type_ fra.ResourceLike
@@ -312,7 +312,7 @@ func (c *documentClass_) ExtractType(
 	return type_
 }
 
-func (c *documentClass_) ExtractVersion(
+func (c *draftClass_) ExtractVersion(
 	document bal.DocumentLike,
 ) fra.VersionLike {
 	var version fra.VersionLike
@@ -336,13 +336,13 @@ func (c *documentClass_) ExtractVersion(
 
 // Principal Methods
 
-func (v *document_) GetClass() DocumentClassLike {
-	return documentClass()
+func (v *draft_) GetClass() DraftClassLike {
+	return draftClass()
 }
 
-func (v *document_) AsString() string {
-	var document = bal.Document(v.GetComponent(), nil, "")
-	var string_ = bal.FormatDocument(document)
+func (v *draft_) AsString() string {
+	var draft = bal.Document(v.GetComponent(), nil, "")
+	var string_ = bal.FormatDocument(draft)
 	string_ = string_[:len(string_)-1] // Remove the trailing newline.
 	string_ += `(
 `
@@ -362,29 +362,29 @@ func (v *document_) AsString() string {
 
 // Attribute Methods
 
-func (v *document_) GetComponent() bal.ComponentLike {
+func (v *draft_) GetComponent() bal.ComponentLike {
 	return v.component_
 }
 
 // Parameterized Methods
 
-func (v *document_) GetType() fra.ResourceLike {
+func (v *draft_) GetType() fra.ResourceLike {
 	return v.type_
 }
 
-func (v *document_) GetTag() fra.TagLike {
+func (v *draft_) GetTag() fra.TagLike {
 	return v.tag_
 }
 
-func (v *document_) GetVersion() fra.VersionLike {
+func (v *draft_) GetVersion() fra.VersionLike {
 	return v.version_
 }
 
-func (v *document_) GetPermissions() fra.ResourceLike {
+func (v *draft_) GetPermissions() fra.ResourceLike {
 	return v.permissions_
 }
 
-func (v *document_) GetOptionalPrevious() CitationLike {
+func (v *draft_) GetOptionalPrevious() CitationLike {
 	return v.previous_
 }
 
@@ -394,7 +394,7 @@ func (v *document_) GetOptionalPrevious() CitationLike {
 
 // Instance Structure
 
-type document_ struct {
+type draft_ struct {
 	// Declare the instance attributes.
 	component_   bal.ComponentLike
 	type_        fra.ResourceLike
@@ -406,16 +406,16 @@ type document_ struct {
 
 // Class Structure
 
-type documentClass_ struct {
+type draftClass_ struct {
 	// Declare the class constants.
 }
 
 // Class Reference
 
-func documentClass() *documentClass_ {
-	return documentClassReference_
+func draftClass() *draftClass_ {
+	return draftClassReference_
 }
 
-var documentClassReference_ = &documentClass_{
+var draftClassReference_ = &draftClass_{
 	// Initialize the class constants.
 }

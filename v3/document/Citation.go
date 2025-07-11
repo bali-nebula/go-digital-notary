@@ -67,12 +67,12 @@ func (c *citationClass_) CitationFromString(
 	}()
 	var document = bal.ParseSource(source)
 	var tag = fra.TagFromString(
-		DocumentClass().ExtractAttribute("$tag", document),
+		DraftClass().ExtractAttribute("$tag", document),
 	)
 	var version = fra.VersionFromString(
-		DocumentClass().ExtractAttribute("$version", document),
+		DraftClass().ExtractAttribute("$version", document),
 	)
-	var digest = DocumentClass().ExtractDigest(document)
+	var digest = DraftClass().ExtractDigest(document)
 	return c.Citation(tag, version, digest)
 }
 

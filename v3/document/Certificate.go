@@ -77,9 +77,9 @@ func (c *certificateClass_) CertificateFromString(
 		}
 	}()
 	var document = bal.ParseSource(source)
-	var algorithm = DocumentClass().ExtractAlgorithm(document)
+	var algorithm = DraftClass().ExtractAlgorithm(document)
 	var publicKey = fra.BinaryFromString(
-		DocumentClass().ExtractAttribute("$publicKey", document),
+		DraftClass().ExtractAttribute("$publicKey", document),
 	)
 
 	var parameters = document.GetOptionalParameters() // Not optional here.

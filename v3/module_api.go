@@ -47,7 +47,7 @@ type (
 	CitationClassLike    = doc.CitationClassLike
 	ContractClassLike    = doc.ContractClassLike
 	DigestClassLike      = doc.DigestClassLike
-	DocumentClassLike    = doc.DocumentClassLike
+	DraftClassLike       = doc.DraftClassLike
 	SignatureClassLike   = doc.SignatureClassLike
 )
 
@@ -56,7 +56,7 @@ type (
 	CitationLike    = doc.CitationLike
 	ContractLike    = doc.ContractLike
 	DigestLike      = doc.DigestLike
-	DocumentLike    = doc.DocumentLike
+	DraftLike       = doc.DraftLike
 	SignatureLike   = doc.SignatureLike
 )
 
@@ -150,12 +150,12 @@ func ContractClass() ContractClassLike {
 }
 
 func Contract(
-	document doc.DocumentLike,
+	draft doc.DraftLike,
 	account fra.TagLike,
 	certificate doc.CitationLike,
 ) ContractLike {
 	return ContractClass().Contract(
-		document,
+		draft,
 		account,
 		certificate,
 	)
@@ -191,19 +191,19 @@ func DigestFromString(
 	)
 }
 
-func DocumentClass() DocumentClassLike {
-	return doc.DocumentClass()
+func DraftClass() DraftClassLike {
+	return doc.DraftClass()
 }
 
-func Document(
+func Draft(
 	component bal.ComponentLike,
 	type_ fra.ResourceLike,
 	tag fra.TagLike,
 	version fra.VersionLike,
 	permissions fra.ResourceLike,
 	previous doc.CitationLike,
-) DocumentLike {
-	return DocumentClass().Document(
+) DraftLike {
+	return DraftClass().Draft(
 		component,
 		type_,
 		tag,
@@ -213,10 +213,10 @@ func Document(
 	)
 }
 
-func DocumentFromString(
+func DraftFromString(
 	source string,
-) DocumentLike {
-	return DocumentClass().DocumentFromString(
+) DraftLike {
+	return DraftClass().DraftFromString(
 		source,
 	)
 }
