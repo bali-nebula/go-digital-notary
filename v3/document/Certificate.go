@@ -48,8 +48,8 @@ func (c *certificateClass_) Certificate(
 	if uti.IsUndefined(version) {
 		panic("The \"version\" attribute is required by this class.")
 	}
-	var type_ = fra.Resource("<bali:/types/documents/Certificate:v3>")
-	var permissions = fra.Resource("<bali:/permissions/Public:v3>")
+	var type_ = fra.ResourceFromString("<bali:/types/documents/Certificate:v3>")
+	var permissions = fra.ResourceFromString("<bali:/permissions/Public:v3>")
 	var instance = &certificate_{
 		// Initialize the instance attributes.
 		algorithm_:   algorithm,

@@ -223,7 +223,7 @@ func (c *documentClass_) ExtractPermissions(
 		var symbol = element.GetAny().(string)
 		if symbol == "$permissions" {
 			var source = bal.FormatDocument(association.GetDocument())
-			permissions = fra.Resource(source)
+			permissions = fra.ResourceFromString(source)
 			break
 		}
 	}
@@ -305,7 +305,7 @@ func (c *documentClass_) ExtractType(
 		var symbol = element.GetAny().(string)
 		if symbol == "$type" {
 			var source = bal.FormatDocument(association.GetDocument())
-			type_ = fra.Resource(source)
+			type_ = fra.ResourceFromString(source)
 			break
 		}
 	}
