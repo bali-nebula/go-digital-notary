@@ -25,16 +25,16 @@ import (
 
 // Access Function
 
-func NotaryClass() NotaryClassLike {
+func DigitalNotaryClass() DigitalNotaryClassLike {
 	return notaryClass()
 }
 
 // Constructor Methods
 
-func (c *notaryClass_) Notary(
+func (c *notaryClass_) DigitalNotary(
 	ssm Trusted,
 	hsm Hardened,
-) NotaryLike {
+) DigitalNotaryLike {
 	if uti.IsUndefined(ssm) {
 		panic("The \"ssm\" attribute is required by this class.")
 	}
@@ -75,20 +75,15 @@ func (c *notaryClass_) Notary(
 
 // Principal Methods
 
-func (v *notary_) GetClass() NotaryClassLike {
+func (v *notary_) GetClass() DigitalNotaryClassLike {
 	return notaryClass()
 }
 
 func (v *notary_) GenerateKey() doc.ContractLike {
-	defer func() {
-		if e := recover(); e != nil {
-			var message = fmt.Sprintf(
-				"The following error occurred while attempting to generate a new private key:\n    %v",
-				e,
-			)
-			panic(message)
-		}
-	}()
+	// Check for any errors at the end.
+	defer errorCheck(
+		"An error occurred while attempting to generate a new private key",
+	)
 
 	// Create a new certificate.
 	var algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
@@ -146,15 +141,10 @@ func (v *notary_) GenerateKey() doc.ContractLike {
 }
 
 func (v *notary_) GetCitation() doc.CitationLike {
-	defer func() {
-		if e := recover(); e != nil {
-			var message = fmt.Sprintf(
-				"The following error occurred while attempting to retrieve the public certificate citation:\n    %v",
-				e,
-			)
-			panic(message)
-		}
-	}()
+	// Check for any errors at the end.
+	defer errorCheck(
+		"An error occurred while attempting to retrieve the public certificate",
+	)
 
 	if !uti.PathExists(v.filename_) {
 		panic("The digital notary has not yet been initialized.")
@@ -165,15 +155,10 @@ func (v *notary_) GetCitation() doc.CitationLike {
 }
 
 func (v *notary_) RefreshKey() doc.ContractLike {
-	defer func() {
-		if e := recover(); e != nil {
-			var message = fmt.Sprintf(
-				"The following error occurred while attempting to refresh the private key:\n    %v",
-				e,
-			)
-			panic(message)
-		}
-	}()
+	// Check for any errors at the end.
+	defer errorCheck(
+		"An error occurred while attempting to refresh the private key",
+	)
 
 	// Generate a new key pair.
 	var algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
@@ -233,20 +218,20 @@ func (v *notary_) RefreshKey() doc.ContractLike {
 }
 
 func (v *notary_) ForgetKey() {
+	// Check for any errors at the end.
+	defer errorCheck(
+		"An error occurred while attempting to forget the private key",
+	)
+
 	v.hsm_.EraseKeys()
 	uti.RemovePath(v.filename_)
 }
 
 func (v *notary_) GenerateCredential() doc.ContractLike {
-	defer func() {
-		if e := recover(); e != nil {
-			var message = fmt.Sprintf(
-				"The following error occurred while attempting to generate a security credential:\n    %v",
-				e,
-			)
-			panic(message)
-		}
-	}()
+	// Check for any errors at the end.
+	defer errorCheck(
+		"An error occurred while attempting to generate a security credential",
+	)
 
 	// Create the credential document including timestamp component.
 	var timestamp = fra.Now().AsString()
@@ -287,15 +272,10 @@ func (v *notary_) GenerateCredential() doc.ContractLike {
 func (v *notary_) NotarizeDraft(
 	draft doc.DraftLike,
 ) doc.ContractLike {
-	defer func() {
-		if e := recover(); e != nil {
-			var message = fmt.Sprintf(
-				"The following error occurred while attempting to notarize a draft document:\n    %v",
-				e,
-			)
-			panic(message)
-		}
-	}()
+	// Check for any errors at the end.
+	defer errorCheck(
+		"An error occurred while attempting to notarize a draft document",
+	)
 
 	// Digitally notarize the draft document.
 	var citation = v.GetCitation()
@@ -320,15 +300,10 @@ func (v *notary_) SignatureMatches(
 	contract doc.ContractLike,
 	certificate doc.CertificateLike,
 ) bool {
-	defer func() {
-		if e := recover(); e != nil {
-			var message = fmt.Sprintf(
-				"The following error occurred while attempting to match a contract signature:\n    %v",
-				e,
-			)
-			panic(message)
-		}
-	}()
+	// Check for any errors at the end.
+	defer errorCheck(
+		"An error occurred while attempting to match a contract signature",
+	)
 
 	// Validate the signature on the contract using the public certificate.
 	var certificateAlgorithm = string(certificate.GetAlgorithm().AsIntrinsic())
@@ -355,15 +330,10 @@ func (v *notary_) SignatureMatches(
 func (v *notary_) CiteDraft(
 	draft doc.DraftLike,
 ) doc.CitationLike {
-	defer func() {
-		if e := recover(); e != nil {
-			var message = fmt.Sprintf(
-				"The following error occurred while attempting to create a citation to a draft document:\n    %v",
-				e,
-			)
-			panic(message)
-		}
-	}()
+	// Check for any errors at the end.
+	defer errorCheck(
+		"An error occurred while attempting to create a citation to a draft document",
+	)
 
 	var tag = draft.GetTag()
 	var version = draft.GetVersion()
@@ -387,15 +357,10 @@ func (v *notary_) CitationMatches(
 	citation doc.CitationLike,
 	draft doc.DraftLike,
 ) bool {
-	defer func() {
-		if e := recover(); e != nil {
-			var message = fmt.Sprintf(
-				"The following error occurred while attempting to verify a document citation:\n    %v",
-				e,
-			)
-			panic(message)
-		}
-	}()
+	// Check for any errors at the end.
+	defer errorCheck(
+		"An error occurred while attempting to verify a document citation",
+	)
 
 	// Compare the citation digest with a digest of the draft document.
 	var algorithm = fra.QuoteFromString(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
@@ -416,6 +381,19 @@ func (v *notary_) CitationMatches(
 // PROTECTED INTERFACE
 
 // Private Methods
+
+func errorCheck(
+	message string,
+) {
+	if e := recover(); e != nil {
+		message = fmt.Sprintf(
+			"DigitalNotary: %s:\n    %v",
+			message,
+			e,
+		)
+		panic(message)
+	}
+}
 
 // Instance Structure
 

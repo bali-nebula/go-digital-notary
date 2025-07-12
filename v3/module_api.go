@@ -64,14 +64,14 @@ type (
 	Parameterized = doc.Parameterized
 )
 
-// Notary
+// DigitalNotary
 
 type (
-	NotaryClassLike = not.NotaryClassLike
+	DigitalNotaryClassLike = not.DigitalNotaryClassLike
 )
 
 type (
-	NotaryLike = not.NotaryLike
+	DigitalNotaryLike = not.DigitalNotaryLike
 )
 
 type (
@@ -243,17 +243,17 @@ func SignatureFromString(
 	)
 }
 
-// Notary
+// DigitalNotary
 
-func NotaryClass() NotaryClassLike {
-	return not.NotaryClass()
+func DigitalNotaryClass() DigitalNotaryClassLike {
+	return not.DigitalNotaryClass()
 }
 
-func Notary(
+func DigitalNotary(
 	ssm not.Trusted,
 	hsm not.Hardened,
-) NotaryLike {
-	return NotaryClass().Notary(
+) DigitalNotaryLike {
+	return DigitalNotaryClass().DigitalNotary(
 		ssm,
 		hsm,
 	)

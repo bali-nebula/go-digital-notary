@@ -66,7 +66,7 @@ func TestParsingContracts(t *tes.T) {
 
 // Create the security module and digital notary.
 var module = not.Ssm()
-var notary = not.Notary(module, module)
+var notary = not.DigitalNotary(module, module)
 
 func TestSSM(t *tes.T) {
 	var bytes = []byte{0x0, 0x1, 0x2, 0x3, 0x4}
@@ -74,6 +74,7 @@ func TestSSM(t *tes.T) {
 	ass.Equal(t, "ED25519", module.GetSignatureAlgorithm())
 	ass.Equal(t, 64, len(module.DigestBytes(bytes)))
 
+	module.EraseKeys()
 	var publicKey = module.GenerateKeys()
 
 	var signature = module.SignBytes(bytes)
@@ -86,12 +87,12 @@ func TestSSM(t *tes.T) {
 	module.EraseKeys()
 }
 
-func TestNotaryInitialization(t *tes.T) {
+func TestDigitalNotaryInitialization(t *tes.T) {
 	// Should not be able to retrieve the certificate citation without any keys.
 	defer func() {
 		if e := recover(); e != nil {
 			var message = e.(string)
-			ass.Equal(t, "The following error occurred while attempting to retrieve the public certificate citation:\n    The digital notary has not yet been initialized.", message)
+			ass.Equal(t, "DigitalNotary: An error occurred while attempting to retrieve the public certificate:\n    The digital notary has not yet been initialized.", message)
 		} else {
 			ass.Fail(t, "Test should result in recovered panic.")
 		}
@@ -101,8 +102,9 @@ func TestNotaryInitialization(t *tes.T) {
 	notary.GetCitation()
 }
 
-func TestNotaryGenerateKey(t *tes.T) {
+func TestDigitalNotaryGenerateKey(t *tes.T) {
 	// Generate a new public-private key pair.
+	notary.ForgetKey()
 	notary.GenerateKey()
 
 	// Should not be able to do this twice.
@@ -111,7 +113,7 @@ func TestNotaryGenerateKey(t *tes.T) {
 			var message = e.(string)
 			ass.Equal(
 				t,
-				"The following error occurred while attempting to generate a new private key:\n    Attempted to transition from state \"$LoneKey\" to an invalid state on event \"$GenerateKeys\".",
+				"DigitalNotary: An error occurred while attempting to generate a new private key:\n    Ssm: An error occurred while attempting to generate new keys:\n        Attempted to transition from state \"$LoneKey\" to an invalid state on event \"$GenerateKeys\".",
 				message,
 			)
 		} else {
@@ -121,7 +123,7 @@ func TestNotaryGenerateKey(t *tes.T) {
 	notary.GenerateKey()
 }
 
-func TestNotaryLifecycle(t *tes.T) {
+func TestDigitalNotaryLifecycle(t *tes.T) {
 	// Generate and validate a new public-private key pair.
 	notary.ForgetKey()
 	var contractV1 = notary.GenerateKey()
@@ -168,7 +170,7 @@ func TestNotaryLifecycle(t *tes.T) {
 
 	// Pickup where we left off with a new security module and digital notary.
 	module = not.Ssm()
-	notary = not.Notary(module, module)
+	notary = not.DigitalNotary(module, module)
 
 	// Refresh and validate the public-private key pair.
 	var contractV2 = notary.RefreshKey()

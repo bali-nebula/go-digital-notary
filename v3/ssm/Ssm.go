@@ -81,16 +81,17 @@ func (v *ssm_) GetSignatureAlgorithm() string {
 }
 
 func (v *ssm_) GenerateKeys() []byte {
+	// Check for any errors at the end.
+	defer errorCheck(
+		"An error occurred while attempting to generate new keys",
+	)
+
 	fmt.Println("WARNING: Using a SOFTWARE security module to generate keys.")
 	var err error
 	v.controller_.ProcessEvent(ssmClass().generateKeys_)
 	v.publicKey_, v.privateKey_, err = sig.GenerateKey(nil)
 	if err != nil {
-		var message = fmt.Sprintf(
-			"Could not generate a new public-private keypair: %v.",
-			err,
-		)
-		panic(message)
+		panic(err)
 	}
 	v.updateConfiguration()
 	return v.publicKey_
@@ -99,6 +100,11 @@ func (v *ssm_) GenerateKeys() []byte {
 func (v *ssm_) SignBytes(
 	bytes []byte,
 ) []byte {
+	// Check for any errors at the end.
+	defer errorCheck(
+		"An error occurred while attempting to sign bytes",
+	)
+
 	fmt.Println("WARNING: Using a SOFTWARE security module to sign bytes.")
 	v.controller_.ProcessEvent(ssmClass().signBytes_)
 	var privateKey = v.privateKey_
@@ -113,23 +119,29 @@ func (v *ssm_) SignBytes(
 }
 
 func (v *ssm_) RotateKeys() []byte {
+	// Check for any errors at the end.
+	defer errorCheck(
+		"An error occurred while attempting to rotate keys",
+	)
+
 	var err error
 	fmt.Println("WARNING: Using a SOFTWARE security module to rotate keys.")
 	v.controller_.ProcessEvent(ssmClass().rotateKeys_)
 	v.previousKey_ = v.privateKey_
 	v.publicKey_, v.privateKey_, err = sig.GenerateKey(nil)
 	if err != nil {
-		var message = fmt.Sprintf(
-			"Could not rotate the public-private keypair: %v.",
-			err,
-		)
-		panic(message)
+		panic(err)
 	}
 	v.updateConfiguration()
 	return v.publicKey_
 }
 
 func (v *ssm_) EraseKeys() {
+	// Check for any errors at the end.
+	defer errorCheck(
+		"An error occurred while attempting to erase the keys",
+	)
+
 	fmt.Println("WARNING: Using a SOFTWARE security module to erase keys.")
 	v.createConfiguration()
 }
@@ -143,6 +155,11 @@ func (v *ssm_) GetDigestAlgorithm() string {
 func (v *ssm_) DigestBytes(
 	bytes []byte,
 ) []byte {
+	// Check for any errors at the end.
+	defer errorCheck(
+		"An error occurred while attempting to digest bytes",
+	)
+
 	var array = dig.Sum512(bytes)
 	var digest = array[:] // Convert the [64]byte array to a slice.
 	return digest
@@ -153,12 +170,30 @@ func (v *ssm_) IsValid(
 	signature []byte,
 	bytes []byte,
 ) bool {
+	// Check for any errors at the end.
+	defer errorCheck(
+		"An error occurred while attempting to verify bytes signature",
+	)
+
 	return sig.Verify(sig.PublicKey(key), bytes, signature)
 }
 
 // PROTECTED INTERFACE
 
 // Private Methods
+
+func errorCheck(
+	message string,
+) {
+	if e := recover(); e != nil {
+		message = fmt.Sprintf(
+			"Ssm: %s:\n        %v",
+			message,
+			e,
+		)
+		panic(message)
+	}
+}
 
 func (v *ssm_) extractAttributes(
 	document bal.DocumentLike,

@@ -39,32 +39,32 @@ import (
 // CLASS DECLARATIONS
 
 /*
-NotaryClassLike is a class interface that declares the complete set of class
-constructors, constants and functions that must be supported by each concrete
-notary-like class.
+DigitalNotaryClassLike is a class interface that declares the complete set of
+class constructors, constants and functions that must be supported by each
+concrete digital-notary-like class.
 
-A notary may be used to digitally sign digital draft documents using a hardware
-security module (HSM). It may also be used to validate the signature on a
-contract that was signed using this or any other digital notary.
+A digital notary may be used to digitally sign digital draft documents using a
+hardware security module (HSM). It may also be used to validate the signature
+on a contract that was signed using this or any other digital notary.
 */
-type NotaryClassLike interface {
+type DigitalNotaryClassLike interface {
 	// Constructor Methods
-	Notary(
+	DigitalNotary(
 		ssm Trusted,
 		hsm Hardened,
-	) NotaryLike
+	) DigitalNotaryLike
 }
 
 // INSTANCE DECLARATIONS
 
 /*
-NotaryLike is an instance interface that declares the complete set of principal,
-attribute and aspect methods that must be supported by each instance of a
-concrete notary-like class.
+DigitalNotaryLike is an instance interface that declares the complete set of
+principal, attribute and aspect methods that must be supported by each instance
+of a concrete digital-notary-like class.
 */
-type NotaryLike interface {
+type DigitalNotaryLike interface {
 	// Principal Methods
-	GetClass() NotaryClassLike
+	GetClass() DigitalNotaryClassLike
 	GenerateKey() doc.ContractLike
 	GetCitation() doc.CitationLike
 	RefreshKey() doc.ContractLike
