@@ -91,7 +91,7 @@ func TestNotaryInitialization(t *tes.T) {
 	defer func() {
 		if e := recover(); e != nil {
 			var message = e.(string)
-			ass.Equal(t, "The digital notary has not yet been initialized.", message)
+			ass.Equal(t, "The following error occurred while attempting to retrieve the public certificate citation:\n    The digital notary has not yet been initialized.", message)
 		} else {
 			ass.Fail(t, "Test should result in recovered panic.")
 		}
@@ -111,7 +111,7 @@ func TestNotaryGenerateKey(t *tes.T) {
 			var message = e.(string)
 			ass.Equal(
 				t,
-				"Attempted to transition from state \"$LoneKey\" to an invalid state on event \"$GenerateKeys\".",
+				"The following error occurred while attempting to generate a new private key:\n    Attempted to transition from state \"$LoneKey\" to an invalid state on event \"$GenerateKeys\".",
 				message,
 			)
 		} else {

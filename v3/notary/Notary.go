@@ -80,6 +80,16 @@ func (v *notary_) GetClass() NotaryClassLike {
 }
 
 func (v *notary_) GenerateKey() doc.ContractLike {
+	defer func() {
+		if e := recover(); e != nil {
+			var message = fmt.Sprintf(
+				"The following error occurred while attempting to generate a new private key:\n    %v",
+				e,
+			)
+			panic(message)
+		}
+	}()
+
 	// Create a new certificate.
 	var algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var bytes = v.hsm_.GenerateKeys() // Returns the new public key.
@@ -136,6 +146,16 @@ func (v *notary_) GenerateKey() doc.ContractLike {
 }
 
 func (v *notary_) GetCitation() doc.CitationLike {
+	defer func() {
+		if e := recover(); e != nil {
+			var message = fmt.Sprintf(
+				"The following error occurred while attempting to retrieve the public certificate citation:\n    %v",
+				e,
+			)
+			panic(message)
+		}
+	}()
+
 	if !uti.PathExists(v.filename_) {
 		panic("The digital notary has not yet been initialized.")
 	}
@@ -145,6 +165,16 @@ func (v *notary_) GetCitation() doc.CitationLike {
 }
 
 func (v *notary_) RefreshKey() doc.ContractLike {
+	defer func() {
+		if e := recover(); e != nil {
+			var message = fmt.Sprintf(
+				"The following error occurred while attempting to refresh the private key:\n    %v",
+				e,
+			)
+			panic(message)
+		}
+	}()
+
 	// Generate a new key pair.
 	var algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var bytes = v.hsm_.RotateKeys() // Returns the new public key.
@@ -208,6 +238,16 @@ func (v *notary_) ForgetKey() {
 }
 
 func (v *notary_) GenerateCredential() doc.ContractLike {
+	defer func() {
+		if e := recover(); e != nil {
+			var message = fmt.Sprintf(
+				"The following error occurred while attempting to generate a security credential:\n    %v",
+				e,
+			)
+			panic(message)
+		}
+	}()
+
 	// Create the credential document including timestamp component.
 	var timestamp = fra.Now().AsString()
 	var component = bal.Component(bal.Element(timestamp))
@@ -247,6 +287,16 @@ func (v *notary_) GenerateCredential() doc.ContractLike {
 func (v *notary_) NotarizeDraft(
 	draft doc.DraftLike,
 ) doc.ContractLike {
+	defer func() {
+		if e := recover(); e != nil {
+			var message = fmt.Sprintf(
+				"The following error occurred while attempting to notarize a draft document:\n    %v",
+				e,
+			)
+			panic(message)
+		}
+	}()
+
 	// Digitally notarize the draft document.
 	var citation = v.GetCitation()
 	var contract = doc.ContractClass().Contract(
@@ -270,6 +320,16 @@ func (v *notary_) SignatureMatches(
 	contract doc.ContractLike,
 	certificate doc.CertificateLike,
 ) bool {
+	defer func() {
+		if e := recover(); e != nil {
+			var message = fmt.Sprintf(
+				"The following error occurred while attempting to match a contract signature:\n    %v",
+				e,
+			)
+			panic(message)
+		}
+	}()
+
 	// Validate the signature on the contract using the public certificate.
 	var certificateAlgorithm = string(certificate.GetAlgorithm().AsIntrinsic())
 	var ssmAlgorithm = v.ssm_.GetSignatureAlgorithm()
@@ -295,6 +355,16 @@ func (v *notary_) SignatureMatches(
 func (v *notary_) CiteDraft(
 	draft doc.DraftLike,
 ) doc.CitationLike {
+	defer func() {
+		if e := recover(); e != nil {
+			var message = fmt.Sprintf(
+				"The following error occurred while attempting to create a citation to a draft document:\n    %v",
+				e,
+			)
+			panic(message)
+		}
+	}()
+
 	var tag = draft.GetTag()
 	var version = draft.GetVersion()
 	var algorithm = fra.QuoteFromString(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
@@ -317,6 +387,16 @@ func (v *notary_) CitationMatches(
 	citation doc.CitationLike,
 	draft doc.DraftLike,
 ) bool {
+	defer func() {
+		if e := recover(); e != nil {
+			var message = fmt.Sprintf(
+				"The following error occurred while attempting to verify a document citation:\n    %v",
+				e,
+			)
+			panic(message)
+		}
+	}()
+
 	// Compare the citation digest with a digest of the draft document.
 	var algorithm = fra.QuoteFromString(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
 	var source = draft.AsString()
