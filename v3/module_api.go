@@ -265,8 +265,12 @@ func SsmClass() SsmClassLike {
 	return ssm.SsmClass()
 }
 
-func Ssm() SsmLike {
-	return SsmClass().Ssm()
+func Ssm(
+	directory string,
+) SsmLike {
+	return SsmClass().Ssm(
+		directory,
+	)
 }
 
 // GLOBAL FUNCTIONS

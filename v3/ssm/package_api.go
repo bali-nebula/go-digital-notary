@@ -49,7 +49,9 @@ the cloud.
 */
 type SsmClassLike interface {
 	// Constructor Methods
-	Ssm() SsmLike
+	Ssm(
+		directory string,
+	) SsmLike
 }
 
 // INSTANCE DECLARATIONS

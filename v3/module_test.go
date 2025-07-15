@@ -65,7 +65,7 @@ func TestParsingContracts(t *tes.T) {
 }
 
 // Create the security module and digital notary.
-var module = not.Ssm()
+var module = not.Ssm(uti.HomeDirectory())
 var notary = not.DigitalNotary(module, module)
 
 func TestSSM(t *tes.T) {
@@ -169,7 +169,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	)
 
 	// Pickup where we left off with a new security module and digital notary.
-	module = not.Ssm()
+	module = not.Ssm(uti.HomeDirectory())
 	notary = not.DigitalNotary(module, module)
 
 	// Refresh and validate the public-private key pair.

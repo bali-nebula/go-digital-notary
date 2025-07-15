@@ -33,8 +33,9 @@ func SsmClass() SsmClassLike {
 
 // Constructor Methods
 
-func (c *ssmClass_) Ssm() SsmLike {
-	var directory = uti.HomeDirectory()
+func (c *ssmClass_) Ssm(
+	directory string,
+) SsmLike {
 	if !sts.HasSuffix(directory, "/") {
 		directory += "/"
 	}
