@@ -250,10 +250,12 @@ func DigitalNotaryClass() DigitalNotaryClassLike {
 }
 
 func DigitalNotary(
+	directory string,
 	ssm not.Trusted,
 	hsm not.Hardened,
 ) DigitalNotaryLike {
 	return DigitalNotaryClass().DigitalNotary(
+		directory,
 		ssm,
 		hsm,
 	)

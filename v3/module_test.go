@@ -24,7 +24,7 @@ import (
 const directory = "./test/"
 
 func TestParsingCitations(t *tes.T) {
-	var filename = directory + "Citation.bali"
+	var filename = directory + "document/Citation.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var citation = not.CitationFromString(source)
@@ -33,7 +33,7 @@ func TestParsingCitations(t *tes.T) {
 }
 
 func TestParsingCertificates(t *tes.T) {
-	var filename = directory + "Certificate.bali"
+	var filename = directory + "document/Certificate.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var certificate = not.CertificateFromString(source)
@@ -42,7 +42,7 @@ func TestParsingCertificates(t *tes.T) {
 }
 
 func TestParsingDrafts(t *tes.T) {
-	var filename = directory + "Draft.bali"
+	var filename = directory + "document/Draft.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var draft = not.DraftFromString(source)
@@ -56,7 +56,7 @@ func TestParsingDrafts(t *tes.T) {
 }
 
 func TestParsingContracts(t *tes.T) {
-	var filename = directory + "Contract.bali"
+	var filename = directory + "document/Contract.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var contract = not.ContractFromString(source)
@@ -65,8 +65,8 @@ func TestParsingContracts(t *tes.T) {
 }
 
 // Create the security module and digital notary.
-var module = not.Ssm(uti.HomeDirectory())
-var notary = not.DigitalNotary(module, module)
+var module = not.Ssm(directory)
+var notary = not.DigitalNotary(directory, module, module)
 
 func TestSSM(t *tes.T) {
 	var bytes = []byte{0x0, 0x1, 0x2, 0x3, 0x4}
@@ -169,8 +169,8 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	)
 
 	// Pickup where we left off with a new security module and digital notary.
-	module = not.Ssm(uti.HomeDirectory())
-	notary = not.DigitalNotary(module, module)
+	module = not.Ssm(directory)
+	notary = not.DigitalNotary(directory, module, module)
 
 	// Refresh and validate the public-private key pair.
 	var contractV2 = notary.RefreshKey()
@@ -194,7 +194,4 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 			certificateV2,
 		),
 	)
-
-	// Reset the security module and digital notary to an uninitialized state.
-	notary.ForgetKey()
 }

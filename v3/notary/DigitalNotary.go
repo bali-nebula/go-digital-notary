@@ -32,9 +32,13 @@ func DigitalNotaryClass() DigitalNotaryClassLike {
 // Constructor Methods
 
 func (c *notaryClass_) DigitalNotary(
+	directory string,
 	ssm Trusted,
 	hsm Hardened,
 ) DigitalNotaryLike {
+	if uti.IsUndefined(directory) {
+		panic("The \"directory\" attribute is required by this class.")
+	}
 	if uti.IsUndefined(ssm) {
 		panic("The \"ssm\" attribute is required by this class.")
 	}
@@ -43,11 +47,10 @@ func (c *notaryClass_) DigitalNotary(
 	}
 
 	// Initialize the notary attributes.
-	var directory = uti.HomeDirectory()
 	if !sts.HasSuffix(directory, "/") {
 		directory += "/"
 	}
-	directory += ".bali/notary/"
+	directory += "notary/"
 	uti.MakeDirectory(directory)
 	var filename = directory + "Citation.bali"
 	var account = fra.TagFromString(hsm.GetTag())
@@ -59,10 +62,11 @@ func (c *notaryClass_) DigitalNotary(
 	// Create the new notary.
 	var instance = &notary_{
 		// Initialize the instance attributes.
-		filename_: filename,
-		account_:  account,
-		ssm_:      ssm,
-		hsm_:      hsm,
+		directory_: directory,
+		filename_:  filename,
+		account_:   account,
+		ssm_:       ssm,
+		hsm_:       hsm,
 	}
 	return instance
 }
@@ -399,10 +403,11 @@ func errorCheck(
 
 type notary_ struct {
 	// Declare the instance attributes.
-	filename_ string
-	account_  fra.TagLike
-	ssm_      Trusted
-	hsm_      Hardened
+	directory_ string
+	filename_  string
+	account_   fra.TagLike
+	ssm_       Trusted
+	hsm_       Hardened
 }
 
 // Class Structure

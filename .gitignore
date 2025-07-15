@@ -14,5 +14,6 @@
 # Swap files for vi(m)
 *.swp
 
-# Generated examples with embedded timestamps.
-examples/
+# Generated examples with random tags.
+v3/test/notary/*.bali
+v3/test/ssm/*.bali

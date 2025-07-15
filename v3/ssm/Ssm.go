@@ -36,10 +36,13 @@ func SsmClass() SsmClassLike {
 func (c *ssmClass_) Ssm(
 	directory string,
 ) SsmLike {
+	if uti.IsUndefined(directory) {
+		panic("The \"directory\" attribute is required by this class.")
+	}
 	if !sts.HasSuffix(directory, "/") {
 		directory += "/"
 	}
-	directory += ".bali/ssm/"
+	directory += "ssm/"
 	uti.MakeDirectory(directory)
 	var controller = fra.Controller(c.events_, c.transitions_, c.keyless_)
 	var instance = &ssm_{

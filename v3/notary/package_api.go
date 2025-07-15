@@ -50,6 +50,7 @@ on a contract that was signed using this or any other digital notary.
 type DigitalNotaryClassLike interface {
 	// Constructor Methods
 	DigitalNotary(
+		directory string,
 		ssm Trusted,
 		hsm Hardened,
 	) DigitalNotaryLike
