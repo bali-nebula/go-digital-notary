@@ -14,7 +14,7 @@ package document
 
 import (
 	fmt "fmt"
-	bal "github.com/bali-nebula/go-document-notation/v3"
+	not "github.com/bali-nebula/go-document-notation/v3"
 	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
@@ -65,7 +65,7 @@ func (c *citationClass_) CitationFromString(
 			panic(message)
 		}
 	}()
-	var document = bal.ParseSource(source)
+	var document = not.ParseSource(source)
 	var tag = fra.TagFromString(
 		DraftClass().ExtractAttribute("$tag", document),
 	)
@@ -96,8 +96,8 @@ func (v *citation_) AsString() string {
 	string_ += `    $digest: ` + v.GetDigest().AsString()
 	string_ += `]($type: <bali:/types/documents/Citation:v3>)
 `
-	var citation = bal.ParseSource(string_)
-	string_ = bal.FormatDocument(citation)
+	var citation = not.ParseSource(string_)
+	string_ = not.FormatDocument(citation)
 	return string_
 }
 

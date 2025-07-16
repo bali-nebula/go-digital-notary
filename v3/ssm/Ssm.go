@@ -17,7 +17,7 @@ import (
 	dig "crypto/sha512"
 	fmt "fmt"
 	doc "github.com/bali-nebula/go-digital-notary/v3/document"
-	bal "github.com/bali-nebula/go-document-notation/v3"
+	not "github.com/bali-nebula/go-document-notation/v3"
 	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	sts "strings"
@@ -200,7 +200,7 @@ func errorCheck(
 }
 
 func (v *ssm_) extractAttributes(
-	document bal.DocumentLike,
+	document not.DocumentLike,
 ) {
 	v.tag_ = doc.DraftClass().ExtractAttribute("$tag", document)
 	v.publicKey_ = v.extractKey("$publicKey", document)
@@ -210,7 +210,7 @@ func (v *ssm_) extractAttributes(
 	v.controller_.SetState(state)
 }
 
-func (v *ssm_) extractDraft() bal.DocumentLike {
+func (v *ssm_) extractDraft() not.DocumentLike {
 	var tag = v.tag_
 	var state = v.getState()
 	var publicKey = fra.Binary(v.publicKey_).AsString()
@@ -221,7 +221,7 @@ func (v *ssm_) extractDraft() bal.DocumentLike {
 	} else {
 		previousKey = "none"
 	}
-	var document = bal.ParseSource(`[
+	var document = not.ParseSource(`[
     $tag: ` + tag + `
     $state: ` + state + `
     $publicKey: ` + publicKey + `
@@ -233,7 +233,7 @@ func (v *ssm_) extractDraft() bal.DocumentLike {
 
 func (v *ssm_) extractKey(
 	name string,
-	document bal.DocumentLike,
+	document not.DocumentLike,
 ) []byte {
 	var key = doc.DraftClass().ExtractAttribute(name, document)
 	if key == "none" {
@@ -243,7 +243,7 @@ func (v *ssm_) extractKey(
 }
 
 func (v *ssm_) extractState(
-	document bal.DocumentLike,
+	document not.DocumentLike,
 ) fra.State {
 	var state fra.State
 	var attribute = doc.DraftClass().ExtractAttribute("$state", document)
@@ -275,7 +275,7 @@ func (v *ssm_) getState() string {
 
 func (v *ssm_) createConfiguration() {
 	v.tag_ = fra.TagWithSize(20).AsString() // Results in a 32 character tag.
-	var document = bal.ParseSource(`[
+	var document = not.ParseSource(`[
     $tag: ` + v.tag_ + `
     $state: $Keyless
     $publicKey: none
@@ -283,7 +283,7 @@ func (v *ssm_) createConfiguration() {
     $previousKey: none
 ]`)
 	v.extractAttributes(document)
-	var source = bal.FormatDocument(document)
+	var source = not.FormatDocument(document)
 	var filename = v.directory_ + v.filename_
 	uti.WriteFile(filename, source)
 }
@@ -291,7 +291,7 @@ func (v *ssm_) createConfiguration() {
 func (v *ssm_) readConfiguration() {
 	var filename = v.directory_ + v.filename_
 	var source = uti.ReadFile(filename)
-	var document = bal.ParseSource(source)
+	var document = not.ParseSource(source)
 	v.extractAttributes(document)
 }
 
@@ -300,7 +300,7 @@ func (v *ssm_) updateConfiguration() {
 		panic("Invalid State")
 	}
 	var draft = v.extractDraft()
-	var source = bal.FormatDocument(draft)
+	var source = not.FormatDocument(draft)
 	var filename = v.directory_ + v.filename_
 	uti.WriteFile(filename, source)
 }

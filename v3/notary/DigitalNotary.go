@@ -15,7 +15,7 @@ package notary
 import (
 	fmt "fmt"
 	doc "github.com/bali-nebula/go-digital-notary/v3/document"
-	bal "github.com/bali-nebula/go-document-notation/v3"
+	not "github.com/bali-nebula/go-document-notation/v3"
 	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	sts "strings"
@@ -239,7 +239,7 @@ func (v *notary_) GenerateCredential() doc.ContractLike {
 
 	// Create the credential document including timestamp component.
 	var timestamp = fra.Now().AsString()
-	var component = bal.Component(bal.Element(timestamp))
+	var component = not.Component(not.Element(timestamp))
 	var type_ = fra.ResourceFromString("<bali:/types/documents/Credential:v3>")
 	var tag = fra.TagWithSize(20)
 	var version = fra.VersionFromString("v1")

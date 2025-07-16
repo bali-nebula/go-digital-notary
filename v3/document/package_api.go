@@ -29,7 +29,7 @@ on interfaces, not on each other.
 package document
 
 import (
-	bal "github.com/bali-nebula/go-document-notation/v3"
+	not "github.com/bali-nebula/go-document-notation/v3"
 	fra "github.com/craterdog/go-component-framework/v7"
 )
 
@@ -116,7 +116,7 @@ concrete draft-like class.
 type DraftClassLike interface {
 	// Constructor Methods
 	Draft(
-		component bal.ComponentLike,
+		component not.ComponentLike,
 		type_ fra.ResourceLike,
 		tag fra.TagLike,
 		version fra.VersionLike,
@@ -129,38 +129,38 @@ type DraftClassLike interface {
 
 	// Function Methods
 	ExtractAlgorithm(
-		document bal.DocumentLike,
+		document not.DocumentLike,
 	) fra.QuoteLike
 	ExtractAttribute(
 		name string,
-		document bal.DocumentLike,
+		document not.DocumentLike,
 	) string
 	ExtractCertificate(
-		document bal.DocumentLike,
+		document not.DocumentLike,
 	) CitationLike
 	ExtractDigest(
-		document bal.DocumentLike,
+		document not.DocumentLike,
 	) DigestLike
 	ExtractDraft(
-		document bal.DocumentLike,
+		document not.DocumentLike,
 	) DraftLike
 	ExtractPermissions(
-		document bal.DocumentLike,
+		document not.DocumentLike,
 	) fra.ResourceLike
 	ExtractPrevious(
-		document bal.DocumentLike,
+		document not.DocumentLike,
 	) CitationLike
 	ExtractSignature(
-		document bal.DocumentLike,
+		document not.DocumentLike,
 	) SignatureLike
 	ExtractTag(
-		document bal.DocumentLike,
+		document not.DocumentLike,
 	) fra.TagLike
 	ExtractType(
-		document bal.DocumentLike,
+		document not.DocumentLike,
 	) fra.ResourceLike
 	ExtractVersion(
-		document bal.DocumentLike,
+		document not.DocumentLike,
 	) fra.VersionLike
 }
 
@@ -262,7 +262,7 @@ type DraftLike interface {
 	AsString() string
 
 	// Attribute Methods
-	GetComponent() bal.ComponentLike
+	GetComponent() not.ComponentLike
 
 	// Aspect Interfaces
 	Parameterized

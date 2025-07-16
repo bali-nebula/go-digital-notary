@@ -14,7 +14,7 @@ package document
 
 import (
 	fmt "fmt"
-	bal "github.com/bali-nebula/go-document-notation/v3"
+	not "github.com/bali-nebula/go-document-notation/v3"
 	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
@@ -30,7 +30,7 @@ func DraftClass() DraftClassLike {
 // Constructor Methods
 
 func (c *draftClass_) Draft(
-	component bal.ComponentLike,
+	component not.ComponentLike,
 	type_ fra.ResourceLike,
 	tag fra.TagLike,
 	version fra.VersionLike,
@@ -77,7 +77,7 @@ func (c *draftClass_) DraftFromString(
 			panic(message)
 		}
 	}()
-	var draft = bal.ParseSource(source)
+	var draft = not.ParseSource(source)
 	var component = draft.GetComponent()
 	var type_ = c.ExtractType(draft)
 	var tag = c.ExtractTag(draft)
@@ -99,21 +99,21 @@ func (c *draftClass_) DraftFromString(
 // Function Methods
 
 func (c *draftClass_) ExtractAlgorithm(
-	document bal.DocumentLike,
+	document not.DocumentLike,
 ) fra.QuoteLike {
 	var attribute fra.QuoteLike
 	var component = document.GetComponent()
-	var collection = component.GetAny().(bal.CollectionLike)
-	var attributes = collection.GetAny().(bal.AttributesLike)
+	var collection = component.GetAny().(not.CollectionLike)
+	var attributes = collection.GetAny().(not.AttributesLike)
 	var associations = attributes.GetAssociations()
 	var iterator = associations.GetIterator()
 	for iterator.HasNext() {
 		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
 		var symbol = element.GetAny().(string)
 		if symbol == "$algorithm" {
 			attribute = fra.QuoteFromString(
-				bal.FormatDocument(association.GetDocument()),
+				not.FormatDocument(association.GetDocument()),
 			)
 			break
 		}
@@ -123,20 +123,20 @@ func (c *draftClass_) ExtractAlgorithm(
 
 func (c *draftClass_) ExtractAttribute(
 	name string,
-	document bal.DocumentLike,
+	document not.DocumentLike,
 ) string {
 	var attribute string
 	var component = document.GetComponent()
-	var collection = component.GetAny().(bal.CollectionLike)
-	var attributes = collection.GetAny().(bal.AttributesLike)
+	var collection = component.GetAny().(not.CollectionLike)
+	var attributes = collection.GetAny().(not.AttributesLike)
 	var associations = attributes.GetAssociations()
 	var iterator = associations.GetIterator()
 	for iterator.HasNext() {
 		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
 		var symbol = element.GetAny().(string)
 		if symbol == name {
-			attribute = bal.FormatDocument(association.GetDocument())
+			attribute = not.FormatDocument(association.GetDocument())
 			attribute = attribute[:len(attribute)-1] // Remove the trailing newline.
 			break
 		}
@@ -145,20 +145,20 @@ func (c *draftClass_) ExtractAttribute(
 }
 
 func (c *draftClass_) ExtractCertificate(
-	document bal.DocumentLike,
+	document not.DocumentLike,
 ) CitationLike {
 	var certificate CitationLike
 	var component = document.GetComponent()
-	var collection = component.GetAny().(bal.CollectionLike)
-	var attributes = collection.GetAny().(bal.AttributesLike)
+	var collection = component.GetAny().(not.CollectionLike)
+	var attributes = collection.GetAny().(not.AttributesLike)
 	var associations = attributes.GetAssociations()
 	var iterator = associations.GetIterator()
 	for iterator.HasNext() {
 		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
 		var symbol = element.GetAny().(string)
 		if symbol == "$certificate" {
-			var source = bal.FormatDocument(association.GetDocument())
+			var source = not.FormatDocument(association.GetDocument())
 			certificate = CitationClass().CitationFromString(source)
 			break
 		}
@@ -167,20 +167,20 @@ func (c *draftClass_) ExtractCertificate(
 }
 
 func (c *draftClass_) ExtractDigest(
-	document bal.DocumentLike,
+	document not.DocumentLike,
 ) DigestLike {
 	var digest DigestLike
 	var component = document.GetComponent()
-	var collection = component.GetAny().(bal.CollectionLike)
-	var attributes = collection.GetAny().(bal.AttributesLike)
+	var collection = component.GetAny().(not.CollectionLike)
+	var attributes = collection.GetAny().(not.AttributesLike)
 	var associations = attributes.GetAssociations()
 	var iterator = associations.GetIterator()
 	for iterator.HasNext() {
 		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
 		var symbol = element.GetAny().(string)
 		if symbol == "$digest" {
-			var source = bal.FormatDocument(association.GetDocument())
+			var source = not.FormatDocument(association.GetDocument())
 			digest = DigestClass().DigestFromString(source)
 			break
 		}
@@ -189,20 +189,20 @@ func (c *draftClass_) ExtractDigest(
 }
 
 func (c *draftClass_) ExtractDraft(
-	document bal.DocumentLike,
+	document not.DocumentLike,
 ) DraftLike {
 	var draft DraftLike
 	var component = document.GetComponent()
-	var collection = component.GetAny().(bal.CollectionLike)
-	var attributes = collection.GetAny().(bal.AttributesLike)
+	var collection = component.GetAny().(not.CollectionLike)
+	var attributes = collection.GetAny().(not.AttributesLike)
 	var associations = attributes.GetAssociations()
 	var iterator = associations.GetIterator()
 	for iterator.HasNext() {
 		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
 		var symbol = element.GetAny().(string)
 		if symbol == "$draft" {
-			var source = bal.FormatDocument(association.GetDocument())
+			var source = not.FormatDocument(association.GetDocument())
 			draft = c.DraftFromString(source)
 			break
 		}
@@ -211,7 +211,7 @@ func (c *draftClass_) ExtractDraft(
 }
 
 func (c *draftClass_) ExtractPermissions(
-	document bal.DocumentLike,
+	document not.DocumentLike,
 ) fra.ResourceLike {
 	var permissions fra.ResourceLike
 	var parameters = document.GetOptionalParameters() // Not optional here.
@@ -219,10 +219,10 @@ func (c *draftClass_) ExtractPermissions(
 	var iterator = associations.GetIterator()
 	for iterator.HasNext() {
 		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
 		var symbol = element.GetAny().(string)
 		if symbol == "$permissions" {
-			var source = bal.FormatDocument(association.GetDocument())
+			var source = not.FormatDocument(association.GetDocument())
 			permissions = fra.ResourceFromString(source)
 			break
 		}
@@ -231,7 +231,7 @@ func (c *draftClass_) ExtractPermissions(
 }
 
 func (c *draftClass_) ExtractPrevious(
-	document bal.DocumentLike,
+	document not.DocumentLike,
 ) CitationLike {
 	var previous CitationLike
 	var parameters = document.GetOptionalParameters() // Not optional here.
@@ -239,10 +239,10 @@ func (c *draftClass_) ExtractPrevious(
 	var iterator = associations.GetIterator()
 	for iterator.HasNext() {
 		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
 		var symbol = element.GetAny().(string)
 		if symbol == "$previous" {
-			var source = bal.FormatDocument(association.GetDocument())
+			var source = not.FormatDocument(association.GetDocument())
 			previous = CitationClass().CitationFromString(source)
 			break
 		}
@@ -251,20 +251,20 @@ func (c *draftClass_) ExtractPrevious(
 }
 
 func (c *draftClass_) ExtractSignature(
-	document bal.DocumentLike,
+	document not.DocumentLike,
 ) SignatureLike {
 	var signature SignatureLike
 	var component = document.GetComponent()
-	var collection = component.GetAny().(bal.CollectionLike)
-	var attributes = collection.GetAny().(bal.AttributesLike)
+	var collection = component.GetAny().(not.CollectionLike)
+	var attributes = collection.GetAny().(not.AttributesLike)
 	var associations = attributes.GetAssociations()
 	var iterator = associations.GetIterator()
 	for iterator.HasNext() {
 		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
 		var symbol = element.GetAny().(string)
 		if symbol == "$signature" {
-			var source = bal.FormatDocument(association.GetDocument())
+			var source = not.FormatDocument(association.GetDocument())
 			signature = SignatureClass().SignatureFromString(source)
 			break
 		}
@@ -273,7 +273,7 @@ func (c *draftClass_) ExtractSignature(
 }
 
 func (c *draftClass_) ExtractTag(
-	document bal.DocumentLike,
+	document not.DocumentLike,
 ) fra.TagLike {
 	var tag fra.TagLike
 	var parameters = document.GetOptionalParameters() // Not optional here.
@@ -281,10 +281,10 @@ func (c *draftClass_) ExtractTag(
 	var iterator = associations.GetIterator()
 	for iterator.HasNext() {
 		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
 		var symbol = element.GetAny().(string)
 		if symbol == "$tag" {
-			var source = bal.FormatDocument(association.GetDocument())
+			var source = not.FormatDocument(association.GetDocument())
 			tag = fra.TagFromString(source)
 			break
 		}
@@ -293,7 +293,7 @@ func (c *draftClass_) ExtractTag(
 }
 
 func (c *draftClass_) ExtractType(
-	document bal.DocumentLike,
+	document not.DocumentLike,
 ) fra.ResourceLike {
 	var type_ fra.ResourceLike
 	var parameters = document.GetOptionalParameters() // Not optional here.
@@ -301,10 +301,10 @@ func (c *draftClass_) ExtractType(
 	var iterator = associations.GetIterator()
 	for iterator.HasNext() {
 		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
 		var symbol = element.GetAny().(string)
 		if symbol == "$type" {
-			var source = bal.FormatDocument(association.GetDocument())
+			var source = not.FormatDocument(association.GetDocument())
 			type_ = fra.ResourceFromString(source)
 			break
 		}
@@ -313,7 +313,7 @@ func (c *draftClass_) ExtractType(
 }
 
 func (c *draftClass_) ExtractVersion(
-	document bal.DocumentLike,
+	document not.DocumentLike,
 ) fra.VersionLike {
 	var version fra.VersionLike
 	var parameters = document.GetOptionalParameters() // Not optional here.
@@ -321,10 +321,10 @@ func (c *draftClass_) ExtractVersion(
 	var iterator = associations.GetIterator()
 	for iterator.HasNext() {
 		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
 		var symbol = element.GetAny().(string)
 		if symbol == "$version" {
-			var source = bal.FormatDocument(association.GetDocument())
+			var source = not.FormatDocument(association.GetDocument())
 			version = fra.VersionFromString(source)
 			break
 		}
@@ -341,8 +341,8 @@ func (v *draft_) GetClass() DraftClassLike {
 }
 
 func (v *draft_) AsString() string {
-	var draft = bal.Document(v.GetComponent(), nil, "")
-	var string_ = bal.FormatDocument(draft)
+	var draft = not.Document(v.GetComponent(), nil, "")
+	var string_ = not.FormatDocument(draft)
 	string_ = string_[:len(string_)-1] // Remove the trailing newline.
 	string_ += `(
 `
@@ -356,13 +356,13 @@ func (v *draft_) AsString() string {
 	}
 	string_ += `)
 `
-	string_ = bal.FormatDocument(bal.ParseSource(string_))
+	string_ = not.FormatDocument(not.ParseSource(string_))
 	return string_
 }
 
 // Attribute Methods
 
-func (v *draft_) GetComponent() bal.ComponentLike {
+func (v *draft_) GetComponent() not.ComponentLike {
 	return v.component_
 }
 
@@ -396,7 +396,7 @@ func (v *draft_) GetOptionalPrevious() CitationLike {
 
 type draft_ struct {
 	// Declare the instance attributes.
-	component_   bal.ComponentLike
+	component_   not.ComponentLike
 	type_        fra.ResourceLike
 	tag_         fra.TagLike
 	version_     fra.VersionLike

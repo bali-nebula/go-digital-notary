@@ -14,7 +14,7 @@ package document
 
 import (
 	fmt "fmt"
-	bal "github.com/bali-nebula/go-document-notation/v3"
+	not "github.com/bali-nebula/go-document-notation/v3"
 	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
@@ -76,7 +76,7 @@ func (c *certificateClass_) CertificateFromString(
 			panic(message)
 		}
 	}()
-	var document = bal.ParseSource(source)
+	var document = not.ParseSource(source)
 	var algorithm = DraftClass().ExtractAlgorithm(document)
 	var publicKey = fra.BinaryFromString(
 		DraftClass().ExtractAttribute("$publicKey", document),
@@ -85,33 +85,33 @@ func (c *certificateClass_) CertificateFromString(
 	var parameters = document.GetOptionalParameters() // Not optional here.
 	var associations = parameters.GetAssociations()
 	var association = associations.GetValue(2)
-	var element = association.GetPrimitive().GetAny().(bal.ElementLike)
+	var element = association.GetPrimitive().GetAny().(not.ElementLike)
 	var symbol = element.GetAny().(string)
 	if symbol != "$tag" {
 		panic("Missing the $tag attribute.")
 	}
-	var tag = fra.TagFromString(bal.FormatDocument(association.GetDocument()))
+	var tag = fra.TagFromString(not.FormatDocument(association.GetDocument()))
 
 	association = associations.GetValue(3)
-	element = association.GetPrimitive().GetAny().(bal.ElementLike)
+	element = association.GetPrimitive().GetAny().(not.ElementLike)
 	symbol = element.GetAny().(string)
 	if symbol != "$version" {
 		panic("Missing the $version attribute.")
 	}
 	var version = fra.VersionFromString(
-		bal.FormatDocument(association.GetDocument()),
+		not.FormatDocument(association.GetDocument()),
 	)
 
 	var previous CitationLike
 	if associations.GetSize() > 4 {
 		association = associations.GetValue(5)
-		element = association.GetPrimitive().GetAny().(bal.ElementLike)
+		element = association.GetPrimitive().GetAny().(not.ElementLike)
 		symbol = element.GetAny().(string)
 		if symbol != "$previous" {
 			panic("Missing the $previous attribute.")
 		}
 		previous = citationClass().CitationFromString(
-			bal.FormatDocument(association.GetDocument()),
+			not.FormatDocument(association.GetDocument()),
 		)
 	}
 
@@ -153,7 +153,7 @@ func (v *certificate_) AsString() string {
 	}
 	string_ += `)
 `
-	string_ = bal.FormatDocument(bal.ParseSource(string_))
+	string_ = not.FormatDocument(not.ParseSource(string_))
 	return string_
 }
 

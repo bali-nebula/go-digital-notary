@@ -14,7 +14,7 @@ package document
 
 import (
 	fmt "fmt"
-	bal "github.com/bali-nebula/go-document-notation/v3"
+	not "github.com/bali-nebula/go-document-notation/v3"
 	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
@@ -65,7 +65,7 @@ func (c *contractClass_) ContractFromString(
 			panic(message)
 		}
 	}()
-	var document = bal.ParseSource(source)
+	var document = not.ParseSource(source)
 	var account = fra.TagFromString(
 		DraftClass().ExtractAttribute("$account", document),
 	)
@@ -104,8 +104,8 @@ func (v *contract_) AsString() string {
 	}
 	string_ += `]($type: <bali:/types/documents/Contract:v3>)
 `
-	var contract = bal.ParseSource(string_)
-	string_ = bal.FormatDocument(contract)
+	var contract = not.ParseSource(string_)
+	string_ = not.FormatDocument(contract)
 	return string_
 }
 

@@ -34,7 +34,7 @@ import (
 	doc "github.com/bali-nebula/go-digital-notary/v3/document"
 	not "github.com/bali-nebula/go-digital-notary/v3/notary"
 	ssm "github.com/bali-nebula/go-digital-notary/v3/ssm"
-	bal "github.com/bali-nebula/go-document-notation/v3"
+	dno "github.com/bali-nebula/go-document-notation/v3"
 	fra "github.com/craterdog/go-component-framework/v7"
 )
 
@@ -196,7 +196,7 @@ func DraftClass() DraftClassLike {
 }
 
 func Draft(
-	component bal.ComponentLike,
+	component dno.ComponentLike,
 	type_ fra.ResourceLike,
 	tag fra.TagLike,
 	version fra.VersionLike,

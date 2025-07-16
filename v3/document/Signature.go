@@ -14,7 +14,7 @@ package document
 
 import (
 	fmt "fmt"
-	bal "github.com/bali-nebula/go-document-notation/v3"
+	not "github.com/bali-nebula/go-document-notation/v3"
 	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
@@ -60,7 +60,7 @@ func (c *signatureClass_) SignatureFromString(
 			panic(message)
 		}
 	}()
-	var document = bal.ParseSource(source)
+	var document = not.ParseSource(source)
 	var algorithm = DraftClass().ExtractAlgorithm(document)
 	var base64 = fra.BinaryFromString(
 		DraftClass().ExtractAttribute("$base64", document),
@@ -87,8 +87,8 @@ func (v *signature_) AsString() string {
 	string_ += `    $base64: ` + v.GetBase64().AsString()
 	string_ += `]
 `
-	var signature = bal.ParseSource(string_)
-	string_ = bal.FormatDocument(signature)
+	var signature = not.ParseSource(string_)
+	string_ = not.FormatDocument(signature)
 	return string_
 }
 
