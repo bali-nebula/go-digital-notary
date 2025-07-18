@@ -26,12 +26,12 @@ import (
 // Access Function
 
 func DigitalNotaryClass() DigitalNotaryClassLike {
-	return notaryClass()
+	return digitalNotaryClass()
 }
 
 // Constructor Methods
 
-func (c *notaryClass_) DigitalNotary(
+func (c *digitalNotaryClass_) DigitalNotary(
 	directory string,
 	ssm Trusted,
 	hsm Hardened,
@@ -46,7 +46,7 @@ func (c *notaryClass_) DigitalNotary(
 		panic("The \"hsm\" attribute is required by this class.")
 	}
 
-	// Initialize the notary attributes.
+	// Initialize the digital notary attributes.
 	if !sts.HasSuffix(directory, "/") {
 		directory += "/"
 	}
@@ -59,8 +59,8 @@ func (c *notaryClass_) DigitalNotary(
 		hsm.EraseKeys()
 	}
 
-	// Create the new notary.
-	var instance = &notary_{
+	// Create the new digital notary.
+	var instance = &digitalNotary_{
 		// Initialize the instance attributes.
 		directory_: directory,
 		filename_:  filename,
@@ -79,13 +79,13 @@ func (c *notaryClass_) DigitalNotary(
 
 // Principal Methods
 
-func (v *notary_) GetClass() DigitalNotaryClassLike {
-	return notaryClass()
+func (v *digitalNotary_) GetClass() DigitalNotaryClassLike {
+	return digitalNotaryClass()
 }
 
-func (v *notary_) GenerateKey() doc.ContractLike {
+func (v *digitalNotary_) GenerateKey() doc.ContractLike {
 	// Check for any errors at the end.
-	defer errorCheck(
+	defer v.errorCheck(
 		"An error occurred while attempting to generate a new private key",
 	)
 
@@ -144,9 +144,9 @@ func (v *notary_) GenerateKey() doc.ContractLike {
 	return contract
 }
 
-func (v *notary_) GetCitation() doc.CitationLike {
+func (v *digitalNotary_) GetCitation() doc.CitationLike {
 	// Check for any errors at the end.
-	defer errorCheck(
+	defer v.errorCheck(
 		"An error occurred while attempting to retrieve the public certificate",
 	)
 
@@ -158,9 +158,9 @@ func (v *notary_) GetCitation() doc.CitationLike {
 	return citation
 }
 
-func (v *notary_) RefreshKey() doc.ContractLike {
+func (v *digitalNotary_) RefreshKey() doc.ContractLike {
 	// Check for any errors at the end.
-	defer errorCheck(
+	defer v.errorCheck(
 		"An error occurred while attempting to refresh the private key",
 	)
 
@@ -221,9 +221,9 @@ func (v *notary_) RefreshKey() doc.ContractLike {
 	return contract
 }
 
-func (v *notary_) ForgetKey() {
+func (v *digitalNotary_) ForgetKey() {
 	// Check for any errors at the end.
-	defer errorCheck(
+	defer v.errorCheck(
 		"An error occurred while attempting to forget the private key",
 	)
 
@@ -231,9 +231,9 @@ func (v *notary_) ForgetKey() {
 	uti.RemovePath(v.filename_)
 }
 
-func (v *notary_) GenerateCredential() doc.ContractLike {
+func (v *digitalNotary_) GenerateCredential() doc.ContractLike {
 	// Check for any errors at the end.
-	defer errorCheck(
+	defer v.errorCheck(
 		"An error occurred while attempting to generate a security credential",
 	)
 
@@ -273,11 +273,11 @@ func (v *notary_) GenerateCredential() doc.ContractLike {
 	return contract
 }
 
-func (v *notary_) NotarizeDraft(
+func (v *digitalNotary_) NotarizeDraft(
 	draft doc.DraftLike,
 ) doc.ContractLike {
 	// Check for any errors at the end.
-	defer errorCheck(
+	defer v.errorCheck(
 		"An error occurred while attempting to notarize a draft document",
 	)
 
@@ -300,12 +300,12 @@ func (v *notary_) NotarizeDraft(
 	return contract
 }
 
-func (v *notary_) SignatureMatches(
+func (v *digitalNotary_) SignatureMatches(
 	contract doc.ContractLike,
 	certificate doc.CertificateLike,
 ) bool {
 	// Check for any errors at the end.
-	defer errorCheck(
+	defer v.errorCheck(
 		"An error occurred while attempting to match a contract signature",
 	)
 
@@ -331,11 +331,11 @@ func (v *notary_) SignatureMatches(
 	return v.ssm_.IsValid(keyBytes, signatureBytes, sourceBytes)
 }
 
-func (v *notary_) CiteDraft(
+func (v *digitalNotary_) CiteDraft(
 	draft doc.DraftLike,
 ) doc.CitationLike {
 	// Check for any errors at the end.
-	defer errorCheck(
+	defer v.errorCheck(
 		"An error occurred while attempting to create a citation to a draft document",
 	)
 
@@ -357,12 +357,12 @@ func (v *notary_) CiteDraft(
 	return citation
 }
 
-func (v *notary_) CitationMatches(
+func (v *digitalNotary_) CitationMatches(
 	citation doc.CitationLike,
 	draft doc.DraftLike,
 ) bool {
 	// Check for any errors at the end.
-	defer errorCheck(
+	defer v.errorCheck(
 		"An error occurred while attempting to verify a document citation",
 	)
 
@@ -386,7 +386,7 @@ func (v *notary_) CitationMatches(
 
 // Private Methods
 
-func errorCheck(
+func (v *digitalNotary_) errorCheck(
 	message string,
 ) {
 	if e := recover(); e != nil {
@@ -401,7 +401,7 @@ func errorCheck(
 
 // Instance Structure
 
-type notary_ struct {
+type digitalNotary_ struct {
 	// Declare the instance attributes.
 	directory_ string
 	filename_  string
@@ -412,16 +412,16 @@ type notary_ struct {
 
 // Class Structure
 
-type notaryClass_ struct {
+type digitalNotaryClass_ struct {
 	// Declare the class constants.
 }
 
 // Class Reference
 
-func notaryClass() *notaryClass_ {
-	return notaryClassReference_
+func digitalNotaryClass() *digitalNotaryClass_ {
+	return digitalNotaryClassReference_
 }
 
-var notaryClassReference_ = &notaryClass_{
+var digitalNotaryClassReference_ = &digitalNotaryClass_{
 	// Initialize the class constants.
 }

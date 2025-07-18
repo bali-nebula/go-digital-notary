@@ -16,7 +16,6 @@ import (
 	sig "crypto/ed25519"
 	dig "crypto/sha512"
 	fmt "fmt"
-	doc "github.com/bali-nebula/go-digital-notary/v3/document"
 	not "github.com/bali-nebula/go-document-notation/v3"
 	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
@@ -86,7 +85,7 @@ func (v *ssm_) GetSignatureAlgorithm() string {
 
 func (v *ssm_) GenerateKeys() []byte {
 	// Check for any errors at the end.
-	defer errorCheck(
+	defer v.errorCheck(
 		"An error occurred while attempting to generate new keys",
 	)
 
@@ -105,7 +104,7 @@ func (v *ssm_) SignBytes(
 	bytes []byte,
 ) []byte {
 	// Check for any errors at the end.
-	defer errorCheck(
+	defer v.errorCheck(
 		"An error occurred while attempting to sign bytes",
 	)
 
@@ -124,7 +123,7 @@ func (v *ssm_) SignBytes(
 
 func (v *ssm_) RotateKeys() []byte {
 	// Check for any errors at the end.
-	defer errorCheck(
+	defer v.errorCheck(
 		"An error occurred while attempting to rotate keys",
 	)
 
@@ -142,7 +141,7 @@ func (v *ssm_) RotateKeys() []byte {
 
 func (v *ssm_) EraseKeys() {
 	// Check for any errors at the end.
-	defer errorCheck(
+	defer v.errorCheck(
 		"An error occurred while attempting to erase the keys",
 	)
 
@@ -160,7 +159,7 @@ func (v *ssm_) DigestBytes(
 	bytes []byte,
 ) []byte {
 	// Check for any errors at the end.
-	defer errorCheck(
+	defer v.errorCheck(
 		"An error occurred while attempting to digest bytes",
 	)
 
@@ -175,7 +174,7 @@ func (v *ssm_) IsValid(
 	bytes []byte,
 ) bool {
 	// Check for any errors at the end.
-	defer errorCheck(
+	defer v.errorCheck(
 		"An error occurred while attempting to verify bytes signature",
 	)
 
@@ -186,7 +185,80 @@ func (v *ssm_) IsValid(
 
 // Private Methods
 
-func errorCheck(
+func (c *ssmClass_) extractAttribute(
+	name string,
+	document not.DocumentLike,
+) string {
+	var attribute string
+	var component = document.GetComponent()
+	var collection = component.GetAny().(not.CollectionLike)
+	var attributes = collection.GetAny().(not.AttributesLike)
+	var associations = attributes.GetAssociations()
+	var iterator = associations.GetIterator()
+	for iterator.HasNext() {
+		var association = iterator.GetNext()
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
+		var symbol = element.GetAny().(string)
+		if symbol == name {
+			attribute = not.FormatDocument(association.GetDocument())
+			attribute = attribute[:len(attribute)-1] // Remove the trailing newline.
+			break
+		}
+	}
+	return attribute
+}
+
+func (c *ssmClass_) extractKey(
+	name string,
+	document not.DocumentLike,
+) []byte {
+	var key = c.extractAttribute(name, document)
+	if key == "none" {
+		return nil
+	}
+	return fra.BinaryFromString(key).AsIntrinsic()
+}
+
+func (c *ssmClass_) extractState(
+	document not.DocumentLike,
+) fra.State {
+	var state fra.State
+	var attribute = c.extractAttribute("$state", document)
+	switch attribute {
+	case "$Keyless":
+		state = c.keyless_
+	case "$LoneKey":
+		state = c.loneKey_
+	case "$TwoKeys":
+		state = c.twoKeys_
+	case "$Invalid":
+		state = c.invalid_
+	}
+	return state
+}
+
+func (c *ssmClass_) extractTag(
+	document not.DocumentLike,
+) string {
+	return c.extractAttribute("$tag", document)
+}
+
+func (v *ssm_) createConfiguration() {
+	v.tag_ = fra.TagWithSize(20).AsString() // Results in a 32 character tag.
+	var document = not.ParseSource(`[
+    $tag: ` + v.tag_ + `
+    $state: $Keyless
+    $publicKey: none
+    $privateKey: none
+    $previousKey: none
+]`)
+	v.extractAttributes(document)
+	var source = not.FormatDocument(document)
+	var filename = v.directory_ + v.filename_
+	uti.WriteFile(filename, source)
+}
+
+func (v *ssm_) errorCheck(
 	message string,
 ) {
 	if e := recover(); e != nil {
@@ -202,11 +274,11 @@ func errorCheck(
 func (v *ssm_) extractAttributes(
 	document not.DocumentLike,
 ) {
-	v.tag_ = doc.DraftClass().ExtractAttribute("$tag", document)
-	v.publicKey_ = v.extractKey("$publicKey", document)
-	v.privateKey_ = v.extractKey("$privateKey", document)
-	v.previousKey_ = v.extractKey("$previousKey", document)
-	var state = v.extractState(document)
+	v.tag_ = ssmClass().extractTag(document)
+	v.publicKey_ = ssmClass().extractKey("$publicKey", document)
+	v.privateKey_ = ssmClass().extractKey("$privateKey", document)
+	v.previousKey_ = ssmClass().extractKey("$previousKey", document)
+	var state = ssmClass().extractState(document)
 	v.controller_.SetState(state)
 }
 
@@ -231,35 +303,6 @@ func (v *ssm_) extractDraft() not.DocumentLike {
 	return document
 }
 
-func (v *ssm_) extractKey(
-	name string,
-	document not.DocumentLike,
-) []byte {
-	var key = doc.DraftClass().ExtractAttribute(name, document)
-	if key == "none" {
-		return nil
-	}
-	return fra.BinaryFromString(key).AsIntrinsic()
-}
-
-func (v *ssm_) extractState(
-	document not.DocumentLike,
-) fra.State {
-	var state fra.State
-	var attribute = doc.DraftClass().ExtractAttribute("$state", document)
-	switch attribute {
-	case "$Keyless":
-		state = ssmClass().keyless_
-	case "$LoneKey":
-		state = ssmClass().loneKey_
-	case "$TwoKeys":
-		state = ssmClass().twoKeys_
-	case "$Invalid":
-		state = ssmClass().invalid_
-	}
-	return state
-}
-
 func (v *ssm_) getState() string {
 	switch v.controller_.GetState() {
 	case ssmClass().keyless_:
@@ -271,21 +314,6 @@ func (v *ssm_) getState() string {
 	default:
 		return "$Invalid"
 	}
-}
-
-func (v *ssm_) createConfiguration() {
-	v.tag_ = fra.TagWithSize(20).AsString() // Results in a 32 character tag.
-	var document = not.ParseSource(`[
-    $tag: ` + v.tag_ + `
-    $state: $Keyless
-    $publicKey: none
-    $privateKey: none
-    $previousKey: none
-]`)
-	v.extractAttributes(document)
-	var source = not.FormatDocument(document)
-	var filename = v.directory_ + v.filename_
-	uti.WriteFile(filename, source)
 }
 
 func (v *ssm_) readConfiguration() {

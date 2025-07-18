@@ -77,44 +77,11 @@ func (c *certificateClass_) CertificateFromString(
 		}
 	}()
 	var document = not.ParseSource(source)
-	var algorithm = DraftClass().ExtractAlgorithm(document)
-	var publicKey = fra.BinaryFromString(
-		DraftClass().ExtractAttribute("$publicKey", document),
-	)
-
-	var parameters = document.GetOptionalParameters() // Not optional here.
-	var associations = parameters.GetAssociations()
-	var association = associations.GetValue(2)
-	var element = association.GetPrimitive().GetAny().(not.ElementLike)
-	var symbol = element.GetAny().(string)
-	if symbol != "$tag" {
-		panic("Missing the $tag attribute.")
-	}
-	var tag = fra.TagFromString(not.FormatDocument(association.GetDocument()))
-
-	association = associations.GetValue(3)
-	element = association.GetPrimitive().GetAny().(not.ElementLike)
-	symbol = element.GetAny().(string)
-	if symbol != "$version" {
-		panic("Missing the $version attribute.")
-	}
-	var version = fra.VersionFromString(
-		not.FormatDocument(association.GetDocument()),
-	)
-
-	var previous CitationLike
-	if associations.GetSize() > 4 {
-		association = associations.GetValue(5)
-		element = association.GetPrimitive().GetAny().(not.ElementLike)
-		symbol = element.GetAny().(string)
-		if symbol != "$previous" {
-			panic("Missing the $previous attribute.")
-		}
-		previous = citationClass().CitationFromString(
-			not.FormatDocument(association.GetDocument()),
-		)
-	}
-
+	var algorithm = c.extractAlgorithm(document)
+	var publicKey = c.extractPublicKey(document)
+	var tag = c.extractTag(document)
+	var version = c.extractVersion(document)
+	var previous = c.extractPrevious(document)
 	return c.Certificate(
 		algorithm,
 		publicKey,
@@ -192,6 +159,92 @@ func (v *certificate_) GetOptionalPrevious() CitationLike {
 // PROTECTED INTERFACE
 
 // Private Methods
+
+func (c *certificateClass_) extractAlgorithm(
+	document not.DocumentLike,
+) fra.QuoteLike {
+	var attribute = c.extractAttribute("$algorithm", document)
+	var algorithm = fra.QuoteFromString(attribute)
+	return algorithm
+}
+
+func (c *certificateClass_) extractAttribute(
+	name string,
+	document not.DocumentLike,
+) string {
+	var attribute string
+	var component = document.GetComponent()
+	var collection = component.GetAny().(not.CollectionLike)
+	var attributes = collection.GetAny().(not.AttributesLike)
+	var associations = attributes.GetAssociations()
+	var iterator = associations.GetIterator()
+	for iterator.HasNext() {
+		var association = iterator.GetNext()
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
+		var symbol = element.GetAny().(string)
+		if symbol == name {
+			attribute = not.FormatDocument(association.GetDocument())
+			attribute = attribute[:len(attribute)-1] // Remove the trailing newline.
+			break
+		}
+	}
+	return attribute
+}
+
+func (c *certificateClass_) extractParameter(
+	name string,
+	document not.DocumentLike,
+) string {
+	var parameter string
+	var parameters = document.GetOptionalParameters() // Not optional here.
+	var associations = parameters.GetAssociations()
+	var iterator = associations.GetIterator()
+	for iterator.HasNext() {
+		var association = iterator.GetNext()
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
+		var symbol = element.GetAny().(string)
+		if symbol == name {
+			parameter = not.FormatDocument(association.GetDocument())
+			break
+		}
+	}
+	return parameter
+}
+
+func (c *certificateClass_) extractPublicKey(
+	document not.DocumentLike,
+) fra.BinaryLike {
+	var attribute = c.extractAttribute("$publicKey", document)
+	var publicKey = fra.BinaryFromString(attribute)
+	return publicKey
+}
+
+func (c *certificateClass_) extractPrevious(
+	document not.DocumentLike,
+) CitationLike {
+	var previous CitationLike
+	var parameter = c.extractParameter("$previous", document)
+	if uti.IsDefined(parameter) {
+		previous = CitationClass().CitationFromString(parameter)
+	}
+	return previous
+}
+
+func (c *certificateClass_) extractTag(
+	document not.DocumentLike,
+) fra.TagLike {
+	var parameter = c.extractParameter("$tag", document)
+	var tag = fra.TagFromString(parameter)
+	return tag
+}
+
+func (c *certificateClass_) extractVersion(
+	document not.DocumentLike,
+) fra.VersionLike {
+	var parameter = c.extractParameter("$version", document)
+	var version = fra.VersionFromString(parameter)
+	return version
+}
 
 // Instance Structure
 

@@ -61,10 +61,8 @@ func (c *signatureClass_) SignatureFromString(
 		}
 	}()
 	var document = not.ParseSource(source)
-	var algorithm = DraftClass().ExtractAlgorithm(document)
-	var base64 = fra.BinaryFromString(
-		DraftClass().ExtractAttribute("$base64", document),
-	)
+	var algorithm = c.extractAlgorithm(document)
+	var base64 = c.extractBase64(document)
 	return c.Signature(algorithm, base64)
 }
 
@@ -105,6 +103,45 @@ func (v *signature_) GetBase64() fra.BinaryLike {
 // PROTECTED INTERFACE
 
 // Private Methods
+
+func (c *signatureClass_) extractAlgorithm(
+	document not.DocumentLike,
+) fra.QuoteLike {
+	var attribute = c.extractAttribute("$algorithm", document)
+	var algorithm = fra.QuoteFromString(attribute)
+	return algorithm
+}
+
+func (c *signatureClass_) extractAttribute(
+	name string,
+	document not.DocumentLike,
+) string {
+	var attribute string
+	var component = document.GetComponent()
+	var collection = component.GetAny().(not.CollectionLike)
+	var attributes = collection.GetAny().(not.AttributesLike)
+	var associations = attributes.GetAssociations()
+	var iterator = associations.GetIterator()
+	for iterator.HasNext() {
+		var association = iterator.GetNext()
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
+		var symbol = element.GetAny().(string)
+		if symbol == name {
+			attribute = not.FormatDocument(association.GetDocument())
+			attribute = attribute[:len(attribute)-1] // Remove the trailing newline.
+			break
+		}
+	}
+	return attribute
+}
+
+func (c *signatureClass_) extractBase64(
+	document not.DocumentLike,
+) fra.BinaryLike {
+	var attribute = c.extractAttribute("$base64", document)
+	var base64 = fra.BinaryFromString(attribute)
+	return base64
+}
 
 // Instance Structure
 

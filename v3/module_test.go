@@ -15,7 +15,6 @@ package module_test
 import (
 	fmt "fmt"
 	not "github.com/bali-nebula/go-digital-notary/v3"
-	dno "github.com/bali-nebula/go-document-notation/v3"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	ass "github.com/stretchr/testify/assert"
 	tes "testing"
@@ -48,11 +47,6 @@ func TestParsingDrafts(t *tes.T) {
 	var draft = not.DraftFromString(source)
 	var formatted = draft.AsString()
 	ass.Equal(t, source, formatted)
-	var attribute = not.DraftClass().ExtractAttribute(
-		"$consumer",
-		dno.ParseSource(source),
-	)
-	ass.Equal(t, `"Derk Norton"`, attribute)
 }
 
 func TestParsingContracts(t *tes.T) {

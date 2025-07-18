@@ -126,42 +126,6 @@ type DraftClassLike interface {
 	DraftFromString(
 		source string,
 	) DraftLike
-
-	// Function Methods
-	ExtractAlgorithm(
-		document not.DocumentLike,
-	) fra.QuoteLike
-	ExtractAttribute(
-		name string,
-		document not.DocumentLike,
-	) string
-	ExtractCertificate(
-		document not.DocumentLike,
-	) CitationLike
-	ExtractDigest(
-		document not.DocumentLike,
-	) DigestLike
-	ExtractDraft(
-		document not.DocumentLike,
-	) DraftLike
-	ExtractPermissions(
-		document not.DocumentLike,
-	) fra.ResourceLike
-	ExtractPrevious(
-		document not.DocumentLike,
-	) CitationLike
-	ExtractSignature(
-		document not.DocumentLike,
-	) SignatureLike
-	ExtractTag(
-		document not.DocumentLike,
-	) fra.TagLike
-	ExtractType(
-		document not.DocumentLike,
-	) fra.ResourceLike
-	ExtractVersion(
-		document not.DocumentLike,
-	) fra.VersionLike
 }
 
 /*

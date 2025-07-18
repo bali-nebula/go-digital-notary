@@ -66,12 +66,10 @@ func (c *contractClass_) ContractFromString(
 		}
 	}()
 	var document = not.ParseSource(source)
-	var account = fra.TagFromString(
-		DraftClass().ExtractAttribute("$account", document),
-	)
-	var certificate = DraftClass().ExtractCertificate(document)
-	var signature = DraftClass().ExtractSignature(document)
-	var component = DraftClass().ExtractDraft(document)
+	var account = c.extractAccount(document)
+	var certificate = c.extractCertificate(document)
+	var signature = c.extractSignature(document)
+	var component = c.extractDraft(document)
 	var contract = c.Contract(
 		component,
 		account,
@@ -136,6 +134,61 @@ func (v *contract_) SetSignature(
 // PROTECTED INTERFACE
 
 // Private Methods
+
+func (c *contractClass_) extractAccount(
+	document not.DocumentLike,
+) fra.TagLike {
+	var attribute = c.extractAttribute("$account", document)
+	var account = fra.TagFromString(attribute)
+	return account
+}
+
+func (c *contractClass_) extractAttribute(
+	name string,
+	document not.DocumentLike,
+) string {
+	var attribute string
+	var component = document.GetComponent()
+	var collection = component.GetAny().(not.CollectionLike)
+	var attributes = collection.GetAny().(not.AttributesLike)
+	var associations = attributes.GetAssociations()
+	var iterator = associations.GetIterator()
+	for iterator.HasNext() {
+		var association = iterator.GetNext()
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
+		var symbol = element.GetAny().(string)
+		if symbol == name {
+			attribute = not.FormatDocument(association.GetDocument())
+			attribute = attribute[:len(attribute)-1] // Remove the trailing newline.
+			break
+		}
+	}
+	return attribute
+}
+
+func (c *contractClass_) extractCertificate(
+	document not.DocumentLike,
+) CitationLike {
+	var attribute = c.extractAttribute("$certificate", document)
+	var certificate = CitationClass().CitationFromString(attribute)
+	return certificate
+}
+
+func (c *contractClass_) extractDraft(
+	document not.DocumentLike,
+) DraftLike {
+	var attribute = c.extractAttribute("$draft", document)
+	var draft = DraftClass().DraftFromString(attribute)
+	return draft
+}
+
+func (c *contractClass_) extractSignature(
+	document not.DocumentLike,
+) SignatureLike {
+	var attribute = c.extractAttribute("$signature", document)
+	var signature = SignatureClass().SignatureFromString(attribute)
+	return signature
+}
 
 // Instance Structure
 

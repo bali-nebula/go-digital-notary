@@ -79,11 +79,11 @@ func (c *draftClass_) DraftFromString(
 	}()
 	var draft = not.ParseSource(source)
 	var component = draft.GetComponent()
-	var type_ = c.ExtractType(draft)
-	var tag = c.ExtractTag(draft)
-	var version = c.ExtractVersion(draft)
-	var permissions = c.ExtractPermissions(draft)
-	var previous = c.ExtractPrevious(draft)
+	var type_ = c.extractType(draft)
+	var tag = c.extractTag(draft)
+	var version = c.extractVersion(draft)
+	var permissions = c.extractPermissions(draft)
+	var previous = c.extractPrevious(draft)
 	return c.Draft(
 		component,
 		type_,
@@ -97,240 +97,6 @@ func (c *draftClass_) DraftFromString(
 // Constant Methods
 
 // Function Methods
-
-func (c *draftClass_) ExtractAlgorithm(
-	document not.DocumentLike,
-) fra.QuoteLike {
-	var attribute fra.QuoteLike
-	var component = document.GetComponent()
-	var collection = component.GetAny().(not.CollectionLike)
-	var attributes = collection.GetAny().(not.AttributesLike)
-	var associations = attributes.GetAssociations()
-	var iterator = associations.GetIterator()
-	for iterator.HasNext() {
-		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(not.ElementLike)
-		var symbol = element.GetAny().(string)
-		if symbol == "$algorithm" {
-			attribute = fra.QuoteFromString(
-				not.FormatDocument(association.GetDocument()),
-			)
-			break
-		}
-	}
-	return attribute
-}
-
-func (c *draftClass_) ExtractAttribute(
-	name string,
-	document not.DocumentLike,
-) string {
-	var attribute string
-	var component = document.GetComponent()
-	var collection = component.GetAny().(not.CollectionLike)
-	var attributes = collection.GetAny().(not.AttributesLike)
-	var associations = attributes.GetAssociations()
-	var iterator = associations.GetIterator()
-	for iterator.HasNext() {
-		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(not.ElementLike)
-		var symbol = element.GetAny().(string)
-		if symbol == name {
-			attribute = not.FormatDocument(association.GetDocument())
-			attribute = attribute[:len(attribute)-1] // Remove the trailing newline.
-			break
-		}
-	}
-	return attribute
-}
-
-func (c *draftClass_) ExtractCertificate(
-	document not.DocumentLike,
-) CitationLike {
-	var certificate CitationLike
-	var component = document.GetComponent()
-	var collection = component.GetAny().(not.CollectionLike)
-	var attributes = collection.GetAny().(not.AttributesLike)
-	var associations = attributes.GetAssociations()
-	var iterator = associations.GetIterator()
-	for iterator.HasNext() {
-		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(not.ElementLike)
-		var symbol = element.GetAny().(string)
-		if symbol == "$certificate" {
-			var source = not.FormatDocument(association.GetDocument())
-			certificate = CitationClass().CitationFromString(source)
-			break
-		}
-	}
-	return certificate
-}
-
-func (c *draftClass_) ExtractDigest(
-	document not.DocumentLike,
-) DigestLike {
-	var digest DigestLike
-	var component = document.GetComponent()
-	var collection = component.GetAny().(not.CollectionLike)
-	var attributes = collection.GetAny().(not.AttributesLike)
-	var associations = attributes.GetAssociations()
-	var iterator = associations.GetIterator()
-	for iterator.HasNext() {
-		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(not.ElementLike)
-		var symbol = element.GetAny().(string)
-		if symbol == "$digest" {
-			var source = not.FormatDocument(association.GetDocument())
-			digest = DigestClass().DigestFromString(source)
-			break
-		}
-	}
-	return digest
-}
-
-func (c *draftClass_) ExtractDraft(
-	document not.DocumentLike,
-) DraftLike {
-	var draft DraftLike
-	var component = document.GetComponent()
-	var collection = component.GetAny().(not.CollectionLike)
-	var attributes = collection.GetAny().(not.AttributesLike)
-	var associations = attributes.GetAssociations()
-	var iterator = associations.GetIterator()
-	for iterator.HasNext() {
-		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(not.ElementLike)
-		var symbol = element.GetAny().(string)
-		if symbol == "$draft" {
-			var source = not.FormatDocument(association.GetDocument())
-			draft = c.DraftFromString(source)
-			break
-		}
-	}
-	return draft
-}
-
-func (c *draftClass_) ExtractPermissions(
-	document not.DocumentLike,
-) fra.ResourceLike {
-	var permissions fra.ResourceLike
-	var parameters = document.GetOptionalParameters() // Not optional here.
-	var associations = parameters.GetAssociations()
-	var iterator = associations.GetIterator()
-	for iterator.HasNext() {
-		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(not.ElementLike)
-		var symbol = element.GetAny().(string)
-		if symbol == "$permissions" {
-			var source = not.FormatDocument(association.GetDocument())
-			permissions = fra.ResourceFromString(source)
-			break
-		}
-	}
-	return permissions
-}
-
-func (c *draftClass_) ExtractPrevious(
-	document not.DocumentLike,
-) CitationLike {
-	var previous CitationLike
-	var parameters = document.GetOptionalParameters() // Not optional here.
-	var associations = parameters.GetAssociations()
-	var iterator = associations.GetIterator()
-	for iterator.HasNext() {
-		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(not.ElementLike)
-		var symbol = element.GetAny().(string)
-		if symbol == "$previous" {
-			var source = not.FormatDocument(association.GetDocument())
-			previous = CitationClass().CitationFromString(source)
-			break
-		}
-	}
-	return previous
-}
-
-func (c *draftClass_) ExtractSignature(
-	document not.DocumentLike,
-) SignatureLike {
-	var signature SignatureLike
-	var component = document.GetComponent()
-	var collection = component.GetAny().(not.CollectionLike)
-	var attributes = collection.GetAny().(not.AttributesLike)
-	var associations = attributes.GetAssociations()
-	var iterator = associations.GetIterator()
-	for iterator.HasNext() {
-		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(not.ElementLike)
-		var symbol = element.GetAny().(string)
-		if symbol == "$signature" {
-			var source = not.FormatDocument(association.GetDocument())
-			signature = SignatureClass().SignatureFromString(source)
-			break
-		}
-	}
-	return signature
-}
-
-func (c *draftClass_) ExtractTag(
-	document not.DocumentLike,
-) fra.TagLike {
-	var tag fra.TagLike
-	var parameters = document.GetOptionalParameters() // Not optional here.
-	var associations = parameters.GetAssociations()
-	var iterator = associations.GetIterator()
-	for iterator.HasNext() {
-		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(not.ElementLike)
-		var symbol = element.GetAny().(string)
-		if symbol == "$tag" {
-			var source = not.FormatDocument(association.GetDocument())
-			tag = fra.TagFromString(source)
-			break
-		}
-	}
-	return tag
-}
-
-func (c *draftClass_) ExtractType(
-	document not.DocumentLike,
-) fra.ResourceLike {
-	var type_ fra.ResourceLike
-	var parameters = document.GetOptionalParameters() // Not optional here.
-	var associations = parameters.GetAssociations()
-	var iterator = associations.GetIterator()
-	for iterator.HasNext() {
-		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(not.ElementLike)
-		var symbol = element.GetAny().(string)
-		if symbol == "$type" {
-			var source = not.FormatDocument(association.GetDocument())
-			type_ = fra.ResourceFromString(source)
-			break
-		}
-	}
-	return type_
-}
-
-func (c *draftClass_) ExtractVersion(
-	document not.DocumentLike,
-) fra.VersionLike {
-	var version fra.VersionLike
-	var parameters = document.GetOptionalParameters() // Not optional here.
-	var associations = parameters.GetAssociations()
-	var iterator = associations.GetIterator()
-	for iterator.HasNext() {
-		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(not.ElementLike)
-		var symbol = element.GetAny().(string)
-		if symbol == "$version" {
-			var source = not.FormatDocument(association.GetDocument())
-			version = fra.VersionFromString(source)
-			break
-		}
-	}
-	return version
-}
 
 // INSTANCE INTERFACE
 
@@ -391,6 +157,69 @@ func (v *draft_) GetOptionalPrevious() CitationLike {
 // PROTECTED INTERFACE
 
 // Private Methods
+
+func (c *draftClass_) extractParameter(
+	name string,
+	document not.DocumentLike,
+) string {
+	var parameter string
+	var parameters = document.GetOptionalParameters() // Not optional here.
+	var associations = parameters.GetAssociations()
+	var iterator = associations.GetIterator()
+	for iterator.HasNext() {
+		var association = iterator.GetNext()
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
+		var symbol = element.GetAny().(string)
+		if symbol == name {
+			parameter = not.FormatDocument(association.GetDocument())
+			break
+		}
+	}
+	return parameter
+}
+
+func (c *draftClass_) extractPermissions(
+	document not.DocumentLike,
+) fra.ResourceLike {
+	var parameter = c.extractParameter("$permissions", document)
+	var permissions = fra.ResourceFromString(parameter)
+	return permissions
+}
+
+func (c *draftClass_) extractPrevious(
+	document not.DocumentLike,
+) CitationLike {
+	var previous CitationLike
+	var parameter = c.extractParameter("$previous", document)
+	if uti.IsDefined(parameter) {
+		previous = CitationClass().CitationFromString(parameter)
+	}
+	return previous
+}
+
+func (c *draftClass_) extractTag(
+	document not.DocumentLike,
+) fra.TagLike {
+	var parameter = c.extractParameter("$tag", document)
+	var tag = fra.TagFromString(parameter)
+	return tag
+}
+
+func (c *draftClass_) extractType(
+	document not.DocumentLike,
+) fra.ResourceLike {
+	var parameter = c.extractParameter("$type", document)
+	var type_ = fra.ResourceFromString(parameter)
+	return type_
+}
+
+func (c *draftClass_) extractVersion(
+	document not.DocumentLike,
+) fra.VersionLike {
+	var parameter = c.extractParameter("$version", document)
+	var version = fra.VersionFromString(parameter)
+	return version
+}
 
 // Instance Structure
 

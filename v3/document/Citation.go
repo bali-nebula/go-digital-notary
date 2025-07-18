@@ -66,13 +66,9 @@ func (c *citationClass_) CitationFromString(
 		}
 	}()
 	var document = not.ParseSource(source)
-	var tag = fra.TagFromString(
-		DraftClass().ExtractAttribute("$tag", document),
-	)
-	var version = fra.VersionFromString(
-		DraftClass().ExtractAttribute("$version", document),
-	)
-	var digest = DraftClass().ExtractDigest(document)
+	var tag = c.extractTag(document)
+	var version = c.extractVersion(document)
+	var digest = c.extractDigest(document)
 	return c.Citation(tag, version, digest)
 }
 
@@ -118,6 +114,53 @@ func (v *citation_) GetDigest() DigestLike {
 // PROTECTED INTERFACE
 
 // Private Methods
+
+func (c *citationClass_) extractAttribute(
+	name string,
+	document not.DocumentLike,
+) string {
+	var attribute string
+	var component = document.GetComponent()
+	var collection = component.GetAny().(not.CollectionLike)
+	var attributes = collection.GetAny().(not.AttributesLike)
+	var associations = attributes.GetAssociations()
+	var iterator = associations.GetIterator()
+	for iterator.HasNext() {
+		var association = iterator.GetNext()
+		var element = association.GetPrimitive().GetAny().(not.ElementLike)
+		var symbol = element.GetAny().(string)
+		if symbol == name {
+			attribute = not.FormatDocument(association.GetDocument())
+			attribute = attribute[:len(attribute)-1] // Remove the trailing newline.
+			break
+		}
+	}
+	return attribute
+}
+
+func (c *citationClass_) extractDigest(
+	document not.DocumentLike,
+) DigestLike {
+	var attribute = c.extractAttribute("$digest", document)
+	var digest = DigestClass().DigestFromString(attribute)
+	return digest
+}
+
+func (c *citationClass_) extractTag(
+	document not.DocumentLike,
+) fra.TagLike {
+	var attribute = c.extractAttribute("$tag", document)
+	var tag = fra.TagFromString(attribute)
+	return tag
+}
+
+func (c *citationClass_) extractVersion(
+	document not.DocumentLike,
+) fra.VersionLike {
+	var attribute = c.extractAttribute("$version", document)
+	var version = fra.VersionFromString(attribute)
+	return version
+}
 
 // Instance Structure
 
