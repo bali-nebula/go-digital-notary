@@ -173,20 +173,10 @@ func (c *certificateClass_) extractAttribute(
 	document not.DocumentLike,
 ) string {
 	var attribute string
-	var component = document.GetComponent()
-	var collection = component.GetAny().(not.CollectionLike)
-	var attributes = collection.GetAny().(not.AttributesLike)
-	var associations = attributes.GetAssociations()
-	var iterator = associations.GetIterator()
-	for iterator.HasNext() {
-		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(not.ElementLike)
-		var symbol = element.GetAny().(string)
-		if symbol == name {
-			attribute = not.FormatDocument(association.GetDocument())
-			attribute = attribute[:len(attribute)-1] // Remove the trailing newline.
-			break
-		}
+	document = not.GetItem(document, name)
+	if uti.IsDefined(document) {
+		attribute = not.FormatDocument(document)
+		attribute = attribute[:len(attribute)-1] // Remove the trailing newline.
 	}
 	return attribute
 }
@@ -198,15 +188,10 @@ func (c *certificateClass_) extractParameter(
 	var parameter string
 	var parameters = document.GetOptionalParameters() // Not optional here.
 	var associations = parameters.GetAssociations()
-	var iterator = associations.GetIterator()
-	for iterator.HasNext() {
-		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(not.ElementLike)
-		var symbol = element.GetAny().(string)
-		if symbol == name {
-			parameter = not.FormatDocument(association.GetDocument())
-			break
-		}
+	document = not.GetAttribute(associations, name)
+	if uti.IsDefined(document) {
+		parameter = not.FormatDocument(document)
+		parameter = parameter[:len(parameter)-1] // Remove the trailing newline.
 	}
 	return parameter
 }

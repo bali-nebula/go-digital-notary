@@ -165,15 +165,10 @@ func (c *draftClass_) extractParameter(
 	var parameter string
 	var parameters = document.GetOptionalParameters() // Not optional here.
 	var associations = parameters.GetAssociations()
-	var iterator = associations.GetIterator()
-	for iterator.HasNext() {
-		var association = iterator.GetNext()
-		var element = association.GetPrimitive().GetAny().(not.ElementLike)
-		var symbol = element.GetAny().(string)
-		if symbol == name {
-			parameter = not.FormatDocument(association.GetDocument())
-			break
-		}
+	document = not.GetAttribute(associations, name)
+	if uti.IsDefined(document) {
+		parameter = not.FormatDocument(document)
+		parameter = parameter[:len(parameter)-1] // Remove the trailing newline.
 	}
 	return parameter
 }
