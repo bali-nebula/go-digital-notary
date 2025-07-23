@@ -163,9 +163,7 @@ func (c *draftClass_) extractParameter(
 	document not.DocumentLike,
 ) string {
 	var parameter string
-	var parameters = document.GetOptionalParameters() // Not optional here.
-	var associations = parameters.GetAssociations()
-	document = not.GetAttribute(associations, name)
+	document = not.GetParameter(document, name)
 	if uti.IsDefined(document) {
 		parameter = not.FormatDocument(document)
 		parameter = parameter[:len(parameter)-1] // Remove the trailing newline.
