@@ -148,7 +148,8 @@ func (c *contractClass_) extractAttribute(
 	document not.DocumentLike,
 ) string {
 	var attribute string
-	document = not.GetAttribute(document, name)
+	var key = not.Primitive(not.Element(name))
+	document = not.GetAttribute(document, key)
 	if uti.IsDefined(document) {
 		attribute = not.FormatDocument(document)
 		attribute = attribute[:len(attribute)-1] // Remove the trailing newline.

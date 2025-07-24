@@ -163,7 +163,8 @@ func (c *draftClass_) extractParameter(
 	document not.DocumentLike,
 ) string {
 	var parameter string
-	document = not.GetParameter(document, name)
+	var key = not.Primitive(not.Element(name))
+	document = not.GetParameter(document, key)
 	if uti.IsDefined(document) {
 		parameter = not.FormatDocument(document)
 		parameter = parameter[:len(parameter)-1] // Remove the trailing newline.
