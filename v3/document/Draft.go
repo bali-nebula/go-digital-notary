@@ -119,6 +119,8 @@ func (v *draft_) AsString() string {
 	var previous = v.GetOptionalPrevious()
 	if uti.IsDefined(previous) {
 		string_ += `    $previous: ` + previous.AsString()
+	} else {
+		string_ += `    $previous: none`
 	}
 	string_ += `)
 `
@@ -185,7 +187,7 @@ func (c *draftClass_) extractPrevious(
 ) CitationLike {
 	var previous CitationLike
 	var parameter = c.extractParameter("$previous", document)
-	if uti.IsDefined(parameter) {
+	if uti.IsDefined(parameter) && parameter != "none" {
 		previous = CitationClass().CitationFromString(parameter)
 	}
 	return previous
