@@ -23,7 +23,7 @@ import (
 const directory = "./test/"
 
 func TestParsingCitations(t *tes.T) {
-	var filename = directory + "document/Citation.bali"
+	var filename = directory + "documents/Citation.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var citation = not.CitationFromString(source)
@@ -32,7 +32,7 @@ func TestParsingCitations(t *tes.T) {
 }
 
 func TestParsingCertificates(t *tes.T) {
-	var filename = directory + "document/Certificate.bali"
+	var filename = directory + "documents/Certificate.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var certificate = not.CertificateFromString(source)
@@ -41,7 +41,7 @@ func TestParsingCertificates(t *tes.T) {
 }
 
 func TestParsingDrafts(t *tes.T) {
-	var filename = directory + "document/Draft.bali"
+	var filename = directory + "documents/Draft.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var draft = not.DraftFromString(source)
@@ -50,7 +50,7 @@ func TestParsingDrafts(t *tes.T) {
 }
 
 func TestParsingContracts(t *tes.T) {
-	var filename = directory + "document/Contract.bali"
+	var filename = directory + "documents/Contract.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var contract = not.ContractFromString(source)

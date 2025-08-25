@@ -29,7 +29,7 @@ on interfaces, not on each other.
 package notary
 
 import (
-	doc "github.com/bali-nebula/go-digital-notary/v3/document"
+	doc "github.com/bali-nebula/go-digital-notary/v3/documents"
 )
 
 // TYPE DECLARATIONS

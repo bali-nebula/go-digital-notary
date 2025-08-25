@@ -16,7 +16,7 @@ import (
 	sig "crypto/ed25519"
 	dig "crypto/sha512"
 	fmt "fmt"
-	not "github.com/bali-nebula/go-document-notation/v3"
+	doc "github.com/bali-nebula/go-bali-documents/v3"
 	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	sts "strings"
@@ -96,7 +96,7 @@ func (v *ssm_) GenerateKeys() []byte {
 	if err != nil {
 		panic(err)
 	}
-	v.updateConfiguration()
+	v.writeConfiguration()
 	return v.publicKey_
 }
 
@@ -117,7 +117,7 @@ func (v *ssm_) SignBytes(
 		v.previousKey_ = nil
 	}
 	var signature = sig.Sign(privateKey, bytes)
-	v.updateConfiguration()
+	v.writeConfiguration()
 	return signature
 }
 
@@ -135,7 +135,7 @@ func (v *ssm_) RotateKeys() []byte {
 	if err != nil {
 		panic(err)
 	}
-	v.updateConfiguration()
+	v.writeConfiguration()
 	return v.publicKey_
 }
 
@@ -185,68 +185,17 @@ func (v *ssm_) IsValid(
 
 // Private Methods
 
-func (c *ssmClass_) extractAttribute(
-	name string,
-	document not.DocumentLike,
-) string {
-	var attribute string
-	var key = not.Primitive(not.Element(name))
-	document = not.GetAttribute(document, key)
-	if uti.IsDefined(document) {
-		attribute = not.FormatDocument(document)
-		attribute = attribute[:len(attribute)-1] // Remove the trailing newline.
-	}
-	return attribute
-}
-
-func (c *ssmClass_) extractKey(
-	name string,
-	document not.DocumentLike,
-) []byte {
-	var key = c.extractAttribute(name, document)
-	if key == "none" {
-		return nil
-	}
-	return fra.BinaryFromString(key).AsIntrinsic()
-}
-
-func (c *ssmClass_) extractState(
-	document not.DocumentLike,
-) fra.State {
-	var state fra.State
-	var attribute = c.extractAttribute("$state", document)
-	switch attribute {
-	case "$Keyless":
-		state = c.keyless_
-	case "$LoneKey":
-		state = c.loneKey_
-	case "$TwoKeys":
-		state = c.twoKeys_
-	case "$Invalid":
-		state = c.invalid_
-	}
-	return state
-}
-
-func (c *ssmClass_) extractTag(
-	document not.DocumentLike,
-) string {
-	return c.extractAttribute("$tag", document)
-}
-
 func (v *ssm_) createConfiguration() {
 	v.tag_ = fra.TagWithSize(20).AsString() // Results in a 32 character tag.
-	var document = not.ParseSource(`[
-    $tag: ` + v.tag_ + `
-    $state: $Keyless
-    $publicKey: none
-    $privateKey: none
-    $previousKey: none
-]`)
-	v.extractAttributes(document)
-	var source = not.FormatDocument(document)
-	var filename = v.directory_ + v.filename_
-	uti.WriteFile(filename, source)
+	v.publicKey_ = nil
+	v.privateKey_ = nil
+	v.previousKey_ = nil
+	v.controller_ = fra.Controller(
+		ssmClass().events_,
+		ssmClass().transitions_,
+		ssmClass().keyless_,
+	)
+	v.writeConfiguration()
 }
 
 func (v *ssm_) errorCheck(
@@ -262,64 +211,89 @@ func (v *ssm_) errorCheck(
 	}
 }
 
-func (v *ssm_) extractAttributes(
-	document not.DocumentLike,
-) {
-	v.tag_ = ssmClass().extractTag(document)
-	v.publicKey_ = ssmClass().extractKey("$publicKey", document)
-	v.privateKey_ = ssmClass().extractKey("$privateKey", document)
-	v.previousKey_ = ssmClass().extractKey("$previousKey", document)
-	var state = ssmClass().extractState(document)
-	v.controller_.SetState(state)
+func (v *ssm_) readConfiguration() {
+	var filename = v.directory_ + v.filename_
+	var source = uti.ReadFile(filename)
+	var component = doc.ParseSource(source)
+	fmt.Println(filename)
+
+	v.tag_ = doc.FormatComponent(
+		component.GetObject(fra.Symbol("tag")),
+	)
+
+	var publicKey = doc.FormatComponent(
+		component.GetObject(fra.Symbol("publicKey")),
+	)
+	if publicKey != "none" {
+		v.publicKey_ = fra.BinaryFromString(publicKey).AsIntrinsic()
+	}
+
+	var privateKey = doc.FormatComponent(
+		component.GetObject(fra.Symbol("privateKey")),
+	)
+	if privateKey != "none" {
+		v.privateKey_ = fra.BinaryFromString(privateKey).AsIntrinsic()
+	}
+
+	var previousKey = doc.FormatComponent(
+		component.GetObject(fra.Symbol("previousKey")),
+	)
+	if previousKey != "none" {
+		v.previousKey_ = fra.BinaryFromString(previousKey).AsIntrinsic()
+	}
+
+	var state = doc.FormatComponent(
+		component.GetObject(fra.Symbol("state")),
+	)
+	switch state {
+	case "$Keyless":
+		v.controller_.SetState(ssmClass().keyless_)
+	case "$LoneKey":
+		v.controller_.SetState(ssmClass().loneKey_)
+	case "$TwoKeys":
+		v.controller_.SetState(ssmClass().twoKeys_)
+	default:
+		panic("Invalid State")
+	}
 }
 
-func (v *ssm_) extractDraft() not.DocumentLike {
+func (v *ssm_) writeConfiguration() {
 	var tag = v.tag_
-	var state = v.getState()
-	var publicKey = fra.Binary(v.publicKey_).AsString()
-	var privateKey = fra.Binary(v.privateKey_).AsString()
-	var previousKey string
-	if v.previousKey_ != nil {
-		previousKey = fra.Binary(v.previousKey_).AsString()
-	} else {
-		previousKey = "none"
+
+	var state string
+	switch v.controller_.GetState() {
+	case ssmClass().keyless_:
+		state = "$Keyless"
+	case ssmClass().loneKey_:
+		state = "$LoneKey"
+	case ssmClass().twoKeys_:
+		state = "$TwoKeys"
+	default:
+		panic("Invalid State")
 	}
-	var document = not.ParseSource(`[
+
+	var publicKey = "none"
+	if uti.IsDefined(v.publicKey_) {
+		publicKey = fra.Binary(v.publicKey_).AsString()
+	}
+
+	var privateKey = "none"
+	if uti.IsDefined(v.privateKey_) {
+		privateKey = fra.Binary(v.privateKey_).AsString()
+	}
+
+	var previousKey = "none"
+	if uti.IsDefined(v.previousKey_) {
+		previousKey = fra.Binary(v.previousKey_).AsString()
+	}
+
+	var source = `[
     $tag: ` + tag + `
     $state: ` + state + `
     $publicKey: ` + publicKey + `
     $privateKey: ` + privateKey + `
     $previousKey: ` + previousKey + `
-]`)
-	return document
-}
-
-func (v *ssm_) getState() string {
-	switch v.controller_.GetState() {
-	case ssmClass().keyless_:
-		return "$Keyless"
-	case ssmClass().loneKey_:
-		return "$LoneKey"
-	case ssmClass().twoKeys_:
-		return "$TwoKeys"
-	default:
-		return "$Invalid"
-	}
-}
-
-func (v *ssm_) readConfiguration() {
-	var filename = v.directory_ + v.filename_
-	var source = uti.ReadFile(filename)
-	var document = not.ParseSource(source)
-	v.extractAttributes(document)
-}
-
-func (v *ssm_) updateConfiguration() {
-	if v.controller_.GetState() == "$Invalid" {
-		panic("Invalid State")
-	}
-	var draft = v.extractDraft()
-	var source = not.FormatDocument(draft)
+]($type: <bali:/nebula/ssm/Configuration@v3>)`
 	var filename = v.directory_ + v.filename_
 	uti.WriteFile(filename, source)
 }
@@ -341,7 +315,6 @@ type ssm_ struct {
 
 type ssmClass_ struct {
 	// Declare the class constants.
-	invalid_      fra.State
 	keyless_      fra.State
 	loneKey_      fra.State
 	twoKeys_      fra.State

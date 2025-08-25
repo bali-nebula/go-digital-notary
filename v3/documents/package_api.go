@@ -11,7 +11,7 @@
 */
 
 /*
-Package "document" provides an implementation of wrappers for various types of
+Package "documents" provides an implementation of wrappers for various types of
 Bali Document Notation™ documents that are required by digital notarization.
 
 For detailed documentation on this package refer to the wiki:
@@ -26,10 +26,10 @@ be developed and used seamlessly since the interface declarations only depend on
 other interfaces and intrinsic types—and the class implementations only depend
 on interfaces, not on each other.
 */
-package document
+package documents
 
 import (
-	not "github.com/bali-nebula/go-document-notation/v3"
+	doc "github.com/bali-nebula/go-bali-documents/v3"
 	fra "github.com/craterdog/go-component-framework/v7"
 )
 
@@ -51,7 +51,7 @@ type CertificateClassLike interface {
 		publicKey fra.BinaryLike,
 		tag fra.TagLike,
 		version fra.VersionLike,
-		optionalPrevious CitationLike,
+		optionalPrevious fra.ResourceLike,
 	) CertificateLike
 	CertificateFromString(
 		source string,
@@ -69,6 +69,9 @@ type CitationClassLike interface {
 		tag fra.TagLike,
 		version fra.VersionLike,
 		digest DigestLike,
+	) CitationLike
+	CitationFromResource(
+		resource fra.ResourceLike,
 	) CitationLike
 	CitationFromString(
 		source string,
@@ -116,12 +119,12 @@ concrete draft-like class.
 type DraftClassLike interface {
 	// Constructor Methods
 	Draft(
-		component not.ComponentLike,
+		component any,
 		type_ fra.ResourceLike,
 		tag fra.TagLike,
 		version fra.VersionLike,
 		permissions fra.ResourceLike,
-		previous CitationLike,
+		optionalPrevious fra.ResourceLike,
 	) DraftLike
 	DraftFromString(
 		source string,
@@ -155,12 +158,11 @@ type CertificateLike interface {
 	// Principal Methods
 	GetClass() CertificateClassLike
 	AsString() string
-
-	// Attribute Methods
 	GetAlgorithm() fra.QuoteLike
 	GetPublicKey() fra.BinaryLike
 
 	// Aspect Interfaces
+	doc.Declarative
 	Parameterized
 }
 
@@ -172,12 +174,14 @@ of a concrete citation-like class.
 type CitationLike interface {
 	// Principal Methods
 	GetClass() CitationClassLike
+	AsResource() fra.ResourceLike
 	AsString() string
-
-	// Attribute Methods
 	GetTag() fra.TagLike
 	GetVersion() fra.VersionLike
 	GetDigest() DigestLike
+
+	// Aspect Interfaces
+	doc.Declarative
 }
 
 /*
@@ -189,8 +193,6 @@ type ContractLike interface {
 	// Principal Methods
 	GetClass() ContractClassLike
 	AsString() string
-
-	// Attribute Methods
 	GetDraft() DraftLike
 	GetAccount() fra.TagLike
 	GetCertificate() CitationLike
@@ -198,6 +200,10 @@ type ContractLike interface {
 	SetSignature(
 		signature SignatureLike,
 	)
+	RemoveSignature()
+
+	// Aspect Interfaces
+	doc.Declarative
 }
 
 /*
@@ -209,10 +215,11 @@ type DigestLike interface {
 	// Principal Methods
 	GetClass() DigestClassLike
 	AsString() string
-
-	// Attribute Methods
 	GetAlgorithm() fra.QuoteLike
 	GetBase64() fra.BinaryLike
+
+	// Aspect Interfaces
+	doc.Declarative
 }
 
 /*
@@ -224,11 +231,10 @@ type DraftLike interface {
 	// Principal Methods
 	GetClass() DraftClassLike
 	AsString() string
-
-	// Attribute Methods
-	GetComponent() not.ComponentLike
+	GetComponent() any
 
 	// Aspect Interfaces
+	doc.Declarative
 	Parameterized
 }
 
@@ -241,10 +247,11 @@ type SignatureLike interface {
 	// Principal Methods
 	GetClass() SignatureClassLike
 	AsString() string
-
-	// Attribute Methods
 	GetAlgorithm() fra.QuoteLike
 	GetBase64() fra.BinaryLike
+
+	// Aspect Interfaces
+	doc.Declarative
 }
 
 // ASPECT DECLARATIONS
@@ -258,5 +265,5 @@ type Parameterized interface {
 	GetTag() fra.TagLike
 	GetVersion() fra.VersionLike
 	GetPermissions() fra.ResourceLike
-	GetOptionalPrevious() CitationLike
+	GetPrevious() any
 }

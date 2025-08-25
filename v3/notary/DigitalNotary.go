@@ -14,8 +14,7 @@ package notary
 
 import (
 	fmt "fmt"
-	doc "github.com/bali-nebula/go-digital-notary/v3/document"
-	not "github.com/bali-nebula/go-document-notation/v3"
+	doc "github.com/bali-nebula/go-digital-notary/v3/documents"
 	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	sts "strings"
@@ -95,7 +94,7 @@ func (v *digitalNotary_) GenerateKey() doc.ContractLike {
 	var publicKey = fra.Binary(bytes)
 	var tag = fra.TagWithSize(20)
 	var version = fra.VersionFromString("v1")
-	var previous doc.CitationLike
+	var previous fra.ResourceLike
 	var certificate = doc.CertificateClass().Certificate(
 		algorithm,
 		publicKey,
@@ -174,7 +173,7 @@ func (v *digitalNotary_) RefreshKey() doc.ContractLike {
 	var tag = citation.GetTag()
 	var current = citation.GetVersion()
 	var version = fra.VersionClass().GetNextVersion(current, 0)
-	var previous = citation
+	var previous = citation.AsResource()
 	var certificate = doc.CertificateClass().Certificate(
 		algorithm,
 		publicKey,
@@ -238,15 +237,14 @@ func (v *digitalNotary_) GenerateCredential() doc.ContractLike {
 	)
 
 	// Create the credential document including timestamp component.
-	var timestamp = fra.Now().AsString()
-	var component = not.Component(not.Element(timestamp))
+	var timestamp = fra.Now()
 	var type_ = fra.ResourceFromString("<bali:/types/documents/Credential:v3>")
 	var tag = fra.TagWithSize(20)
 	var version = fra.VersionFromString("v1")
 	var permissions = fra.ResourceFromString("<bali:/permissions/Public:v3>")
-	var previous doc.CitationLike
+	var previous fra.ResourceLike
 	var draft = doc.DraftClass().Draft(
-		component,
+		timestamp,
 		type_,
 		tag,
 		version,
@@ -322,7 +320,7 @@ func (v *digitalNotary_) SignatureMatches(
 	}
 	var publicKey = certificate.GetPublicKey()
 	var signature = contract.GetSignature()
-	contract.SetSignature(nil)
+	contract.RemoveSignature()
 	var source = contract.AsString()
 	var sourceBytes = []byte(source)
 	contract.SetSignature(signature)

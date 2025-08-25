@@ -31,16 +31,15 @@ For detailed documentation on this entire module refer to the wiki:
 package module
 
 import (
-	doc "github.com/bali-nebula/go-digital-notary/v3/document"
+	doc "github.com/bali-nebula/go-digital-notary/v3/documents"
 	not "github.com/bali-nebula/go-digital-notary/v3/notary"
 	ssm "github.com/bali-nebula/go-digital-notary/v3/ssm"
-	dno "github.com/bali-nebula/go-document-notation/v3"
 	fra "github.com/craterdog/go-component-framework/v7"
 )
 
 // TYPE ALIASES
 
-// Document
+// Documents
 
 type (
 	CertificateClassLike = doc.CertificateClassLike
@@ -64,7 +63,7 @@ type (
 	Parameterized = doc.Parameterized
 )
 
-// DigitalNotary
+// Notary
 
 type (
 	DigitalNotaryClassLike = not.DigitalNotaryClassLike
@@ -91,7 +90,7 @@ type (
 
 // CLASS ACCESSORS
 
-// Document
+// Documents
 
 func CertificateClass() CertificateClassLike {
 	return doc.CertificateClass()
@@ -102,7 +101,7 @@ func Certificate(
 	publicKey fra.BinaryLike,
 	tag fra.TagLike,
 	version fra.VersionLike,
-	optionalPrevious doc.CitationLike,
+	optionalPrevious fra.ResourceLike,
 ) CertificateLike {
 	return CertificateClass().Certificate(
 		algorithm,
@@ -196,12 +195,12 @@ func DraftClass() DraftClassLike {
 }
 
 func Draft(
-	component dno.ComponentLike,
+	component any,
 	type_ fra.ResourceLike,
 	tag fra.TagLike,
 	version fra.VersionLike,
 	permissions fra.ResourceLike,
-	previous doc.CitationLike,
+	optionalPrevious fra.ResourceLike,
 ) DraftLike {
 	return DraftClass().Draft(
 		component,
@@ -209,7 +208,7 @@ func Draft(
 		tag,
 		version,
 		permissions,
-		previous,
+		optionalPrevious,
 	)
 }
 
@@ -243,7 +242,7 @@ func SignatureFromString(
 	)
 }
 
-// DigitalNotary
+// Notary
 
 func DigitalNotaryClass() DigitalNotaryClassLike {
 	return not.DigitalNotaryClass()
