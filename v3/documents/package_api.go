@@ -51,7 +51,7 @@ type CertificateClassLike interface {
 		publicKey fra.BinaryLike,
 		tag fra.TagLike,
 		version fra.VersionLike,
-		optionalPrevious fra.ResourceLike,
+		previous any,
 	) CertificateLike
 	CertificateFromString(
 		source string,
@@ -68,6 +68,7 @@ type CitationClassLike interface {
 	Citation(
 		tag fra.TagLike,
 		version fra.VersionLike,
+		isNotarized fra.BooleanLike,
 		digest DigestLike,
 	) CitationLike
 	CitationFromResource(
@@ -178,6 +179,7 @@ type CitationLike interface {
 	AsString() string
 	GetTag() fra.TagLike
 	GetVersion() fra.VersionLike
+	IsNotarized() fra.BooleanLike
 	GetDigest() DigestLike
 
 	// Aspect Interfaces

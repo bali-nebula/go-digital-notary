@@ -13,6 +13,7 @@
 package documents
 
 import (
+	fmt "fmt"
 	doc "github.com/bali-nebula/go-bali-documents/v3"
 	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
@@ -32,6 +33,7 @@ func CitationClass() CitationClassLike {
 func (c *citationClass_) Citation(
 	tag fra.TagLike,
 	version fra.VersionLike,
+	isNotarized fra.BooleanLike,
 	digest DigestLike,
 ) CitationLike {
 	if uti.IsUndefined(tag) {
@@ -40,6 +42,9 @@ func (c *citationClass_) Citation(
 	if uti.IsUndefined(version) {
 		panic("The \"version\" attribute is required by this class.")
 	}
+	if uti.IsUndefined(isNotarized) {
+		panic("The \"isNotarized\" attribute is required by this class.")
+	}
 	if uti.IsUndefined(digest) {
 		panic("The \"digest\" attribute is required by this class.")
 	}
@@ -47,8 +52,9 @@ func (c *citationClass_) Citation(
 	var component = doc.ParseSource(`[
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
+    $isNotarized: ` + isNotarized.AsString() + `
     $digest: ` + digest.AsString() + `
-]($type: <bali:/nebula/notary/Citation:v3>)`,
+]($type: <bali:/nebula/types/Citation:v3>)`,
 	)
 
 	var instance = &citation_{
@@ -78,9 +84,24 @@ func (c *citationClass_) CitationFromResource(
 ) CitationLike {
 	// Parse parts of the path.
 	var path = resource.GetPath()
-	var parts = sts.Split(path, ":")
+	var parts = sts.Split(path, "/")
+	var documents = parts[1]
+	parts = sts.Split(parts[2], ":")
 	var tag = fra.TagFromString("#" + parts[0])
 	var version = fra.VersionFromString(parts[1])
+	var isNotarized fra.BooleanLike
+	switch documents {
+	case "contracts":
+		isNotarized = fra.Boolean(true)
+	case "drafts":
+		isNotarized = fra.Boolean(false)
+	default:
+		var message = fmt.Sprintf(
+			"The resource has an invalid document type: %v",
+			documents,
+		)
+		panic(message)
+	}
 
 	// Parse parts of the query string.
 	var query = resource.GetQuery()
@@ -95,10 +116,10 @@ func (c *citationClass_) CitationFromResource(
 	var digest = DigestClass().DigestFromString(`[
     $algorithm: "` + algorithm + `"
     $base64: '>` + base64 + `<'
-]($type: <bali:/nebula/notary/Digest:v3>)`,
+]($type: <bali:/nebula/types/Digest:v3>)`,
 	)
 
-	return c.Citation(tag, version, digest)
+	return c.Citation(tag, version, isNotarized, digest)
 }
 
 // Constant Methods
@@ -120,6 +141,13 @@ func (v *citation_) AsString() string {
 func (v *citation_) AsResource() fra.ResourceLike {
 	var tag = v.GetTag().AsString()[1:]
 	var version = v.GetVersion().AsString()
+	var documents string
+	switch v.IsNotarized().AsString() {
+	case "true":
+		documents = "contracts"
+	case "false":
+		documents = "drafts"
+	}
 	var digest = v.GetDigest()
 	var algorithm = digest.GetAlgorithm().AsString()
 	algorithm = algorithm[1 : len(algorithm)-1] // Remove the double quotes.
@@ -129,7 +157,7 @@ func (v *citation_) AsResource() fra.ResourceLike {
 	base64 = sts.ReplaceAll(base64, "+", "-")
 	base64 = sts.ReplaceAll(base64, "/", "_")
 	var resource = fra.ResourceFromString(
-		"<bali:/contracts/" + tag + ":" + version + "?" + algorithm + "=" +
+		"<bali:/" + documents + "/" + tag + ":" + version + "?" + algorithm + "=" +
 			base64 + ">",
 	)
 	return resource
@@ -143,6 +171,11 @@ func (v *citation_) GetTag() fra.TagLike {
 func (v *citation_) GetVersion() fra.VersionLike {
 	var object = v.GetObject(fra.Symbol("version"))
 	return fra.VersionFromString(doc.FormatComponent(object))
+}
+
+func (v *citation_) IsNotarized() fra.BooleanLike {
+	var object = v.GetObject(fra.Symbol("isNotarized"))
+	return fra.BooleanFromString(doc.FormatComponent(object))
 }
 
 func (v *citation_) GetDigest() DigestLike {

@@ -1,6 +1,7 @@
 [
     $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
     $version: v2
+    $isNotarized: true
     $digest: [
         $algorithm: "SHA512"
         $base64: '>
@@ -8,4 +9,4 @@
             IyW7HwDwhmFp3QAx0W6BWjXJxw
         <'
     ]
-]($type: <bali:/types/documents/Citation:v3>)
+]($type: <bali:/nebula/types/Citation:v3>)

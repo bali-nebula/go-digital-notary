@@ -42,7 +42,7 @@ func (c *digestClass_) Digest(
 	var component = doc.ParseSource(`[
     $algorithm: ` + algorithm.AsString() + `
     $base64: ` + base64.AsString() + `
-]($type: <bali:/nebula/notary/Digest:v3>)`,
+]($type: <bali:/nebula/types/Digest:v3>)`,
 	)
 
 	var instance = &digest_{

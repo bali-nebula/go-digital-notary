@@ -29,6 +29,14 @@ func TestParsingCitations(t *tes.T) {
 	var citation = not.CitationFromString(source)
 	var formatted = citation.AsString()
 	ass.Equal(t, source, formatted)
+	citation = not.Citation(
+		citation.GetTag(),
+		citation.GetVersion(),
+		citation.IsNotarized(),
+		citation.GetDigest(),
+	)
+	source = citation.AsString()
+	uti.WriteFile(filename, source)
 }
 
 func TestParsingCertificates(t *tes.T) {
@@ -38,6 +46,15 @@ func TestParsingCertificates(t *tes.T) {
 	var certificate = not.CertificateFromString(source)
 	var formatted = certificate.AsString()
 	ass.Equal(t, source, formatted)
+	certificate = not.Certificate(
+		certificate.GetAlgorithm(),
+		certificate.GetPublicKey(),
+		certificate.GetTag(),
+		certificate.GetVersion(),
+		certificate.GetPrevious(),
+	)
+	source = certificate.AsString()
+	uti.WriteFile(filename, source)
 }
 
 func TestParsingDrafts(t *tes.T) {
@@ -146,7 +163,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	$type: <bali:/examples/Record:v1.2.3>
 	$tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
 	$version: v1
-	$permissions: <bali:/permissions/Public:v3>
+	$permissions: <bali:/permissions/public:v3>
 )`,
 	)
 	var citation = notary.CiteDraft(transaction)

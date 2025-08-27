@@ -4,9 +4,9 @@
         oKWrrSJi3yyYcNO7WtiF0LxYOIx9UGAcx9bw7jxr/Ac
     <'
 ](
-    $type: <bali:/types/documents/Certificate:v3>
+    $type: <bali:/nebula/types/Certificate:v3>
     $tag: #ZQANMT480VVV5CNRAZZNZ7AKJ4WZJBFR
     $version: v2
-    $permissions: <bali:/permissions/Public:v3>
+    $permissions: <bali:/nebula/permissions/public:v3>
     $previous: <bali:/contracts/ZQANMT480VVV5CNRAZZNZ7AKJ4WZJBFR:v1?SHA512=Cq90FBb_Pd8ls7qaREtLfsA_oFuYQcaSGBx4HKY9mngTDs9FL7wP27WAakGNwgy5KJo9MEcm5r-aiOG_2SOkdw>
 )

@@ -94,7 +94,7 @@ func (v *digitalNotary_) GenerateKey() doc.ContractLike {
 	var publicKey = fra.Binary(bytes)
 	var tag = fra.TagWithSize(20)
 	var version = fra.VersionFromString("v1")
-	var previous fra.ResourceLike
+	var previous = fra.PatternClass().None()
 	var certificate = doc.CertificateClass().Certificate(
 		algorithm,
 		publicKey,
@@ -113,9 +113,11 @@ func (v *digitalNotary_) GenerateKey() doc.ContractLike {
 	)
 
 	// Create a citation to the new certificate.
+	var isNotarized = fra.Boolean(true)
 	var citation = doc.CitationClass().Citation(
 		tag,
 		version,
+		isNotarized,
 		digest,
 	)
 
@@ -183,6 +185,7 @@ func (v *digitalNotary_) RefreshKey() doc.ContractLike {
 	)
 
 	// Create a citation to the new version of the certificate.
+	var isNotarized = fra.Boolean(true)
 	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetDigestAlgorithm() + `"`)
 	bytes = []byte(certificate.AsString())
 	var base64 = fra.Binary(v.hsm_.DigestBytes(bytes))
@@ -193,6 +196,7 @@ func (v *digitalNotary_) RefreshKey() doc.ContractLike {
 	citation = doc.CitationClass().Citation(
 		tag,
 		version,
+		isNotarized,
 		digest,
 	)
 
@@ -238,10 +242,10 @@ func (v *digitalNotary_) GenerateCredential() doc.ContractLike {
 
 	// Create the credential document including timestamp component.
 	var timestamp = fra.Now()
-	var type_ = fra.ResourceFromString("<bali:/types/documents/Credential:v3>")
+	var type_ = fra.ResourceFromString("<bali:/nebula/types/Credential:v3>")
 	var tag = fra.TagWithSize(20)
 	var version = fra.VersionFromString("v1")
-	var permissions = fra.ResourceFromString("<bali:/permissions/Public:v3>")
+	var permissions = fra.ResourceFromString("<bali:/permissions/public:v3>")
 	var previous fra.ResourceLike
 	var draft = doc.DraftClass().Draft(
 		timestamp,
@@ -337,8 +341,10 @@ func (v *digitalNotary_) CiteDraft(
 		"An error occurred while attempting to create a citation to a draft document",
 	)
 
+	// Create a citation to the draft document.
 	var tag = draft.GetTag()
 	var version = draft.GetVersion()
+	var isNotarized = fra.Boolean(false)
 	var algorithm = fra.QuoteFromString(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
 	var source = draft.AsString()
 	var bytes = []byte(source)
@@ -350,6 +356,7 @@ func (v *digitalNotary_) CiteDraft(
 	var citation = doc.CitationClass().Citation(
 		tag,
 		version,
+		isNotarized,
 		digest,
 	)
 	return citation

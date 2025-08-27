@@ -15,6 +15,7 @@
     $certificate: [
         $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
         $version: v1
+        $isNotarized: true
         $digest: [
             $algorithm: "SHA512"
             $base64: '>

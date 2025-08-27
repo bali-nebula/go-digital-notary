@@ -13,6 +13,7 @@
 package documents
 
 import (
+	fmt "fmt"
 	doc "github.com/bali-nebula/go-bali-documents/v3"
 	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
@@ -33,7 +34,7 @@ func (c *certificateClass_) Certificate(
 	publicKey fra.BinaryLike,
 	tag fra.TagLike,
 	version fra.VersionLike,
-	optionalPrevious fra.ResourceLike,
+	previous any,
 ) CertificateLike {
 	if uti.IsUndefined(algorithm) {
 		panic("The \"algorithm\" attribute is required by this class.")
@@ -47,20 +48,42 @@ func (c *certificateClass_) Certificate(
 	if uti.IsUndefined(version) {
 		panic("The \"version\" attribute is required by this class.")
 	}
-	var previous = "none"
-	if uti.IsDefined(optionalPrevious) {
-		previous = optionalPrevious.AsString()
+	if uti.IsUndefined(previous) {
+		panic("The \"previous\" attribute is required by this class.")
+	}
+
+	var citation string
+	switch actual := previous.(type) {
+	case fra.PatternLike:
+		citation = actual.AsString()
+		if citation != "none" {
+			var message = fmt.Sprintf(
+				"An invalid previous pattern was passed: %v",
+				citation,
+			)
+			panic(message)
+		}
+	case fra.ResourceLike:
+		citation = actual.AsString()
+	case CitationLike:
+		citation = actual.AsResource().AsString()
+	default:
+		var message = fmt.Sprintf(
+			"An invalid previous citation type was passed: %T",
+			actual,
+		)
+		panic(message)
 	}
 
 	var component = doc.ParseSource(`[
     $algorithm: ` + algorithm.AsString() + `
     $publicKey: ` + publicKey.AsString() + `
 ](
-    $type: <bali:/nebula/notary/Certificate:v3>
+    $type: <bali:/nebula/types/Certificate:v3>
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
-    $permissions: <bali:/nebula/permissions/Public:v3>
-    $previous: ` + previous + `
+    $permissions: <bali:/nebula/permissions/public:v3>
+    $previous: ` + citation + `
 )`,
 	)
 
@@ -121,27 +144,27 @@ func (v *certificate_) GetPublicKey() fra.BinaryLike {
 
 func (v *certificate_) GetType() fra.ResourceLike {
 	var document = v.GetParameter(fra.Symbol("type"))
-	return fra.ResourceFromString(doc.FormatDocument(document))
+	return fra.ResourceFromString(doc.FormatComponent(document))
 }
 
 func (v *certificate_) GetTag() fra.TagLike {
 	var document = v.GetParameter(fra.Symbol("tag"))
-	return fra.TagFromString(doc.FormatDocument(document))
+	return fra.TagFromString(doc.FormatComponent(document))
 }
 
 func (v *certificate_) GetVersion() fra.VersionLike {
 	var document = v.GetParameter(fra.Symbol("version"))
-	return fra.VersionFromString(doc.FormatDocument(document))
+	return fra.VersionFromString(doc.FormatComponent(document))
 }
 
 func (v *certificate_) GetPermissions() fra.ResourceLike {
 	var document = v.GetParameter(fra.Symbol("permissions"))
-	return fra.ResourceFromString(doc.FormatDocument(document))
+	return fra.ResourceFromString(doc.FormatComponent(document))
 }
 
 func (v *certificate_) GetPrevious() any {
-	var document = v.GetParameter(fra.Symbol("previous"))
-	var source = doc.FormatDocument(document)
+	var constraint = v.GetParameter(fra.Symbol("previous"))
+	var source = doc.FormatComponent(constraint)
 	switch source {
 	case "none":
 		return fra.PatternFromString(source)

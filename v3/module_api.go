@@ -101,14 +101,14 @@ func Certificate(
 	publicKey fra.BinaryLike,
 	tag fra.TagLike,
 	version fra.VersionLike,
-	optionalPrevious fra.ResourceLike,
+	previous any,
 ) CertificateLike {
 	return CertificateClass().Certificate(
 		algorithm,
 		publicKey,
 		tag,
 		version,
-		optionalPrevious,
+		previous,
 	)
 }
 
@@ -127,12 +127,22 @@ func CitationClass() CitationClassLike {
 func Citation(
 	tag fra.TagLike,
 	version fra.VersionLike,
+	isNotarized fra.BooleanLike,
 	digest doc.DigestLike,
 ) CitationLike {
 	return CitationClass().Citation(
 		tag,
 		version,
+		isNotarized,
 		digest,
+	)
+}
+
+func CitationFromResource(
+	resource fra.ResourceLike,
+) CitationLike {
+	return CitationClass().CitationFromResource(
+		resource,
 	)
 }
 
