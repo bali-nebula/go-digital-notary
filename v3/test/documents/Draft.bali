@@ -7,6 +7,6 @@
     $type: <bali:/examples/Draft:v1.2.3>
     $tag: #1ZPDPZALRT90H6YMGYNTQJW9PJCRMVSP
     $version: v1
-    $permissions: <bali:/permissions/Public:v3>
+    $permissions: <bali:/nebula/permissions/public:v3>
     $previous: none
 )

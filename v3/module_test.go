@@ -64,6 +64,8 @@ func TestParsingDrafts(t *tes.T) {
 	var draft = not.DraftFromString(source)
 	var formatted = draft.AsString()
 	ass.Equal(t, source, formatted)
+	source = draft.AsString()
+	uti.WriteFile(filename, source)
 }
 
 func TestParsingContracts(t *tes.T) {
@@ -73,6 +75,8 @@ func TestParsingContracts(t *tes.T) {
 	var contract = not.ContractFromString(source)
 	var formatted = contract.AsString()
 	ass.Equal(t, source, formatted)
+	source = contract.AsString()
+	uti.WriteFile(filename, source)
 }
 
 // Create the security module and digital notary.
@@ -163,7 +167,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	$type: <bali:/examples/Record:v1.2.3>
 	$tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
 	$version: v1
-	$permissions: <bali:/permissions/public:v3>
+	$permissions: <bali:/nebula/permissions/public:v3>
 )`,
 	)
 	var citation = notary.CiteDraft(transaction)

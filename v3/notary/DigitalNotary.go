@@ -245,7 +245,7 @@ func (v *digitalNotary_) GenerateCredential() doc.ContractLike {
 	var type_ = fra.ResourceFromString("<bali:/nebula/types/Credential:v3>")
 	var tag = fra.TagWithSize(20)
 	var version = fra.VersionFromString("v1")
-	var permissions = fra.ResourceFromString("<bali:/permissions/public:v3>")
+	var permissions = fra.ResourceFromString("<bali:/nebula/permissions/public:v3>")
 	var previous fra.ResourceLike
 	var draft = doc.DraftClass().Draft(
 		timestamp,

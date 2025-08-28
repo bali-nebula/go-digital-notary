@@ -8,7 +8,7 @@
         $type: <bali:/examples/Record:v1.2.3>
         $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
         $version: v1
-        $permissions: <bali:/permissions/Public:v3>
+        $permissions: <bali:/nebula/permissions/public:v3>
         $previous: none
     )
     $account: #TZ4SVSJ0RL5ACFX7GLW9HG5NYR8GCRK5
@@ -23,7 +23,7 @@
                 lQbvDjGPPScIUSjZmLaNidaqFQ
             <'
         ]
-    ]($type: <bali:/types/documents/Citation:v3>)
+    ]($type: <bali:/nebula/types/Citation:v3>)
     $signature: [
         $algorithm: "ED25519"
         $base64: '>
@@ -31,4 +31,4 @@
             2LCKremx0iP6iZiwRegkP+iVAQ
         <'
     ]
-]($type: <bali:/types/documents/Contract:v3>)
+]($type: <bali:/nebula/types/Contract:v3>)

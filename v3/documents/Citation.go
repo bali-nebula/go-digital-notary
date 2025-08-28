@@ -157,8 +157,8 @@ func (v *citation_) AsResource() fra.ResourceLike {
 	base64 = sts.ReplaceAll(base64, "+", "-")
 	base64 = sts.ReplaceAll(base64, "/", "_")
 	var resource = fra.ResourceFromString(
-		"<bali:/" + documents + "/" + tag + ":" + version + "?" + algorithm + "=" +
-			base64 + ">",
+		"<bali:/nebula/" + documents + "/" + tag + ":" + version +
+			"?" + algorithm + "=" + base64 + ">",
 	)
 	return resource
 }
