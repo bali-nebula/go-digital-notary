@@ -13,6 +13,7 @@
 package notary
 
 import (
+	byt "bytes"
 	fmt "fmt"
 	doc "github.com/bali-nebula/go-digital-notary/v3/documents"
 	fra "github.com/craterdog/go-component-framework/v7"
@@ -54,7 +55,7 @@ func (c *digitalNotaryClass_) DigitalNotary(
 	var filename = directory + "Citation.bali"
 	var account = fra.TagFromString(hsm.GetTag())
 	if !uti.PathExists(filename) {
-		// There is no way to retrieve the citation to the certificate.
+		// There is no way to retrieve a citation to the certificate.
 		hsm.EraseKeys()
 	}
 
@@ -131,7 +132,7 @@ func (v *digitalNotary_) GenerateKey() doc.ContractLike {
 	var contract = doc.ContractClass().Contract(
 		draft,
 		v.account_,
-		citation,
+		citation.AsResource(),
 	)
 	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	source = contract.AsString()
@@ -210,7 +211,7 @@ func (v *digitalNotary_) RefreshKey() doc.ContractLike {
 	var contract = doc.ContractClass().Contract(
 		draft,
 		v.account_,
-		citation,
+		citation.AsResource(),
 	)
 	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	source = contract.AsString()
@@ -261,7 +262,7 @@ func (v *digitalNotary_) GenerateCredential() doc.ContractLike {
 	var contract = doc.ContractClass().Contract(
 		draft,
 		v.account_,
-		citation,
+		citation.AsResource(),
 	)
 	var algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var source = contract.AsString()
@@ -288,7 +289,7 @@ func (v *digitalNotary_) NotarizeDraft(
 	var contract = doc.ContractClass().Contract(
 		draft,
 		v.account_,
-		citation,
+		citation.AsResource(),
 	)
 	var algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var source = contract.AsString()
@@ -335,7 +336,7 @@ func (v *digitalNotary_) SignatureMatches(
 
 func (v *digitalNotary_) CiteDraft(
 	draft doc.DraftLike,
-) doc.CitationLike {
+) fra.ResourceLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
 		"An error occurred while attempting to create a citation to a draft document",
@@ -359,11 +360,12 @@ func (v *digitalNotary_) CiteDraft(
 		version,
 		digest,
 	)
-	return citation
+	var resource = citation.AsResource()
+	return resource
 }
 
 func (v *digitalNotary_) CitationMatches(
-	citation doc.CitationLike,
+	citation fra.ResourceLike,
 	draft doc.DraftLike,
 ) bool {
 	// Check for any errors at the end.
@@ -372,14 +374,15 @@ func (v *digitalNotary_) CitationMatches(
 	)
 
 	// Compare the citation digest with a digest of the draft document.
+	var digest = doc.CitationClass().CitationFromResource(citation).GetDigest()
 	var algorithm = fra.QuoteFromString(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
 	var source = draft.AsString()
 	var bytes = []byte(source)
 	var base64 = fra.Binary(v.ssm_.DigestBytes(bytes))
-	if algorithm.AsString() != citation.GetDigest().GetAlgorithm().AsString() {
+	if algorithm.AsString() != digest.GetAlgorithm().AsString() {
 		return false
 	}
-	if base64.AsString() != citation.GetDigest().GetBase64().AsString() {
+	if !byt.Equal(base64.AsIntrinsic(), digest.GetBase64().AsIntrinsic()) {
 		return false
 	}
 	return true

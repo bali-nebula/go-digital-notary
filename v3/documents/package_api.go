@@ -89,7 +89,7 @@ type ContractClassLike interface {
 	Contract(
 		draft DraftLike,
 		account fra.TagLike,
-		certificate CitationLike,
+		certificate fra.ResourceLike,
 	) ContractLike
 	ContractFromString(
 		source string,
@@ -197,7 +197,7 @@ type ContractLike interface {
 	AsString() string
 	GetDraft() DraftLike
 	GetAccount() fra.TagLike
-	GetCertificate() CitationLike
+	GetCertificate() fra.ResourceLike
 	GetSignature() SignatureLike
 	SetSignature(
 		signature SignatureLike,

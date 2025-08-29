@@ -12,18 +12,7 @@
         $previous: none
     )
     $account: #TZ4SVSJ0RL5ACFX7GLW9HG5NYR8GCRK5
-    $certificate: [
-        $isNotarized: true
-        $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
-        $version: v1
-        $digest: [
-            $algorithm: "SHA512"
-            $base64: '>
-                GmKlML1kRBJ4r5/vZkMub4ZF45ZDukdO95TtCKzuLiNeEuE04xqvUrDYxsnY
-                lQbvDjGPPScIUSjZmLaNidaqFQ
-            <'
-        ]
-    ]($type: <bali:/nebula/types/Citation:v3>)
+    $certificate: <bali:/nebula/contracts/BCASYZR1MC2J2QDPL03HG42W0M7P36TQ:v1?SHA512=GmKlML1kRBJ4r5_vZkMub4ZF45ZDukdO95TtCKzuLiNeEuE04xqvUrDYxsnYlQbvDjGPPScIUSjZmLaNidaqFQ>
     $signature: [
         $algorithm: "ED25519"
         $base64: '>

@@ -161,7 +161,7 @@ func ContractClass() ContractClassLike {
 func Contract(
 	draft doc.DraftLike,
 	account fra.TagLike,
-	certificate doc.CitationLike,
+	certificate fra.ResourceLike,
 ) ContractLike {
 	return ContractClass().Contract(
 		draft,

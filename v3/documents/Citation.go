@@ -85,7 +85,7 @@ func (c *citationClass_) CitationFromResource(
 	// Parse parts of the path.
 	var path = resource.GetPath()
 	var parts = sts.Split(path, "/")
-	var documents = parts[1]
+	var documents = parts[2]
 	var isNotarized fra.BooleanLike
 	switch documents {
 	case "contracts":
@@ -99,7 +99,7 @@ func (c *citationClass_) CitationFromResource(
 		)
 		panic(message)
 	}
-	parts = sts.Split(parts[2], ":")
+	parts = sts.Split(parts[3], ":")
 	var tag = fra.TagFromString("#" + parts[0])
 	var version = fra.VersionFromString(parts[1])
 
@@ -152,6 +152,7 @@ func (v *citation_) AsResource() fra.ResourceLike {
 	var algorithm = digest.GetAlgorithm().AsString()
 	algorithm = algorithm[1 : len(algorithm)-1] // Remove the double quotes.
 	var base64 = digest.GetBase64().AsString()
+	base64 = base64[2 : len(base64)-2]
 	base64 = sts.ReplaceAll(base64, " ", "")
 	base64 = sts.ReplaceAll(base64, "\n", "")
 	base64 = sts.ReplaceAll(base64, "+", "-")

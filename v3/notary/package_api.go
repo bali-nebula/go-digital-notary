@@ -30,6 +30,7 @@ package notary
 
 import (
 	doc "github.com/bali-nebula/go-digital-notary/v3/documents"
+	fra "github.com/craterdog/go-component-framework/v7"
 )
 
 // TYPE DECLARATIONS
@@ -80,9 +81,9 @@ type DigitalNotaryLike interface {
 	) bool
 	CiteDraft(
 		draft doc.DraftLike,
-	) doc.CitationLike
+	) fra.ResourceLike
 	CitationMatches(
-		citation doc.CitationLike,
+		citation fra.ResourceLike,
 		draft doc.DraftLike,
 	) bool
 }

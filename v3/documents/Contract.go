@@ -31,7 +31,7 @@ func ContractClass() ContractClassLike {
 func (c *contractClass_) Contract(
 	draft DraftLike,
 	account fra.TagLike,
-	certificate CitationLike,
+	certificate fra.ResourceLike,
 ) ContractLike {
 	if uti.IsUndefined(draft) {
 		panic("The \"draft\" attribute is required by this class.")
@@ -98,9 +98,9 @@ func (v *contract_) GetAccount() fra.TagLike {
 	return fra.TagFromString(doc.FormatComponent(object))
 }
 
-func (v *contract_) GetCertificate() CitationLike {
+func (v *contract_) GetCertificate() fra.ResourceLike {
 	var object = v.GetObject(fra.Symbol("certificate"))
-	return CitationClass().CitationFromString(doc.FormatComponent(object))
+	return fra.ResourceFromString(doc.FormatComponent(object))
 }
 
 func (v *contract_) GetSignature() SignatureLike {
