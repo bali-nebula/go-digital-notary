@@ -13,7 +13,6 @@
 package documents
 
 import (
-	fmt "fmt"
 	doc "github.com/bali-nebula/go-bali-documents/v3"
 	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
@@ -34,7 +33,7 @@ func (c *certificateClass_) Certificate(
 	publicKey fra.BinaryLike,
 	tag fra.TagLike,
 	version fra.VersionLike,
-	previous any,
+	optionalPrevious fra.ResourceLike,
 ) CertificateLike {
 	if uti.IsUndefined(algorithm) {
 		panic("The \"algorithm\" attribute is required by this class.")
@@ -48,31 +47,10 @@ func (c *certificateClass_) Certificate(
 	if uti.IsUndefined(version) {
 		panic("The \"version\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(previous) {
-		panic("The \"previous\" attribute is required by this class.")
-	}
 
-	var citation string
-	switch actual := previous.(type) {
-	case fra.PatternLike:
-		citation = actual.AsString()
-		if citation != "none" {
-			var message = fmt.Sprintf(
-				"An invalid previous pattern was passed: %v",
-				citation,
-			)
-			panic(message)
-		}
-	case fra.ResourceLike:
-		citation = actual.AsString()
-	case CitationLike:
-		citation = actual.AsResource().AsString()
-	default:
-		var message = fmt.Sprintf(
-			"An invalid previous citation type was passed: %T",
-			actual,
-		)
-		panic(message)
+	var previous = "none"
+	if uti.IsDefined(optionalPrevious) {
+		previous = optionalPrevious.AsString()
 	}
 
 	var component = doc.ParseSource(`[
@@ -83,7 +61,7 @@ func (c *certificateClass_) Certificate(
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
     $permissions: <bali:/nebula/permissions/public:v3>
-    $previous: ` + citation + `
+    $previous: ` + previous + `
 )`,
 	)
 
@@ -162,15 +140,14 @@ func (v *certificate_) GetPermissions() fra.ResourceLike {
 	return fra.ResourceFromString(doc.FormatComponent(document))
 }
 
-func (v *certificate_) GetPrevious() any {
-	var constraint = v.GetParameter(fra.Symbol("previous"))
-	var source = doc.FormatComponent(constraint)
-	switch source {
-	case "none":
-		return fra.PatternFromString(source)
-	default:
-		return fra.ResourceFromString(source)
+func (v *certificate_) GetOptionalPrevious() fra.ResourceLike {
+	var previous fra.ResourceLike
+	var component = v.GetParameter(fra.Symbol("previous"))
+	var source = doc.FormatComponent(component)
+	if source != "none" {
+		previous = fra.ResourceFromString(source)
 	}
+	return previous
 }
 
 // PROTECTED INTERFACE

@@ -51,7 +51,7 @@ func TestParsingCertificates(t *tes.T) {
 		certificate.GetPublicKey(),
 		certificate.GetTag(),
 		certificate.GetVersion(),
-		certificate.GetPrevious(),
+		certificate.GetOptionalPrevious(),
 	)
 	source = certificate.AsString()
 	uti.WriteFile(filename, source)

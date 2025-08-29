@@ -101,7 +101,7 @@ func Certificate(
 	publicKey fra.BinaryLike,
 	tag fra.TagLike,
 	version fra.VersionLike,
-	previous any,
+	previous fra.ResourceLike,
 ) CertificateLike {
 	return CertificateClass().Certificate(
 		algorithm,

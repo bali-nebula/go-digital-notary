@@ -132,15 +132,14 @@ func (v *draft_) GetPermissions() fra.ResourceLike {
 	return fra.ResourceFromString(doc.FormatComponent(component))
 }
 
-func (v *draft_) GetPrevious() any {
+func (v *draft_) GetOptionalPrevious() fra.ResourceLike {
+	var previous fra.ResourceLike
 	var component = v.GetParameter(fra.Symbol("previous"))
 	var source = doc.FormatComponent(component)
-	switch source {
-	case "none":
-		return fra.PatternFromString(source)
-	default:
-		return fra.ResourceFromString(source)
+	if source != "none" {
+		previous = fra.ResourceFromString(source)
 	}
+	return previous
 }
 
 // PROTECTED INTERFACE

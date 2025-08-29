@@ -51,7 +51,7 @@ type CertificateClassLike interface {
 		publicKey fra.BinaryLike,
 		tag fra.TagLike,
 		version fra.VersionLike,
-		previous any,
+		previous fra.ResourceLike,
 	) CertificateLike
 	CertificateFromString(
 		source string,
@@ -267,5 +267,5 @@ type Parameterized interface {
 	GetTag() fra.TagLike
 	GetVersion() fra.VersionLike
 	GetPermissions() fra.ResourceLike
-	GetPrevious() any
+	GetOptionalPrevious() fra.ResourceLike
 }

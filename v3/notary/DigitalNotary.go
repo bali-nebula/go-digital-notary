@@ -95,7 +95,7 @@ func (v *digitalNotary_) GenerateKey() doc.ContractLike {
 	var publicKey = fra.Binary(bytes)
 	var tag = fra.TagWithSize(20)
 	var version = fra.VersionFromString("v1")
-	var previous = fra.PatternClass().None()
+	var previous fra.ResourceLike
 	var certificate = doc.CertificateClass().Certificate(
 		algorithm,
 		publicKey,
