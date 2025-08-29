@@ -30,9 +30,9 @@ func TestParsingCitations(t *tes.T) {
 	var formatted = citation.AsString()
 	ass.Equal(t, source, formatted)
 	citation = not.Citation(
+		citation.IsNotarized(),
 		citation.GetTag(),
 		citation.GetVersion(),
-		citation.IsNotarized(),
 		citation.GetDigest(),
 	)
 	source = citation.AsString()
@@ -107,7 +107,7 @@ func TestDigitalNotaryInitialization(t *tes.T) {
 	defer func() {
 		if e := recover(); e != nil {
 			var message = e.(string)
-			ass.Equal(t, "DigitalNotary: An error occurred while attempting to retrieve the public certificate:\n    The digital notary has not yet been initialized.", message)
+			ass.Equal(t, "DigitalNotary: An error occurred while attempting to retrieve the certificate citation:\n    The digital notary has not yet been initialized.", message)
 		} else {
 			ass.Fail(t, "Test should result in recovered panic.")
 		}

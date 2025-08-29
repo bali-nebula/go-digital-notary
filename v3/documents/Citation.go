@@ -31,28 +31,28 @@ func CitationClass() CitationClassLike {
 // Constructor Methods
 
 func (c *citationClass_) Citation(
+	isNotarized fra.BooleanLike,
 	tag fra.TagLike,
 	version fra.VersionLike,
-	isNotarized fra.BooleanLike,
 	digest DigestLike,
 ) CitationLike {
+	if uti.IsUndefined(isNotarized) {
+		panic("The \"isNotarized\" attribute is required by this class.")
+	}
 	if uti.IsUndefined(tag) {
 		panic("The \"tag\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(version) {
 		panic("The \"version\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(isNotarized) {
-		panic("The \"isNotarized\" attribute is required by this class.")
-	}
 	if uti.IsUndefined(digest) {
 		panic("The \"digest\" attribute is required by this class.")
 	}
 
 	var component = doc.ParseSource(`[
+    $isNotarized: ` + isNotarized.AsString() + `
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
-    $isNotarized: ` + isNotarized.AsString() + `
     $digest: ` + digest.AsString() + `
 ]($type: <bali:/nebula/types/Citation:v3>)`,
 	)
@@ -86,9 +86,6 @@ func (c *citationClass_) CitationFromResource(
 	var path = resource.GetPath()
 	var parts = sts.Split(path, "/")
 	var documents = parts[1]
-	parts = sts.Split(parts[2], ":")
-	var tag = fra.TagFromString("#" + parts[0])
-	var version = fra.VersionFromString(parts[1])
 	var isNotarized fra.BooleanLike
 	switch documents {
 	case "contracts":
@@ -102,6 +99,9 @@ func (c *citationClass_) CitationFromResource(
 		)
 		panic(message)
 	}
+	parts = sts.Split(parts[2], ":")
+	var tag = fra.TagFromString("#" + parts[0])
+	var version = fra.VersionFromString(parts[1])
 
 	// Parse parts of the query string.
 	var query = resource.GetQuery()
@@ -119,7 +119,7 @@ func (c *citationClass_) CitationFromResource(
 ]($type: <bali:/nebula/types/Digest:v3>)`,
 	)
 
-	return c.Citation(tag, version, isNotarized, digest)
+	return c.Citation(isNotarized, tag, version, digest)
 }
 
 // Constant Methods
@@ -163,6 +163,11 @@ func (v *citation_) AsResource() fra.ResourceLike {
 	return resource
 }
 
+func (v *citation_) IsNotarized() fra.BooleanLike {
+	var object = v.GetObject(fra.Symbol("isNotarized"))
+	return fra.BooleanFromString(doc.FormatComponent(object))
+}
+
 func (v *citation_) GetTag() fra.TagLike {
 	var object = v.GetObject(fra.Symbol("tag"))
 	return fra.TagFromString(doc.FormatComponent(object))
@@ -171,11 +176,6 @@ func (v *citation_) GetTag() fra.TagLike {
 func (v *citation_) GetVersion() fra.VersionLike {
 	var object = v.GetObject(fra.Symbol("version"))
 	return fra.VersionFromString(doc.FormatComponent(object))
-}
-
-func (v *citation_) IsNotarized() fra.BooleanLike {
-	var object = v.GetObject(fra.Symbol("isNotarized"))
-	return fra.BooleanFromString(doc.FormatComponent(object))
 }
 
 func (v *citation_) GetDigest() DigestLike {

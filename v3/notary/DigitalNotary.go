@@ -89,6 +89,7 @@ func (v *digitalNotary_) GenerateKey() doc.ContractLike {
 	)
 
 	// Create a new certificate.
+	var isNotarized = fra.Boolean(true)
 	var algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var bytes = v.hsm_.GenerateKeys() // Returns the new public key.
 	var publicKey = fra.Binary(bytes)
@@ -113,11 +114,10 @@ func (v *digitalNotary_) GenerateKey() doc.ContractLike {
 	)
 
 	// Create a citation to the new certificate.
-	var isNotarized = fra.Boolean(true)
 	var citation = doc.CitationClass().Citation(
+		isNotarized,
 		tag,
 		version,
-		isNotarized,
 		digest,
 	)
 
@@ -148,7 +148,7 @@ func (v *digitalNotary_) GenerateKey() doc.ContractLike {
 func (v *digitalNotary_) GetCitation() doc.CitationLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
-		"An error occurred while attempting to retrieve the public certificate",
+		"An error occurred while attempting to retrieve the certificate citation",
 	)
 
 	if !uti.PathExists(v.filename_) {
@@ -171,6 +171,7 @@ func (v *digitalNotary_) RefreshKey() doc.ContractLike {
 	var publicKey = fra.Binary(bytes)
 
 	// Generate a the next version of the certificate.
+	var isNotarized = fra.Boolean(true)
 	var citation = v.GetCitation()
 	var tag = citation.GetTag()
 	var current = citation.GetVersion()
@@ -185,7 +186,6 @@ func (v *digitalNotary_) RefreshKey() doc.ContractLike {
 	)
 
 	// Create a citation to the new version of the certificate.
-	var isNotarized = fra.Boolean(true)
 	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetDigestAlgorithm() + `"`)
 	bytes = []byte(certificate.AsString())
 	var base64 = fra.Binary(v.hsm_.DigestBytes(bytes))
@@ -194,9 +194,9 @@ func (v *digitalNotary_) RefreshKey() doc.ContractLike {
 		base64,
 	)
 	citation = doc.CitationClass().Citation(
+		isNotarized,
 		tag,
 		version,
-		isNotarized,
 		digest,
 	)
 
@@ -342,9 +342,9 @@ func (v *digitalNotary_) CiteDraft(
 	)
 
 	// Create a citation to the draft document.
+	var isNotarized = fra.Boolean(false)
 	var tag = draft.GetTag()
 	var version = draft.GetVersion()
-	var isNotarized = fra.Boolean(false)
 	var algorithm = fra.QuoteFromString(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
 	var source = draft.AsString()
 	var bytes = []byte(source)
@@ -354,9 +354,9 @@ func (v *digitalNotary_) CiteDraft(
 		base64,
 	)
 	var citation = doc.CitationClass().Citation(
+		isNotarized,
 		tag,
 		version,
-		isNotarized,
 		digest,
 	)
 	return citation

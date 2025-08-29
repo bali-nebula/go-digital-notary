@@ -125,15 +125,15 @@ func CitationClass() CitationClassLike {
 }
 
 func Citation(
+	isNotarized fra.BooleanLike,
 	tag fra.TagLike,
 	version fra.VersionLike,
-	isNotarized fra.BooleanLike,
 	digest doc.DigestLike,
 ) CitationLike {
 	return CitationClass().Citation(
+		isNotarized,
 		tag,
 		version,
-		isNotarized,
 		digest,
 	)
 }
