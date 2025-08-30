@@ -100,6 +100,10 @@ func (v *certificate_) GetClass() CertificateClassLike {
 	return certificateClass()
 }
 
+func (v *certificate_) AsIntrinsic() doc.ComponentLike {
+	return v.Declarative.(doc.ComponentLike)
+}
+
 func (v *certificate_) AsString() string {
 	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
 }

@@ -79,6 +79,10 @@ func (v *signature_) GetClass() SignatureClassLike {
 	return signatureClass()
 }
 
+func (v *signature_) AsIntrinsic() doc.ComponentLike {
+	return v.Declarative.(doc.ComponentLike)
+}
+
 func (v *signature_) AsString() string {
 	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
 }

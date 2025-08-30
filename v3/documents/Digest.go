@@ -79,6 +79,10 @@ func (v *digest_) GetClass() DigestClassLike {
 	return digestClass()
 }
 
+func (v *digest_) AsIntrinsic() doc.ComponentLike {
+	return v.Declarative.(doc.ComponentLike)
+}
+
 func (v *digest_) AsString() string {
 	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
 }

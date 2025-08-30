@@ -84,6 +84,10 @@ func (v *contract_) GetClass() ContractClassLike {
 	return contractClass()
 }
 
+func (v *contract_) AsIntrinsic() doc.ComponentLike {
+	return v.Declarative.(doc.ComponentLike)
+}
+
 func (v *contract_) AsString() string {
 	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
 }

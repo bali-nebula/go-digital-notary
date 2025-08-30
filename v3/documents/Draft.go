@@ -100,12 +100,12 @@ func (v *draft_) GetClass() DraftClassLike {
 	return draftClass()
 }
 
-func (v *draft_) AsString() string {
-	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
+func (v *draft_) AsIntrinsic() doc.ComponentLike {
+	return v.Declarative.(doc.ComponentLike)
 }
 
-func (v *draft_) GetComponent() any {
-	return v.Declarative.(doc.ComponentLike)
+func (v *draft_) AsString() string {
+	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
 }
 
 // Attribute Methods

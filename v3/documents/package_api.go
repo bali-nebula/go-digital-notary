@@ -158,6 +158,7 @@ of a concrete certificate-like class.
 type CertificateLike interface {
 	// Principal Methods
 	GetClass() CertificateClassLike
+	AsIntrinsic() doc.ComponentLike
 	AsString() string
 	GetAlgorithm() fra.QuoteLike
 	GetPublicKey() fra.BinaryLike
@@ -175,6 +176,7 @@ of a concrete citation-like class.
 type CitationLike interface {
 	// Principal Methods
 	GetClass() CitationClassLike
+	AsIntrinsic() doc.ComponentLike
 	AsResource() fra.ResourceLike
 	AsString() string
 	IsNotarized() fra.BooleanLike
@@ -194,6 +196,7 @@ of a concrete contract-like class.
 type ContractLike interface {
 	// Principal Methods
 	GetClass() ContractClassLike
+	AsIntrinsic() doc.ComponentLike
 	AsString() string
 	GetDraft() DraftLike
 	GetAccount() fra.TagLike
@@ -216,6 +219,7 @@ of a concrete digest-like class.
 type DigestLike interface {
 	// Principal Methods
 	GetClass() DigestClassLike
+	AsIntrinsic() doc.ComponentLike
 	AsString() string
 	GetAlgorithm() fra.QuoteLike
 	GetBase64() fra.BinaryLike
@@ -232,8 +236,8 @@ of a concrete draft-like class.
 type DraftLike interface {
 	// Principal Methods
 	GetClass() DraftClassLike
+	AsIntrinsic() doc.ComponentLike
 	AsString() string
-	GetComponent() any
 
 	// Aspect Interfaces
 	doc.Declarative
@@ -248,6 +252,7 @@ of a concrete signature-like class.
 type SignatureLike interface {
 	// Principal Methods
 	GetClass() SignatureClassLike
+	AsIntrinsic() doc.ComponentLike
 	AsString() string
 	GetAlgorithm() fra.QuoteLike
 	GetBase64() fra.BinaryLike

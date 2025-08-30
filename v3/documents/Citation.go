@@ -134,6 +134,10 @@ func (v *citation_) GetClass() CitationClassLike {
 	return citationClass()
 }
 
+func (v *citation_) AsIntrinsic() doc.ComponentLike {
+	return v.Declarative.(doc.ComponentLike)
+}
+
 func (v *citation_) AsString() string {
 	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
 }
