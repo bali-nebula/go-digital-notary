@@ -83,6 +83,20 @@ func (v *digitalNotary_) GetClass() DigitalNotaryClassLike {
 	return digitalNotaryClass()
 }
 
+func (v *digitalNotary_) GetCitation() fra.ResourceLike {
+	// Check for any errors at the end.
+	defer v.errorCheck(
+		"An error occurred while attempting to retrieve the certificate citation",
+	)
+
+	if !uti.PathExists(v.filename_) {
+		panic("The digital notary has not yet been initialized.")
+	}
+	var source = uti.ReadFile(v.filename_)
+	var citation = doc.CitationClass().CitationFromString(source)
+	return citation.AsResource()
+}
+
 func (v *digitalNotary_) GenerateKey() doc.ContractLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
@@ -146,20 +160,6 @@ func (v *digitalNotary_) GenerateKey() doc.ContractLike {
 	return contract
 }
 
-func (v *digitalNotary_) GetCitation() doc.CitationLike {
-	// Check for any errors at the end.
-	defer v.errorCheck(
-		"An error occurred while attempting to retrieve the certificate citation",
-	)
-
-	if !uti.PathExists(v.filename_) {
-		panic("The digital notary has not yet been initialized.")
-	}
-	var source = uti.ReadFile(v.filename_)
-	var citation = doc.CitationClass().CitationFromString(source)
-	return citation
-}
-
 func (v *digitalNotary_) RefreshKey() doc.ContractLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
@@ -173,11 +173,11 @@ func (v *digitalNotary_) RefreshKey() doc.ContractLike {
 
 	// Generate a the next version of the certificate.
 	var isNotarized = fra.Boolean(true)
-	var citation = v.GetCitation()
+	var previous = v.GetCitation()
+	var citation = doc.CitationClass().CitationFromResource(previous)
 	var tag = citation.GetTag()
 	var current = citation.GetVersion()
 	var version = fra.VersionClass().GetNextVersion(current, 0)
-	var previous = citation.AsResource()
 	var certificate = doc.CertificateClass().Certificate(
 		algorithm,
 		publicKey,
@@ -262,7 +262,7 @@ func (v *digitalNotary_) GenerateCredential() doc.ContractLike {
 	var contract = doc.ContractClass().Contract(
 		draft,
 		v.account_,
-		citation.AsResource(),
+		citation,
 	)
 	var algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var source = contract.AsString()
@@ -289,7 +289,7 @@ func (v *digitalNotary_) NotarizeDraft(
 	var contract = doc.ContractClass().Contract(
 		draft,
 		v.account_,
-		citation.AsResource(),
+		citation,
 	)
 	var algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var source = contract.AsString()

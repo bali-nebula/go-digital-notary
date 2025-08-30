@@ -67,8 +67,8 @@ of a concrete digital-notary-like class.
 type DigitalNotaryLike interface {
 	// Principal Methods
 	GetClass() DigitalNotaryClassLike
+	GetCitation() fra.ResourceLike
 	GenerateKey() doc.ContractLike
-	GetCitation() doc.CitationLike
 	RefreshKey() doc.ContractLike
 	ForgetKey()
 	GenerateCredential() doc.ContractLike
