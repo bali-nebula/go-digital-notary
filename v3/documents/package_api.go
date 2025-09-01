@@ -179,7 +179,6 @@ type CertificateLike interface {
 	GetKey() KeyLike
 
 	// Aspect Interfaces
-	doc.Declarative
 	Notarized
 }
 
@@ -216,7 +215,6 @@ type ContractLike interface {
 	GetDraft() DraftLike
 
 	// Aspect Interfaces
-	doc.Declarative
 	Notarized
 }
 
@@ -249,7 +247,6 @@ type DraftLike interface {
 	AsString() string
 
 	// Aspect Interfaces
-	doc.Declarative
 	Parameterized
 }
 
@@ -268,7 +265,6 @@ type KeyLike interface {
 	GetBase64() fra.BinaryLike
 
 	// Aspect Interfaces
-	doc.Declarative
 	Parameterized
 }
 
@@ -296,6 +292,7 @@ Notarized declares the set of method signatures that must be supported by
 all notarized documents.
 */
 type Notarized interface {
+	doc.Declarative
 	AsString() string
 	GetContent() Parameterized
 	GetAccount() fra.TagLike
@@ -312,6 +309,7 @@ Parameterized declares the set of method signatures that must be supported by
 all parameterized documents.
 */
 type Parameterized interface {
+	doc.Declarative
 	AsString() string
 	GetEntity() any
 	GetType() fra.ResourceLike
@@ -319,5 +317,4 @@ type Parameterized interface {
 	GetVersion() fra.VersionLike
 	GetPermissions() fra.ResourceLike
 	GetOptionalPrevious() fra.ResourceLike
-	doc.Declarative
 }
