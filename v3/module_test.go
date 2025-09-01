@@ -46,13 +46,13 @@ func TestParsingCertificates(t *tes.T) {
 	var certificate = not.CertificateFromString(source)
 	var formatted = certificate.AsString()
 	ass.Equal(t, source, formatted)
+	var signature = certificate.GetSignature()
 	certificate = not.Certificate(
-		certificate.GetAlgorithm(),
-		certificate.GetPublicKey(),
-		certificate.GetTag(),
-		certificate.GetVersion(),
-		certificate.GetOptionalPrevious(),
+		certificate.GetKey(),
+		certificate.GetAccount(),
+		certificate.GetSignatory(),
 	)
+	certificate.SetSignature(signature)
 	source = certificate.AsString()
 	uti.WriteFile(filename, source)
 }
@@ -64,6 +64,14 @@ func TestParsingDrafts(t *tes.T) {
 	var draft = not.DraftFromString(source)
 	var formatted = draft.AsString()
 	ass.Equal(t, source, formatted)
+	draft = not.Draft(
+		draft.GetEntity(),
+		draft.GetType(),
+		draft.GetTag(),
+		draft.GetVersion(),
+		draft.GetPermissions(),
+		draft.GetOptionalPrevious(),
+	)
 	source = draft.AsString()
 	uti.WriteFile(filename, source)
 }
@@ -75,6 +83,13 @@ func TestParsingContracts(t *tes.T) {
 	var contract = not.ContractFromString(source)
 	var formatted = contract.AsString()
 	ass.Equal(t, source, formatted)
+	var signature = contract.GetSignature()
+	contract = not.Contract(
+		contract.GetEntity(),
+		contract.GetAccount(),
+		contract.GetSignatory(),
+	)
+	contract.SetSignature(signature)
 	source = contract.AsString()
 	uti.WriteFile(filename, source)
 }
@@ -128,7 +143,7 @@ func TestDigitalNotaryGenerateKey(t *tes.T) {
 			var message = e.(string)
 			ass.Equal(
 				t,
-				"DigitalNotary: An error occurred while attempting to generate a new private key:\n    Ssm: An error occurred while attempting to generate new keys:\n        Attempted to transition from state \"$LoneKey\" to an invalid state on event \"$GenerateKeys\".",
+				"DigitalNotary: An error occurred while attempting to generate a new key pair:\n    Ssm: An error occurred while attempting to generate new keys:\n        Attempted to transition from state \"$LoneKey\" to an invalid state on event \"$GenerateKeys\".",
 				message,
 			)
 		} else {
@@ -141,17 +156,18 @@ func TestDigitalNotaryGenerateKey(t *tes.T) {
 func TestDigitalNotaryLifecycle(t *tes.T) {
 	// Generate and validate a new public-private key pair.
 	notary.ForgetKey()
-	var contractV1 = notary.GenerateKey()
-	var certificateV1 = not.CertificateFromString(
-		contractV1.GetDraft().AsString(),
-	)
+	var certificateV1 = notary.GenerateKey()
+	var keyV1 = certificateV1.GetKey()
 	ass.True(
 		t,
 		notary.SignatureMatches(
-			contractV1,
 			certificateV1,
+			keyV1,
 		),
 	)
+	var filename = "./test/notary/CertificateV1.bali"
+	var source = certificateV1.AsString()
+	uti.WriteFile(filename, source)
 
 	// Extract the citation to the public certificate.
 	notary.GetCitation()
@@ -179,7 +195,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 		t,
 		notary.SignatureMatches(
 			contract,
-			certificateV1,
+			keyV1,
 		),
 	)
 
@@ -188,25 +204,26 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	notary = not.DigitalNotary(directory, module, module)
 
 	// Refresh and validate the public-private key pair.
-	var contractV2 = notary.RefreshKey()
+	var certificateV2 = notary.RefreshKey()
 	ass.True(
 		t,
 		notary.SignatureMatches(
-			contractV2,
-			certificateV1,
+			certificateV2,
+			keyV1,
 		),
 	)
+	filename = "./test/notary/CertificateV2.bali"
+	source = certificateV2.AsString()
+	uti.WriteFile(filename, source)
 
 	// Generate an authentication credential.
 	var credential = notary.GenerateCredential()
-	var certificateV2 = not.CertificateFromString(
-		contractV2.GetDraft().AsString(),
-	)
+	var keyV2 = certificateV2.GetKey()
 	ass.True(
 		t,
 		notary.SignatureMatches(
 			credential,
-			certificateV2,
+			keyV2,
 		),
 	)
 }

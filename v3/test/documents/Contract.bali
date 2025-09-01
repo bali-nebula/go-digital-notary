@@ -1,5 +1,5 @@
 [
-    $draft: [
+    $entity: [
         $timestamp: <2022-06-03T07:39:54>
         $consumer: "Derk Norton"
         $merchant: <https://www.starbucks.com>
@@ -12,12 +12,12 @@
         $previous: none
     )
     $account: #TZ4SVSJ0RL5ACFX7GLW9HG5NYR8GCRK5
-    $certificate: <bali:/nebula/contracts/BCASYZR1MC2J2QDPL03HG42W0M7P36TQ:v1?SHA512=GmKlML1kRBJ4r5_vZkMub4ZF45ZDukdO95TtCKzuLiNeEuE04xqvUrDYxsnYlQbvDjGPPScIUSjZmLaNidaqFQ>
+    $signatory: <bali:/nebula/contracts/BCASYZR1MC2J2QDPL03HG42W0M7P36TQ:v1?SHA512=GmKlML1kRBJ4r5_vZkMub4ZF45ZDukdO95TtCKzuLiNeEuE04xqvUrDYxsnYlQbvDjGPPScIUSjZmLaNidaqFQ>
     $signature: [
         $algorithm: "ED25519"
         $base64: '>
             5j8Tc5OsKQlMYGltKYL7CSDVzyUmvsPVvUEGWIo7IHDo3iCZaPaCcPRKQRrZ
             2LCKremx0iP6iZiwRegkP+iVAQ
         <'
-    ]
+    ]($type: <bali:/nebula/types/Signature:v3>)
 ]($type: <bali:/nebula/types/Contract:v3>)

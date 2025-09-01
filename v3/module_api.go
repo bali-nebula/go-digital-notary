@@ -47,6 +47,7 @@ type (
 	ContractClassLike    = doc.ContractClassLike
 	DigestClassLike      = doc.DigestClassLike
 	DraftClassLike       = doc.DraftClassLike
+	KeyClassLike         = doc.KeyClassLike
 	SignatureClassLike   = doc.SignatureClassLike
 )
 
@@ -56,6 +57,7 @@ type (
 	ContractLike    = doc.ContractLike
 	DigestLike      = doc.DigestLike
 	DraftLike       = doc.DraftLike
+	KeyLike         = doc.KeyLike
 	SignatureLike   = doc.SignatureLike
 )
 
@@ -97,18 +99,14 @@ func CertificateClass() CertificateClassLike {
 }
 
 func Certificate(
-	algorithm fra.QuoteLike,
-	publicKey fra.BinaryLike,
-	tag fra.TagLike,
-	version fra.VersionLike,
-	previous fra.ResourceLike,
+	key KeyLike,
+	account fra.TagLike,
+	signatory fra.ResourceLike,
 ) CertificateLike {
 	return CertificateClass().Certificate(
-		algorithm,
-		publicKey,
-		tag,
-		version,
-		previous,
+		key,
+		account,
+		signatory,
 	)
 }
 
@@ -159,12 +157,12 @@ func ContractClass() ContractClassLike {
 }
 
 func Contract(
-	draft doc.DraftLike,
+	entity doc.DraftLike,
 	account fra.TagLike,
 	certificate fra.ResourceLike,
 ) ContractLike {
 	return ContractClass().Contract(
-		draft,
+		entity,
 		account,
 		certificate,
 	)
@@ -205,7 +203,7 @@ func DraftClass() DraftClassLike {
 }
 
 func Draft(
-	component any,
+	entity any,
 	type_ fra.ResourceLike,
 	tag fra.TagLike,
 	version fra.VersionLike,
@@ -213,7 +211,7 @@ func Draft(
 	optionalPrevious fra.ResourceLike,
 ) DraftLike {
 	return DraftClass().Draft(
-		component,
+		entity,
 		type_,
 		tag,
 		version,
@@ -226,6 +224,32 @@ func DraftFromString(
 	source string,
 ) DraftLike {
 	return DraftClass().DraftFromString(
+		source,
+	)
+}
+
+func KeyClass() KeyClassLike {
+	return doc.KeyClass()
+}
+
+func Key(
+	algorithm fra.QuoteLike,
+	base64 fra.BinaryLike,
+	tag fra.TagLike,
+	version fra.VersionLike,
+) KeyLike {
+	return KeyClass().Key(
+		algorithm,
+		base64,
+		tag,
+		version,
+	)
+}
+
+func KeyFromString(
+	source string,
+) KeyLike {
+	return KeyClass().KeyFromString(
 		source,
 	)
 }

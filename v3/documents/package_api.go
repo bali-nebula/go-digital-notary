@@ -47,11 +47,9 @@ concrete certificate-like class.
 type CertificateClassLike interface {
 	// Constructor Methods
 	Certificate(
-		algorithm fra.QuoteLike,
-		publicKey fra.BinaryLike,
-		tag fra.TagLike,
-		version fra.VersionLike,
-		previous fra.ResourceLike,
+		key KeyLike,
+		account fra.TagLike,
+		signatory fra.ResourceLike,
 	) CertificateLike
 	CertificateFromString(
 		source string,
@@ -87,9 +85,9 @@ concrete contract-like class.
 type ContractClassLike interface {
 	// Constructor Methods
 	Contract(
-		draft DraftLike,
+		entity DraftLike,
 		account fra.TagLike,
-		certificate fra.ResourceLike,
+		signatory fra.ResourceLike,
 	) ContractLike
 	ContractFromString(
 		source string,
@@ -120,7 +118,7 @@ concrete draft-like class.
 type DraftClassLike interface {
 	// Constructor Methods
 	Draft(
-		component any,
+		entity any,
 		type_ fra.ResourceLike,
 		tag fra.TagLike,
 		version fra.VersionLike,
@@ -130,6 +128,24 @@ type DraftClassLike interface {
 	DraftFromString(
 		source string,
 	) DraftLike
+}
+
+/*
+KeyClassLike is a class interface that declares the complete set of
+class constructors, constants and functions that must be supported by each
+concrete key-like class.
+*/
+type KeyClassLike interface {
+	// Constructor Methods
+	Key(
+		algorithm fra.QuoteLike,
+		base64 fra.BinaryLike,
+		tag fra.TagLike,
+		version fra.VersionLike,
+	) KeyLike
+	KeyFromString(
+		source string,
+	) KeyLike
 }
 
 /*
@@ -160,12 +176,11 @@ type CertificateLike interface {
 	GetClass() CertificateClassLike
 	AsIntrinsic() doc.ComponentLike
 	AsString() string
-	GetAlgorithm() fra.QuoteLike
-	GetPublicKey() fra.BinaryLike
+	GetKey() KeyLike
 
 	// Aspect Interfaces
 	doc.Declarative
-	Parameterized
+	Notarized
 }
 
 /*
@@ -198,17 +213,11 @@ type ContractLike interface {
 	GetClass() ContractClassLike
 	AsIntrinsic() doc.ComponentLike
 	AsString() string
-	GetDraft() DraftLike
-	GetAccount() fra.TagLike
-	GetCertificate() fra.ResourceLike
-	GetSignature() SignatureLike
-	SetSignature(
-		signature SignatureLike,
-	)
-	RemoveSignature()
+	GetEntity() DraftLike
 
 	// Aspect Interfaces
 	doc.Declarative
+	Notarized
 }
 
 /*
@@ -245,6 +254,25 @@ type DraftLike interface {
 }
 
 /*
+KeyLike is an instance interface that declares the complete set of
+principal, attribute and aspect methods that must be supported by each instance
+of a concrete key-like class.
+*/
+type KeyLike interface {
+	// Principal Methods
+	GetClass() KeyClassLike
+	AsIntrinsic() doc.ComponentLike
+	AsString() string
+	GetCreated() fra.MomentLike
+	GetAlgorithm() fra.QuoteLike
+	GetBase64() fra.BinaryLike
+
+	// Aspect Interfaces
+	doc.Declarative
+	Parameterized
+}
+
+/*
 SignatureLike is an instance interface that declares the complete set of
 principal, attribute and aspect methods that must be supported by each instance
 of a concrete signature-like class.
@@ -264,10 +292,26 @@ type SignatureLike interface {
 // ASPECT DECLARATIONS
 
 /*
+Notarized declares the set of method signatures that must be supported by
+all notarized documents.
+*/
+type Notarized interface {
+	AsString() string
+	GetAccount() fra.TagLike
+	GetSignatory() fra.ResourceLike
+	GetSignature() SignatureLike
+	SetSignature(
+		signature SignatureLike,
+	)
+	RemoveSignature()
+}
+
+/*
 Parameterized declares the set of method signatures that must be supported by
 all parameterized documents.
 */
 type Parameterized interface {
+	GetEntity() any
 	GetType() fra.ResourceLike
 	GetTag() fra.TagLike
 	GetVersion() fra.VersionLike

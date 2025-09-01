@@ -22,25 +22,23 @@ import (
 
 // Access Function
 
-func DraftClass() DraftClassLike {
-	return draftClass()
+func KeyClass() KeyClassLike {
+	return keyClass()
 }
 
 // Constructor Methods
 
-func (c *draftClass_) Draft(
-	entity any,
-	type_ fra.ResourceLike,
+func (c *keyClass_) Key(
+	algorithm fra.QuoteLike,
+	base64 fra.BinaryLike,
 	tag fra.TagLike,
 	version fra.VersionLike,
-	permissions fra.ResourceLike,
-	optionalPrevious fra.ResourceLike,
-) DraftLike {
-	if uti.IsUndefined(entity) {
-		panic("The \"entity\" attribute is required by this class.")
+) KeyLike {
+	if uti.IsUndefined(algorithm) {
+		panic("The \"algorithm\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(type_) {
-		panic("The \"type\" attribute is required by this class.")
+	if uti.IsUndefined(base64) {
+		panic("The \"base64\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(tag) {
 		panic("The \"tag\" attribute is required by this class.")
@@ -48,25 +46,28 @@ func (c *draftClass_) Draft(
 	if uti.IsUndefined(version) {
 		panic("The \"version\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(permissions) {
-		panic("The \"permissions\" attribute is required by this class.")
-	}
-	var previous = "none"
-	if uti.IsDefined(optionalPrevious) {
-		previous = optionalPrevious.AsString()
-	}
 
-	var component = doc.ParseSource(
-		doc.FormatComponent(entity) + `(
-    $type: ` + type_.AsString() + `
+	var created = fra.Now()
+	var previous = "none"
+	var current = version.AsIntrinsic()[0]
+	if current > 1 {
+		previous = "<bali:/nebula/certificates/" + tag.AsString()[1:] +
+			":" + fra.Version([]uti.Ordinal{current - 1}).AsString() + ">"
+	}
+	var component = doc.ParseSource(`[
+    $created: ` + created.AsString() + `
+    $algorithm: ` + algorithm.AsString() + `
+    $base64: ` + base64.AsString() + `
+](
+    $type: <bali:/nebula/types/Key:v3>
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
-    $permissions: ` + permissions.AsString() + `
+	$permissions: <bali:/nebula/permissions/public:v3>
     $previous: ` + previous + `
 )`,
 	)
 
-	var instance = &draft_{
+	var instance = &key_{
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
@@ -75,11 +76,11 @@ func (c *draftClass_) Draft(
 	return instance
 }
 
-func (c *draftClass_) DraftFromString(
+func (c *keyClass_) KeyFromString(
 	source string,
-) DraftLike {
+) KeyLike {
 	var component = doc.ParseSource(source)
-	var instance = &draft_{
+	var instance = &key_{
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
@@ -96,47 +97,62 @@ func (c *draftClass_) DraftFromString(
 
 // Principal Methods
 
-func (v *draft_) GetClass() DraftClassLike {
-	return draftClass()
+func (v *key_) GetClass() KeyClassLike {
+	return keyClass()
 }
 
-func (v *draft_) AsIntrinsic() doc.ComponentLike {
+func (v *key_) AsIntrinsic() doc.ComponentLike {
 	return v.Declarative.(doc.ComponentLike)
 }
 
-func (v *draft_) AsString() string {
+func (v *key_) AsString() string {
 	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
+}
+
+func (v *key_) GetCreated() fra.MomentLike {
+	var object = v.GetObject(fra.Symbol("created"))
+	return fra.MomentFromString(doc.FormatComponent(object))
+}
+
+func (v *key_) GetAlgorithm() fra.QuoteLike {
+	var object = v.GetObject(fra.Symbol("algorithm"))
+	return fra.QuoteFromString(doc.FormatComponent(object))
+}
+
+func (v *key_) GetBase64() fra.BinaryLike {
+	var object = v.GetObject(fra.Symbol("base64"))
+	return fra.BinaryFromString(doc.FormatComponent(object))
 }
 
 // Attribute Methods
 
 // Parameterized Methods
 
-func (v *draft_) GetEntity() any {
+func (v *key_) GetEntity() any {
 	return v.Declarative.(doc.ComponentLike).GetEntity()
 }
 
-func (v *draft_) GetType() fra.ResourceLike {
+func (v *key_) GetType() fra.ResourceLike {
 	var component = v.GetParameter(fra.Symbol("type"))
 	return fra.ResourceFromString(doc.FormatComponent(component))
 }
 
-func (v *draft_) GetTag() fra.TagLike {
+func (v *key_) GetTag() fra.TagLike {
 	var component = v.GetParameter(fra.Symbol("tag"))
 	return fra.TagFromString(doc.FormatComponent(component))
 }
 
-func (v *draft_) GetVersion() fra.VersionLike {
+func (v *key_) GetVersion() fra.VersionLike {
 	var component = v.GetParameter(fra.Symbol("version"))
 	return fra.VersionFromString(doc.FormatComponent(component))
 }
 
-func (v *draft_) GetPermissions() fra.ResourceLike {
+func (v *key_) GetPermissions() fra.ResourceLike {
 	var component = v.GetParameter(fra.Symbol("permissions"))
 	return fra.ResourceFromString(doc.FormatComponent(component))
 }
 
-func (v *draft_) GetOptionalPrevious() fra.ResourceLike {
+func (v *key_) GetOptionalPrevious() fra.ResourceLike {
 	var previous fra.ResourceLike
 	var component = v.GetParameter(fra.Symbol("previous"))
 	var source = doc.FormatComponent(component)
@@ -152,7 +168,7 @@ func (v *draft_) GetOptionalPrevious() fra.ResourceLike {
 
 // Instance Structure
 
-type draft_ struct {
+type key_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
@@ -161,16 +177,16 @@ type draft_ struct {
 
 // Class Structure
 
-type draftClass_ struct {
+type keyClass_ struct {
 	// Declare the class constants.
 }
 
 // Class Reference
 
-func draftClass() *draftClass_ {
-	return draftClassReference_
+func keyClass() *keyClass_ {
+	return keyClassReference_
 }
 
-var draftClassReference_ = &draftClass_{
+var keyClassReference_ = &keyClass_{
 	// Initialize the class constants.
 }

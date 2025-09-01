@@ -29,24 +29,24 @@ func ContractClass() ContractClassLike {
 // Constructor Methods
 
 func (c *contractClass_) Contract(
-	draft DraftLike,
+	entity DraftLike,
 	account fra.TagLike,
-	certificate fra.ResourceLike,
+	signatory fra.ResourceLike,
 ) ContractLike {
-	if uti.IsUndefined(draft) {
-		panic("The \"draft\" attribute is required by this class.")
+	if uti.IsUndefined(entity) {
+		panic("The \"entity\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(account) {
 		panic("The \"account\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(certificate) {
-		panic("The \"certificate\" attribute is required by this class.")
+	if uti.IsUndefined(signatory) {
+		panic("The \"signatory\" attribute is required by this class.")
 	}
 
 	var component = doc.ParseSource(`[
-    $draft: ` + draft.AsString() + `
+    $entity: ` + entity.AsString() + `
     $account: ` + account.AsString() + `
-    $certificate: ` + certificate.AsString() + `
+    $signatory: ` + signatory.AsString() + `
 ]($type: <bali:/nebula/types/Contract:v3>)`,
 	)
 
@@ -92,18 +92,22 @@ func (v *contract_) AsString() string {
 	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
 }
 
-func (v *contract_) GetDraft() DraftLike {
-	var object = v.GetObject(fra.Symbol("draft"))
+// Attribute Methods
+
+func (v *contract_) GetEntity() DraftLike {
+	var object = v.GetObject(fra.Symbol("entity"))
 	return DraftClass().DraftFromString(doc.FormatComponent(object))
 }
+
+// Notarized Methods
 
 func (v *contract_) GetAccount() fra.TagLike {
 	var object = v.GetObject(fra.Symbol("account"))
 	return fra.TagFromString(doc.FormatComponent(object))
 }
 
-func (v *contract_) GetCertificate() fra.ResourceLike {
-	var object = v.GetObject(fra.Symbol("certificate"))
+func (v *contract_) GetSignatory() fra.ResourceLike {
+	var object = v.GetObject(fra.Symbol("signatory"))
 	return fra.ResourceFromString(doc.FormatComponent(object))
 }
 
@@ -126,8 +130,6 @@ func (v *contract_) SetSignature(
 func (v *contract_) RemoveSignature() {
 	v.RemoveObject(fra.Symbol("signature"))
 }
-
-// Attribute Methods
 
 // PROTECTED INTERFACE
 

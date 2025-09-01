@@ -29,40 +29,25 @@ func CertificateClass() CertificateClassLike {
 // Constructor Methods
 
 func (c *certificateClass_) Certificate(
-	algorithm fra.QuoteLike,
-	publicKey fra.BinaryLike,
-	tag fra.TagLike,
-	version fra.VersionLike,
-	optionalPrevious fra.ResourceLike,
+	key KeyLike,
+	account fra.TagLike,
+	signatory fra.ResourceLike,
 ) CertificateLike {
-	if uti.IsUndefined(algorithm) {
-		panic("The \"algorithm\" attribute is required by this class.")
+	if uti.IsUndefined(key) {
+		panic("The \"key\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(publicKey) {
-		panic("The \"publicKey\" attribute is required by this class.")
+	if uti.IsUndefined(account) {
+		panic("The \"account\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(tag) {
-		panic("The \"tag\" attribute is required by this class.")
-	}
-	if uti.IsUndefined(version) {
-		panic("The \"version\" attribute is required by this class.")
-	}
-
-	var previous = "none"
-	if uti.IsDefined(optionalPrevious) {
-		previous = optionalPrevious.AsString()
+	if uti.IsUndefined(signatory) {
+		panic("The \"signatory\" attribute is required by this class.")
 	}
 
 	var component = doc.ParseSource(`[
-    $algorithm: ` + algorithm.AsString() + `
-    $publicKey: ` + publicKey.AsString() + `
-](
-    $type: <bali:/nebula/types/Certificate:v3>
-    $tag: ` + tag.AsString() + `
-    $version: ` + version.AsString() + `
-    $permissions: <bali:/nebula/permissions/public:v3>
-    $previous: ` + previous + `
-)`,
+    $key: ` + key.AsString() + `
+    $account: ` + account.AsString() + `
+    $signatory: ` + signatory.AsString() + `
+]($type: <bali:/nebula/types/Certificate:v3>)`,
 	)
 
 	var instance = &certificate_{
@@ -108,53 +93,44 @@ func (v *certificate_) AsString() string {
 	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
 }
 
-func (v *certificate_) GetAlgorithm() fra.QuoteLike {
-	var object = v.GetObject(fra.Symbol("algorithm"))
-	var quote = fra.QuoteFromString(doc.FormatComponent(object))
-	return quote
-}
-
-func (v *certificate_) GetPublicKey() fra.BinaryLike {
-	var object = v.GetObject(fra.Symbol("publicKey"))
-	var binary = fra.BinaryFromString(doc.FormatComponent(object))
-	return binary
-}
-
 // Attribute Methods
 
-// Parameterized Methods
-
-func (v *certificate_) GetType() fra.ResourceLike {
-	var document = v.GetParameter(fra.Symbol("type"))
-	return fra.ResourceFromString(doc.FormatComponent(document))
+func (v *certificate_) GetKey() KeyLike {
+	var object = v.GetObject(fra.Symbol("key"))
+	return KeyClass().KeyFromString(doc.FormatComponent(object))
 }
 
-func (v *certificate_) GetTag() fra.TagLike {
-	var document = v.GetParameter(fra.Symbol("tag"))
-	return fra.TagFromString(doc.FormatComponent(document))
+// Notarized Methods
+
+func (v *certificate_) GetAccount() fra.TagLike {
+	var object = v.GetObject(fra.Symbol("account"))
+	return fra.TagFromString(doc.FormatComponent(object))
 }
 
-func (v *certificate_) GetVersion() fra.VersionLike {
-	var document = v.GetParameter(fra.Symbol("version"))
-	return fra.VersionFromString(doc.FormatComponent(document))
+func (v *certificate_) GetSignatory() fra.ResourceLike {
+	var object = v.GetObject(fra.Symbol("signatory"))
+	return fra.ResourceFromString(doc.FormatComponent(object))
 }
 
-func (v *certificate_) GetPermissions() fra.ResourceLike {
-	var document = v.GetParameter(fra.Symbol("permissions"))
-	return fra.ResourceFromString(doc.FormatComponent(document))
-}
-
-func (v *certificate_) GetOptionalPrevious() fra.ResourceLike {
-	var previous fra.ResourceLike
-	var component = v.GetParameter(fra.Symbol("previous"))
-	var source = doc.FormatComponent(component)
-	if source != "none" {
-		previous = fra.ResourceFromString(source)
+func (v *certificate_) GetSignature() SignatureLike {
+	var signature SignatureLike
+	var object = v.GetObject(fra.Symbol("signature"))
+	if uti.IsDefined(object) {
+		signature = SignatureClass().SignatureFromString(doc.FormatComponent(object))
 	}
-	return previous
+	return signature
 }
 
-// PROTECTED INTERFACE
+func (v *certificate_) SetSignature(
+	signature SignatureLike,
+) {
+	var component = doc.ParseSource(signature.AsString())
+	v.SetObject(component, fra.Symbol("signature"))
+}
+
+func (v *certificate_) RemoveSignature() {
+	v.RemoveObject(fra.Symbol("signature"))
+}
 
 // Private Methods
 

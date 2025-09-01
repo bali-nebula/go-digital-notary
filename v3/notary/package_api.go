@@ -68,16 +68,16 @@ type DigitalNotaryLike interface {
 	// Principal Methods
 	GetClass() DigitalNotaryClassLike
 	GetCitation() fra.ResourceLike
-	GenerateKey() doc.ContractLike
-	RefreshKey() doc.ContractLike
+	GenerateKey() doc.CertificateLike
+	RefreshKey() doc.CertificateLike
 	ForgetKey()
 	GenerateCredential() doc.ContractLike
 	NotarizeDraft(
 		draft doc.DraftLike,
 	) doc.ContractLike
 	SignatureMatches(
-		contract doc.ContractLike,
-		certificate doc.CertificateLike,
+		document doc.Notarized,
+		key doc.KeyLike,
 	) bool
 	CiteDraft(
 		draft doc.DraftLike,

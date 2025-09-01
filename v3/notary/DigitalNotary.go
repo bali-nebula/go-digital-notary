@@ -97,38 +97,36 @@ func (v *digitalNotary_) GetCitation() fra.ResourceLike {
 	return citation.AsResource()
 }
 
-func (v *digitalNotary_) GenerateKey() doc.ContractLike {
+func (v *digitalNotary_) GenerateKey() doc.CertificateLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
-		"An error occurred while attempting to generate a new private key",
+		"An error occurred while attempting to generate a new key pair",
 	)
 
-	// Create a new certificate.
-	var isNotarized = fra.Boolean(true)
+	// Create a new key pair.
 	var algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var bytes = v.hsm_.GenerateKeys() // Returns the new public key.
-	var publicKey = fra.Binary(bytes)
+	var base64 = fra.Binary(bytes)
 	var tag = fra.TagWithSize(20)
 	var version = fra.VersionFromString("v1")
-	var previous fra.ResourceLike
-	var certificate = doc.CertificateClass().Certificate(
+	var key = doc.KeyClass().Key(
 		algorithm,
-		publicKey,
+		base64,
 		tag,
 		version,
-		previous,
 	)
 
-	// Create a digest of the new certificate.
+	// Create a digest of the new public key.
 	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetDigestAlgorithm() + `"`)
-	bytes = []byte(certificate.AsString())
-	var base64 = fra.Binary(v.hsm_.DigestBytes(bytes))
+	bytes = []byte(key.AsString())
+	base64 = fra.Binary(v.hsm_.DigestBytes(bytes))
 	var digest = doc.DigestClass().Digest(
 		algorithm,
 		base64,
 	)
 
-	// Create a citation to the new certificate.
+	// Create a citation to the new public key.
+	var isNotarized = fra.Boolean(true)
 	var citation = doc.CitationClass().Citation(
 		isNotarized,
 		tag,
@@ -140,56 +138,55 @@ func (v *digitalNotary_) GenerateKey() doc.ContractLike {
 	var source = citation.AsString()
 	uti.WriteFile(v.filename_, source)
 
-	// Digitally notarize the certificate.
-	source = certificate.AsString()
-	var draft = doc.DraftClass().DraftFromString(source)
-	var contract = doc.ContractClass().Contract(
-		draft,
-		v.account_,
-		citation.AsResource(),
+	// Create the new certificate.
+	var account = v.account_
+	var signatory = citation.AsResource()
+	var certificate = doc.CertificateClass().Certificate(
+		key,
+		account,
+		signatory,
 	)
 	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
-	source = contract.AsString()
+	source = certificate.AsString()
 	bytes = v.hsm_.SignBytes([]byte(source))
 	base64 = fra.Binary(bytes)
 	var signature = doc.SignatureClass().Signature(
 		algorithm,
 		base64,
 	)
-	contract.SetSignature(signature)
-	return contract
+	certificate.SetSignature(signature)
+	return certificate
 }
 
-func (v *digitalNotary_) RefreshKey() doc.ContractLike {
+func (v *digitalNotary_) RefreshKey() doc.CertificateLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
-		"An error occurred while attempting to refresh the private key",
+		"An error occurred while attempting to refresh the key pair",
 	)
 
 	// Generate a new key pair.
 	var algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var bytes = v.hsm_.RotateKeys() // Returns the new public key.
-	var publicKey = fra.Binary(bytes)
+	var base64 = fra.Binary(bytes)
 
 	// Generate a the next version of the certificate.
-	var isNotarized = fra.Boolean(true)
 	var previous = v.GetCitation()
 	var citation = doc.CitationClass().CitationFromResource(previous)
 	var tag = citation.GetTag()
 	var current = citation.GetVersion()
 	var version = fra.VersionClass().GetNextVersion(current, 0)
-	var certificate = doc.CertificateClass().Certificate(
+	var key = doc.KeyClass().Key(
 		algorithm,
-		publicKey,
+		base64,
 		tag,
 		version,
-		previous,
 	)
 
-	// Create a citation to the new version of the certificate.
+	// Create a citation to the new public key.
+	var isNotarized = fra.Boolean(true)
 	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetDigestAlgorithm() + `"`)
-	bytes = []byte(certificate.AsString())
-	var base64 = fra.Binary(v.hsm_.DigestBytes(bytes))
+	bytes = []byte(key.AsString())
+	base64 = fra.Binary(v.hsm_.DigestBytes(bytes))
 	var digest = doc.DigestClass().Digest(
 		algorithm,
 		base64,
@@ -205,24 +202,24 @@ func (v *digitalNotary_) RefreshKey() doc.ContractLike {
 	var source = citation.AsString()
 	uti.WriteFile(v.filename_, source)
 
-	// Digitally notarize the certificate.
-	source = certificate.AsString()
-	var draft = doc.DraftClass().DraftFromString(source)
-	var contract = doc.ContractClass().Contract(
-		draft,
-		v.account_,
-		citation.AsResource(),
+	// Create the new certificate.
+	var account = v.account_
+	var signatory = citation.AsResource()
+	var certificate = doc.CertificateClass().Certificate(
+		key,
+		account,
+		signatory,
 	)
 	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
-	source = contract.AsString()
+	source = certificate.AsString()
 	bytes = v.hsm_.SignBytes([]byte(source))
 	base64 = fra.Binary(bytes)
 	var signature = doc.SignatureClass().Signature(
 		algorithm,
 		base64,
 	)
-	contract.SetSignature(signature)
-	return contract
+	certificate.SetSignature(signature)
+	return certificate
 }
 
 func (v *digitalNotary_) ForgetKey() {
@@ -304,31 +301,31 @@ func (v *digitalNotary_) NotarizeDraft(
 }
 
 func (v *digitalNotary_) SignatureMatches(
-	contract doc.ContractLike,
-	certificate doc.CertificateLike,
+	document doc.Notarized,
+	key doc.KeyLike,
 ) bool {
 	// Check for any errors at the end.
 	defer v.errorCheck(
-		"An error occurred while attempting to match a contract signature",
+		"An error occurred while attempting to match a document signature",
 	)
 
-	// Validate the signature on the contract using the public certificate.
-	var certificateAlgorithm = string(certificate.GetAlgorithm().AsIntrinsic())
+	// Validate the signature on the document using the public key.
+	var keyAlgorithm = string(key.GetAlgorithm().AsIntrinsic())
 	var ssmAlgorithm = v.ssm_.GetSignatureAlgorithm()
-	if certificateAlgorithm != ssmAlgorithm {
+	if keyAlgorithm != ssmAlgorithm {
 		var message = fmt.Sprintf(
-			"The certificate signature algorithm %q is incompatible with the SSM algorithm %q.",
-			certificateAlgorithm,
+			"The key signature algorithm %q is incompatible with the SSM algorithm %q.",
+			keyAlgorithm,
 			ssmAlgorithm,
 		)
 		panic(message)
 	}
-	var publicKey = certificate.GetPublicKey()
-	var signature = contract.GetSignature()
-	contract.RemoveSignature()
-	var source = contract.AsString()
+	var publicKey = key.GetBase64()
+	var signature = document.GetSignature()
+	document.RemoveSignature()
+	var source = document.AsString()
 	var sourceBytes = []byte(source)
-	contract.SetSignature(signature)
+	document.SetSignature(signature)
 	var keyBytes = publicKey.AsIntrinsic()
 	var signatureBytes = signature.GetBase64().AsIntrinsic()
 	return v.ssm_.IsValid(keyBytes, signatureBytes, sourceBytes)
