@@ -319,4 +319,5 @@ type Parameterized interface {
 	GetVersion() fra.VersionLike
 	GetPermissions() fra.ResourceLike
 	GetOptionalPrevious() fra.ResourceLike
+	doc.Declarative
 }

@@ -62,6 +62,7 @@ type (
 )
 
 type (
+	Notarized     = doc.Notarized
 	Parameterized = doc.Parameterized
 )
 
