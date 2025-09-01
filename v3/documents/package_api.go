@@ -85,7 +85,7 @@ concrete contract-like class.
 type ContractClassLike interface {
 	// Constructor Methods
 	Contract(
-		draft DraftLike,
+		draft Parameterized,
 		account fra.TagLike,
 		signatory fra.ResourceLike,
 	) ContractLike
@@ -212,7 +212,7 @@ type ContractLike interface {
 	GetClass() ContractClassLike
 	AsIntrinsic() doc.ComponentLike
 	AsString() string
-	GetDraft() DraftLike
+	GetDraft() Parameterized
 
 	// Aspect Interfaces
 	Notarized

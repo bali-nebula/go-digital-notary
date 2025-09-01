@@ -73,18 +73,18 @@ type DigitalNotaryLike interface {
 	ForgetKey()
 	GenerateCredential() doc.ContractLike
 	NotarizeDraft(
-		draft doc.DraftLike,
+		draft doc.Parameterized,
 	) doc.ContractLike
 	SignatureMatches(
 		document doc.Notarized,
 		key doc.KeyLike,
 	) bool
 	CiteDraft(
-		draft doc.DraftLike,
+		draft doc.Parameterized,
 	) fra.ResourceLike
 	CitationMatches(
 		citation fra.ResourceLike,
-		draft doc.DraftLike,
+		draft doc.Parameterized,
 	) bool
 }
 

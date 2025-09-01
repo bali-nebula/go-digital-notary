@@ -158,7 +158,7 @@ func ContractClass() ContractClassLike {
 }
 
 func Contract(
-	entity doc.DraftLike,
+	entity doc.Parameterized,
 	account fra.TagLike,
 	certificate fra.ResourceLike,
 ) ContractLike {

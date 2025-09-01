@@ -274,7 +274,7 @@ func (v *digitalNotary_) GenerateCredential() doc.ContractLike {
 }
 
 func (v *digitalNotary_) NotarizeDraft(
-	draft doc.DraftLike,
+	draft doc.Parameterized,
 ) doc.ContractLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
@@ -332,7 +332,7 @@ func (v *digitalNotary_) SignatureMatches(
 }
 
 func (v *digitalNotary_) CiteDraft(
-	draft doc.DraftLike,
+	draft doc.Parameterized,
 ) fra.ResourceLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
@@ -363,7 +363,7 @@ func (v *digitalNotary_) CiteDraft(
 
 func (v *digitalNotary_) CitationMatches(
 	citation fra.ResourceLike,
-	draft doc.DraftLike,
+	draft doc.Parameterized,
 ) bool {
 	// Check for any errors at the end.
 	defer v.errorCheck(

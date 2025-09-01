@@ -29,7 +29,7 @@ func ContractClass() ContractClassLike {
 // Constructor Methods
 
 func (c *contractClass_) Contract(
-	draft DraftLike,
+	draft Parameterized,
 	account fra.TagLike,
 	signatory fra.ResourceLike,
 ) ContractLike {
@@ -94,7 +94,7 @@ func (v *contract_) AsString() string {
 
 // Attribute Methods
 
-func (v *contract_) GetDraft() DraftLike {
+func (v *contract_) GetDraft() Parameterized {
 	var object = v.GetObject(fra.Symbol("content"))
 	return DraftClass().DraftFromString(doc.FormatComponent(object))
 }
