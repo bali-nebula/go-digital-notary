@@ -1,5 +1,5 @@
 [
-    $key: [
+    $content: [
         $algorithm: "ED25519"
         $base64: '>
             oKWrrSJi3yyYcNO7WtiF0LxYOIx9UGAcx9bw7jxr/Ac

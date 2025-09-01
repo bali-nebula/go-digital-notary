@@ -85,7 +85,7 @@ func TestParsingContracts(t *tes.T) {
 	ass.Equal(t, source, formatted)
 	var signature = contract.GetSignature()
 	contract = not.Contract(
-		contract.GetEntity(),
+		contract.GetDraft(),
 		contract.GetAccount(),
 		contract.GetSignatory(),
 	)

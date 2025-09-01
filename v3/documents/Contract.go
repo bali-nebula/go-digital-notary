@@ -29,12 +29,12 @@ func ContractClass() ContractClassLike {
 // Constructor Methods
 
 func (c *contractClass_) Contract(
-	entity DraftLike,
+	draft DraftLike,
 	account fra.TagLike,
 	signatory fra.ResourceLike,
 ) ContractLike {
-	if uti.IsUndefined(entity) {
-		panic("The \"entity\" attribute is required by this class.")
+	if uti.IsUndefined(draft) {
+		panic("The \"draft\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(account) {
 		panic("The \"account\" attribute is required by this class.")
@@ -44,7 +44,7 @@ func (c *contractClass_) Contract(
 	}
 
 	var component = doc.ParseSource(`[
-    $entity: ` + entity.AsString() + `
+    $content: ` + draft.AsString() + `
     $account: ` + account.AsString() + `
     $signatory: ` + signatory.AsString() + `
 ]($type: <bali:/nebula/types/Contract:v3>)`,
@@ -94,12 +94,17 @@ func (v *contract_) AsString() string {
 
 // Attribute Methods
 
-func (v *contract_) GetEntity() DraftLike {
-	var object = v.GetObject(fra.Symbol("entity"))
+func (v *contract_) GetDraft() DraftLike {
+	var object = v.GetObject(fra.Symbol("content"))
 	return DraftClass().DraftFromString(doc.FormatComponent(object))
 }
 
 // Notarized Methods
+
+func (v *contract_) GetContent() Parameterized {
+	var object = v.GetObject(fra.Symbol("content"))
+	return DraftClass().DraftFromString(doc.FormatComponent(object))
+}
 
 func (v *contract_) GetAccount() fra.TagLike {
 	var object = v.GetObject(fra.Symbol("account"))

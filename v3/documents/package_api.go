@@ -85,7 +85,7 @@ concrete contract-like class.
 type ContractClassLike interface {
 	// Constructor Methods
 	Contract(
-		entity DraftLike,
+		draft DraftLike,
 		account fra.TagLike,
 		signatory fra.ResourceLike,
 	) ContractLike
@@ -213,7 +213,7 @@ type ContractLike interface {
 	GetClass() ContractClassLike
 	AsIntrinsic() doc.ComponentLike
 	AsString() string
-	GetEntity() DraftLike
+	GetDraft() DraftLike
 
 	// Aspect Interfaces
 	doc.Declarative
@@ -297,6 +297,7 @@ all notarized documents.
 */
 type Notarized interface {
 	AsString() string
+	GetContent() Parameterized
 	GetAccount() fra.TagLike
 	GetSignatory() fra.ResourceLike
 	GetSignature() SignatureLike
@@ -311,6 +312,7 @@ Parameterized declares the set of method signatures that must be supported by
 all parameterized documents.
 */
 type Parameterized interface {
+	AsString() string
 	GetEntity() any
 	GetType() fra.ResourceLike
 	GetTag() fra.TagLike

@@ -44,7 +44,7 @@ func (c *certificateClass_) Certificate(
 	}
 
 	var component = doc.ParseSource(`[
-    $key: ` + key.AsString() + `
+    $content: ` + key.AsString() + `
     $account: ` + account.AsString() + `
     $signatory: ` + signatory.AsString() + `
 ]($type: <bali:/nebula/types/Certificate:v3>)`,
@@ -96,11 +96,16 @@ func (v *certificate_) AsString() string {
 // Attribute Methods
 
 func (v *certificate_) GetKey() KeyLike {
-	var object = v.GetObject(fra.Symbol("key"))
+	var object = v.GetObject(fra.Symbol("content"))
 	return KeyClass().KeyFromString(doc.FormatComponent(object))
 }
 
 // Notarized Methods
+
+func (v *certificate_) GetContent() Parameterized {
+	var object = v.GetObject(fra.Symbol("content"))
+	return KeyClass().KeyFromString(doc.FormatComponent(object))
+}
 
 func (v *certificate_) GetAccount() fra.TagLike {
 	var object = v.GetObject(fra.Symbol("account"))
