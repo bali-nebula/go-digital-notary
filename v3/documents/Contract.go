@@ -47,7 +47,7 @@ func (c *contractClass_) Contract(
     $content: ` + draft.AsString() + `
     $account: ` + account.AsString() + `
     $signatory: ` + signatory.AsString() + `
-]($type: <bali:/nebula/types/Contract:v3>)`,
+]($type: <bali:/types/notary/Contract:v3>)`,
 	)
 
 	var instance = &contract_{

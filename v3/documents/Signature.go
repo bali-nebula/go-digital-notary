@@ -42,7 +42,7 @@ func (c *signatureClass_) Signature(
 	var component = doc.ParseSource(`[
     $algorithm: ` + algorithm.AsString() + `
     $base64: ` + base64.AsString() + `
-]($type: <bali:/nebula/types/Signature:v3>)`,
+]($type: <bali:/types/notary/Signature:v3>)`,
 	)
 
 	var instance = &signature_{

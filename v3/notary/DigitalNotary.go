@@ -204,7 +204,7 @@ func (v *digitalNotary_) RefreshKey() doc.CertificateLike {
 
 	// Create the new certificate.
 	var account = v.account_
-	var signatory = citation.AsResource()
+	var signatory = previous
 	var certificate = doc.CertificateClass().Certificate(
 		key,
 		account,
@@ -212,7 +212,7 @@ func (v *digitalNotary_) RefreshKey() doc.CertificateLike {
 	)
 	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	source = certificate.AsString()
-	bytes = v.hsm_.SignBytes([]byte(source))
+	bytes = v.hsm_.SignBytes([]byte(source)) // Signed using the previous key.
 	base64 = fra.Binary(bytes)
 	var signature = doc.SignatureClass().Signature(
 		algorithm,
@@ -240,10 +240,10 @@ func (v *digitalNotary_) GenerateCredential() doc.ContractLike {
 
 	// Create the credential document including timestamp component.
 	var timestamp = fra.Now()
-	var type_ = fra.ResourceFromString("<bali:/nebula/types/Credential:v3>")
+	var type_ = fra.ResourceFromString("<bali:/types/notary/Credential:v3>")
 	var tag = fra.TagWithSize(20)
 	var version = fra.VersionFromString("v1")
-	var permissions = fra.ResourceFromString("<bali:/nebula/permissions/public:v3>")
+	var permissions = fra.ResourceFromString("<bali:/permissions/Public:v3>")
 	var previous fra.ResourceLike
 	var draft = doc.DraftClass().Draft(
 		timestamp,

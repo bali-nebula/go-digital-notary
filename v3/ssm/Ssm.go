@@ -293,7 +293,7 @@ func (v *ssm_) writeConfiguration() {
     $publicKey: ` + publicKey + `
     $privateKey: ` + privateKey + `
     $previousKey: ` + previousKey + `
-]($type: <bali:/nebula/types/Ssm@v3>)`
+]($type: <bali:/types/notary/Ssm@v3>)`
 	var filename = v.directory_ + v.filename_
 	uti.WriteFile(filename, source)
 }

@@ -8,5 +8,5 @@
             5WZpk3Dnwp7aUIEO9cSG0KfWJVXE7/Q+Yyfw2Zmbjzeq8TDws99lwqnavuVX
             IyW7HwDwhmFp3QAx0W6BWjXJxw
         <'
-    ]($type: <bali:/nebula/types/Digest:v3>)
-]($type: <bali:/nebula/types/Citation:v3>)
+    ]($type: <bali:/types/notary/Digest:v3>)
+]($type: <bali:/types/notary/Citation:v3>)

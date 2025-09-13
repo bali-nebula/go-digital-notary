@@ -51,7 +51,7 @@ func (c *keyClass_) Key(
 	var previous = "none"
 	var current = version.AsIntrinsic()[0]
 	if current > 1 {
-		previous = "<bali:/nebula/certificates/" + tag.AsString()[1:] +
+		previous = "<nebula:/contracts/" + tag.AsString()[1:] +
 			":" + fra.Version([]uti.Ordinal{current - 1}).AsString() + ">"
 	}
 	var component = doc.ParseSource(`[
@@ -59,10 +59,10 @@ func (c *keyClass_) Key(
     $algorithm: ` + algorithm.AsString() + `
     $base64: ` + base64.AsString() + `
 ](
-    $type: <bali:/nebula/types/Key:v3>
+    $type: <bali:/types/notary/Key:v3>
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
-	$permissions: <bali:/nebula/permissions/public:v3>
+    $permissions: <bali:/permissions/Public:v3>
     $previous: ` + previous + `
 )`,
 	)

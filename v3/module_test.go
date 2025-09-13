@@ -183,7 +183,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	$type: <bali:/examples/Record:v1.2.3>
 	$tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
 	$version: v1
-	$permissions: <bali:/nebula/permissions/public:v3>
+	$permissions: <bali:/permissions/Public:v3>
 )`,
 	)
 	var citation = notary.CiteDraft(transaction)

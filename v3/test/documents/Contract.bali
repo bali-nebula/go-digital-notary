@@ -8,16 +8,16 @@
         $type: <bali:/examples/Record:v1.2.3>
         $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
         $version: v1
-        $permissions: <bali:/nebula/permissions/public:v3>
+        $permissions: <bali:/permissions/Public:v3>
         $previous: none
     )
     $account: #TZ4SVSJ0RL5ACFX7GLW9HG5NYR8GCRK5
-    $signatory: <bali:/nebula/contracts/BCASYZR1MC2J2QDPL03HG42W0M7P36TQ:v1?SHA512=GmKlML1kRBJ4r5_vZkMub4ZF45ZDukdO95TtCKzuLiNeEuE04xqvUrDYxsnYlQbvDjGPPScIUSjZmLaNidaqFQ>
+    $signatory: <nebula:/contracts/61AN2QGC3NKG2F1DJXRXM134CPGXHFW8:v1?SHA512=MiRr3kyrEy-sipLZNB5_FV5727X3ViTLMnNFPy41tG7UMYKdjKe8Ar8UpxJvAK9Hi69SWs_58578_ZLteQY7RA>
     $signature: [
         $algorithm: "ED25519"
         $base64: '>
             5j8Tc5OsKQlMYGltKYL7CSDVzyUmvsPVvUEGWIo7IHDo3iCZaPaCcPRKQRrZ
             2LCKremx0iP6iZiwRegkP+iVAQ
         <'
-    ]($type: <bali:/nebula/types/Signature:v3>)
-]($type: <bali:/nebula/types/Contract:v3>)
+    ]($type: <bali:/types/notary/Signature:v3>)
+]($type: <bali:/types/notary/Contract:v3>)

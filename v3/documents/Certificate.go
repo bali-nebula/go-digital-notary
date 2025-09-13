@@ -47,7 +47,7 @@ func (c *certificateClass_) Certificate(
     $content: ` + key.AsString() + `
     $account: ` + account.AsString() + `
     $signatory: ` + signatory.AsString() + `
-]($type: <bali:/nebula/types/Certificate:v3>)`,
+]($type: <bali:/types/notary/Certificate:v3>)`,
 	)
 
 	var instance = &certificate_{

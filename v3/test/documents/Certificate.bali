@@ -1,23 +1,24 @@
 [
     $content: [
+        $created: <2025-09-13T15:45:58.573>
         $algorithm: "ED25519"
         $base64: '>
-            oKWrrSJi3yyYcNO7WtiF0LxYOIx9UGAcx9bw7jxr/Ac
+            cUCUo6R0BTikIsE3FmymY+Kkjy9uUsdM1lTegF5LASw
         <'
     ](
-        $type: <bali:/nebula/types/Key:v3>
-        $tag: #ZQANMT480VVV5CNRAZZNZ7AKJ4WZJBFR
-        $version: v1
-        $permissions: <bali:/nebula/permissions/public:v3>
-        $previous: none
+        $type: <bali:/types/notary/Key:v3>
+        $tag: #61AN2QGC3NKG2F1DJXRXM134CPGXHFW8
+        $version: v2
+        $permissions: <bali:/permissions/Public:v3>
+        $previous: <nebula:/contracts/61AN2QGC3NKG2F1DJXRXM134CPGXHFW8:v1>
     )
-    $account: #TZ4SVSJ0RL5ACFX7GLW9HG5NYR8GCRK5
-    $signatory: <bali:/nebula/certificates/BCASYZR1MC2J2QDPL03HG42W0M7P36TQ:v1?SHA512=GmKlML1kRBJ4r5_vZkMub4ZF45ZDukdO95TtCKzuLiNeEuE04xqvUrDYxsnYlQbvDjGPPScIUSjZmLaNidaqFQ>
+    $account: #AAX9M20WHW4ZQZYK9SSX7LYJ5B7MBFQ2
+    $signatory: <nebula:/contracts/61AN2QGC3NKG2F1DJXRXM134CPGXHFW8:v1?SHA512=MiRr3kyrEy-sipLZNB5_FV5727X3ViTLMnNFPy41tG7UMYKdjKe8Ar8UpxJvAK9Hi69SWs_58578_ZLteQY7RA>
     $signature: [
         $algorithm: "ED25519"
         $base64: '>
-            5j8Tc5OsKQlMYGltKYL7CSDVzyUmvsPVvUEGWIo7IHDo3iCZaPaCcPRKQRrZ
-            2LCKremx0iP6iZiwRegkP+iVAQ
+            4Y2W+kpV/aCH76hMLvFb8cilw2SCndBGoxHM0FGLKBsPVXmS1eoBqF6TQa3y
+            my9aLDlpWaCdjBkxqepgrew6Dg
         <'
-    ]($type: <bali:/nebula/types/Signature:v3>)
-]($type: <bali:/nebula/types/Certificate:v3>)
+    ]($type: <bali:/types/notary/Signature:v3>)
+]($type: <bali:/types/notary/Certificate:v3>)

@@ -54,7 +54,7 @@ func (c *citationClass_) Citation(
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
     $digest: ` + digest.AsString() + `
-]($type: <bali:/nebula/types/Citation:v3>)`,
+]($type: <bali:/types/notary/Citation:v3>)`,
 	)
 
 	var instance = &citation_{
@@ -85,7 +85,7 @@ func (c *citationClass_) CitationFromResource(
 	// Parse parts of the path.
 	var path = resource.GetPath()
 	var parts = sts.Split(path, "/")
-	var documents = parts[2]
+	var documents = parts[1]
 	var isNotarized fra.BooleanLike
 	switch documents {
 	case "contracts":
@@ -99,7 +99,7 @@ func (c *citationClass_) CitationFromResource(
 		)
 		panic(message)
 	}
-	parts = sts.Split(parts[3], ":")
+	parts = sts.Split(parts[2], ":")
 	var tag = fra.TagFromString("#" + parts[0])
 	var version = fra.VersionFromString(parts[1])
 
@@ -116,7 +116,7 @@ func (c *citationClass_) CitationFromResource(
 	var digest = DigestClass().DigestFromString(`[
     $algorithm: "` + algorithm + `"
     $base64: '>` + base64 + `<'
-]($type: <bali:/nebula/types/Digest:v3>)`,
+]($type: <bali:/types/notary/Digest:v3>)`,
 	)
 
 	return c.Citation(isNotarized, tag, version, digest)
@@ -162,7 +162,7 @@ func (v *citation_) AsResource() fra.ResourceLike {
 	base64 = sts.ReplaceAll(base64, "+", "-")
 	base64 = sts.ReplaceAll(base64, "/", "_")
 	var resource = fra.ResourceFromString(
-		"<bali:/nebula/" + documents + "/" + tag + ":" + version +
+		"<nebula:/" + documents + "/" + tag + ":" + version +
 			"?" + algorithm + "=" + base64 + ">",
 	)
 	return resource
