@@ -51,7 +51,7 @@ func (c *keyClass_) Key(
 	var previous = "none"
 	var current = version.AsIntrinsic()[0]
 	if current > 1 {
-		previous = "<nebula:/contracts/" + tag.AsString()[1:] +
+		previous = "<nebula:/" + tag.AsString()[1:] +
 			":" + fra.Version([]uti.Ordinal{current - 1}).AsString() + ">"
 	}
 	var component = doc.ParseSource(`[

@@ -64,7 +64,6 @@ concrete citation-like class.
 type CitationClassLike interface {
 	// Constructor Methods
 	Citation(
-		isNotarized fra.BooleanLike,
 		tag fra.TagLike,
 		version fra.VersionLike,
 		digest DigestLike,
@@ -193,7 +192,6 @@ type CitationLike interface {
 	AsIntrinsic() doc.ComponentLike
 	AsResource() fra.ResourceLike
 	AsString() string
-	IsNotarized() fra.BooleanLike
 	GetTag() fra.TagLike
 	GetVersion() fra.VersionLike
 	GetDigest() DigestLike

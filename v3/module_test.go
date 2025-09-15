@@ -30,7 +30,6 @@ func TestParsingCitations(t *tes.T) {
 	var formatted = citation.AsString()
 	ass.Equal(t, source, formatted)
 	citation = not.Citation(
-		citation.IsNotarized(),
 		citation.GetTag(),
 		citation.GetVersion(),
 		citation.GetDigest(),

@@ -10,10 +10,10 @@
         $tag: #61AN2QGC3NKG2F1DJXRXM134CPGXHFW8
         $version: v2
         $permissions: <bali:/permissions/Public:v3>
-        $previous: <nebula:/contracts/61AN2QGC3NKG2F1DJXRXM134CPGXHFW8:v1>
+        $previous: <nebula:/61AN2QGC3NKG2F1DJXRXM134CPGXHFW8:v1>
     )
     $account: #AAX9M20WHW4ZQZYK9SSX7LYJ5B7MBFQ2
-    $signatory: <nebula:/contracts/61AN2QGC3NKG2F1DJXRXM134CPGXHFW8:v1?SHA512=MiRr3kyrEy-sipLZNB5_FV5727X3ViTLMnNFPy41tG7UMYKdjKe8Ar8UpxJvAK9Hi69SWs_58578_ZLteQY7RA>
+    $signatory: <nebula:/61AN2QGC3NKG2F1DJXRXM134CPGXHFW8:v1?SHA512=MiRr3kyrEy-sipLZNB5_FV5727X3ViTLMnNFPy41tG7UMYKdjKe8Ar8UpxJvAK9Hi69SWs_58578_ZLteQY7RA>
     $signature: [
         $algorithm: "ED25519"
         $base64: '>

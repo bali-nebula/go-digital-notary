@@ -126,9 +126,7 @@ func (v *digitalNotary_) GenerateKey() doc.CertificateLike {
 	)
 
 	// Create a citation to the new public key.
-	var isNotarized = fra.Boolean(true)
 	var citation = doc.CitationClass().Citation(
-		isNotarized,
 		tag,
 		version,
 		digest,
@@ -183,7 +181,6 @@ func (v *digitalNotary_) RefreshKey() doc.CertificateLike {
 	)
 
 	// Create a citation to the new public key.
-	var isNotarized = fra.Boolean(true)
 	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetDigestAlgorithm() + `"`)
 	bytes = []byte(key.AsString())
 	base64 = fra.Binary(v.hsm_.DigestBytes(bytes))
@@ -192,7 +189,6 @@ func (v *digitalNotary_) RefreshKey() doc.CertificateLike {
 		base64,
 	)
 	citation = doc.CitationClass().Citation(
-		isNotarized,
 		tag,
 		version,
 		digest,
@@ -340,7 +336,6 @@ func (v *digitalNotary_) CiteDraft(
 	)
 
 	// Create a citation to the draft document.
-	var isNotarized = fra.Boolean(false)
 	var tag = draft.GetTag()
 	var version = draft.GetVersion()
 	var algorithm = fra.QuoteFromString(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
@@ -352,7 +347,6 @@ func (v *digitalNotary_) CiteDraft(
 		base64,
 	)
 	var citation = doc.CitationClass().Citation(
-		isNotarized,
 		tag,
 		version,
 		digest,

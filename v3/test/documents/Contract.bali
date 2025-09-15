@@ -12,7 +12,7 @@
         $previous: none
     )
     $account: #TZ4SVSJ0RL5ACFX7GLW9HG5NYR8GCRK5
-    $signatory: <nebula:/contracts/61AN2QGC3NKG2F1DJXRXM134CPGXHFW8:v1?SHA512=MiRr3kyrEy-sipLZNB5_FV5727X3ViTLMnNFPy41tG7UMYKdjKe8Ar8UpxJvAK9Hi69SWs_58578_ZLteQY7RA>
+    $signatory: <nebula:/61AN2QGC3NKG2F1DJXRXM134CPGXHFW8:v1?SHA512=MiRr3kyrEy-sipLZNB5_FV5727X3ViTLMnNFPy41tG7UMYKdjKe8Ar8UpxJvAK9Hi69SWs_58578_ZLteQY7RA>
     $signature: [
         $algorithm: "ED25519"
         $base64: '>
