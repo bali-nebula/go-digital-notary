@@ -1,5 +1,5 @@
-github.com/bali-nebula/go-bali-documents/v3 v3.28.0 h1:d2arXzBdZkt1h3o08Lssb4uMbUzm5C3qaVs7bj2oWhg=
-github.com/bali-nebula/go-bali-documents/v3 v3.28.0/go.mod h1:lAyUxxbAhH7vzbqnPfq+rh6lzMrgMK5agJqxHlMSuMM=
+github.com/bali-nebula/go-bali-documents/v3 v3.29.0 h1:nejU8YSBaRKykTHJrSLARZrauShX1jaIJMBKU427gGA=
+github.com/bali-nebula/go-bali-documents/v3 v3.29.0/go.mod h1:lAyUxxbAhH7vzbqnPfq+rh6lzMrgMK5agJqxHlMSuMM=
 github.com/bali-nebula/go-document-notation/v3 v3.23.0 h1:VttnkPzwzblRgrP+pdQSiXrbXGL6AfH1t1bDl7Ewaa4=
 github.com/bali-nebula/go-document-notation/v3 v3.23.0/go.mod h1:RzC7CU0YJehWFv4q0NrdOo13OBWGQN0l+UemLugj188=
 github.com/craterdog/go-component-framework/v7 v7.22.0 h1:W3UkLOQMUSJLIVE7hui5GzW6kNYPzUiDQi8oiB7LUZk=

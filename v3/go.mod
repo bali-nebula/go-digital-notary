@@ -3,7 +3,7 @@ module github.com/bali-nebula/go-digital-notary/v3
 go 1.24
 
 require (
-	github.com/bali-nebula/go-bali-documents/v3 v3.28.0
+	github.com/bali-nebula/go-bali-documents/v3 v3.29.0
 	github.com/craterdog/go-component-framework/v7 v7.22.0
 	github.com/craterdog/go-missing-utilities/v7 v7.13.0
 	github.com/stretchr/testify v1.11.1
