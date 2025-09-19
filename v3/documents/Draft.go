@@ -139,9 +139,11 @@ func (v *draft_) GetPermissions() fra.ResourceLike {
 func (v *draft_) GetOptionalPrevious() fra.ResourceLike {
 	var previous fra.ResourceLike
 	var component = v.GetParameter(fra.Symbol("previous"))
-	var source = doc.FormatComponent(component)
-	if source != "none" {
-		previous = fra.ResourceFromString(source)
+	if uti.IsDefined(component) {
+		var source = doc.FormatComponent(component)
+		if source != "none" {
+			previous = fra.ResourceFromString(source)
+		}
 	}
 	return previous
 }
