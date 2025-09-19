@@ -31,7 +31,7 @@ func CertificateClass() CertificateClassLike {
 func (c *certificateClass_) Certificate(
 	key KeyLike,
 	account fra.TagLike,
-	signatory fra.ResourceLike,
+	notary fra.ResourceLike,
 ) CertificateLike {
 	if uti.IsUndefined(key) {
 		panic("The \"key\" attribute is required by this class.")
@@ -39,14 +39,14 @@ func (c *certificateClass_) Certificate(
 	if uti.IsUndefined(account) {
 		panic("The \"account\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(signatory) {
-		panic("The \"signatory\" attribute is required by this class.")
+	if uti.IsUndefined(notary) {
+		panic("The \"notary\" attribute is required by this class.")
 	}
 
 	var component = doc.ParseSource(`[
     $content: ` + key.AsString() + `
     $account: ` + account.AsString() + `
-    $signatory: ` + signatory.AsString() + `
+    $notary: ` + notary.AsString() + `
 ]($type: <bali:/types/notary/Certificate:v3>)`,
 	)
 
@@ -112,29 +112,29 @@ func (v *certificate_) GetAccount() fra.TagLike {
 	return fra.TagFromString(doc.FormatComponent(object))
 }
 
-func (v *certificate_) GetSignatory() fra.ResourceLike {
-	var object = v.GetObject(fra.Symbol("signatory"))
+func (v *certificate_) GetNotary() fra.ResourceLike {
+	var object = v.GetObject(fra.Symbol("notary"))
 	return fra.ResourceFromString(doc.FormatComponent(object))
 }
 
-func (v *certificate_) GetSignature() SignatureLike {
-	var signature SignatureLike
-	var object = v.GetObject(fra.Symbol("signature"))
+func (v *certificate_) GetSeal() SealLike {
+	var seal SealLike
+	var object = v.GetObject(fra.Symbol("seal"))
 	if uti.IsDefined(object) {
-		signature = SignatureClass().SignatureFromString(doc.FormatComponent(object))
+		seal = SealClass().SealFromString(doc.FormatComponent(object))
 	}
-	return signature
+	return seal
 }
 
-func (v *certificate_) SetSignature(
-	signature SignatureLike,
+func (v *certificate_) SetSeal(
+	seal SealLike,
 ) {
-	var component = doc.ParseSource(signature.AsString())
-	v.SetObject(component, fra.Symbol("signature"))
+	var component = doc.ParseSource(seal.AsString())
+	v.SetObject(component, fra.Symbol("seal"))
 }
 
-func (v *certificate_) RemoveSignature() {
-	v.RemoveObject(fra.Symbol("signature"))
+func (v *certificate_) RemoveSeal() {
+	v.RemoveObject(fra.Symbol("seal"))
 }
 
 // Private Methods

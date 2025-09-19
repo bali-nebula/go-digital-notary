@@ -49,7 +49,7 @@ type (
 	DigestClassLike      = doc.DigestClassLike
 	DraftClassLike       = doc.DraftClassLike
 	KeyClassLike         = doc.KeyClassLike
-	SignatureClassLike   = doc.SignatureClassLike
+	SealClassLike        = doc.SealClassLike
 )
 
 type (
@@ -60,7 +60,7 @@ type (
 	DigestLike      = doc.DigestLike
 	DraftLike       = doc.DraftLike
 	KeyLike         = doc.KeyLike
-	SignatureLike   = doc.SignatureLike
+	SealLike        = doc.SealLike
 )
 
 type (
@@ -104,12 +104,12 @@ func CertificateClass() CertificateClassLike {
 func Certificate(
 	key KeyLike,
 	account fra.TagLike,
-	signatory fra.ResourceLike,
+	notary fra.ResourceLike,
 ) CertificateLike {
 	return CertificateClass().Certificate(
 		key,
 		account,
-		signatory,
+		notary,
 	)
 }
 
@@ -183,11 +183,11 @@ func CredentialClass() CredentialClassLike {
 
 func Credential(
 	account fra.TagLike,
-	signatory fra.ResourceLike,
+	notary fra.ResourceLike,
 ) CredentialLike {
 	return CredentialClass().Credential(
 		account,
-		signatory,
+		notary,
 	)
 }
 
@@ -277,24 +277,24 @@ func KeyFromString(
 	)
 }
 
-func SignatureClass() SignatureClassLike {
-	return doc.SignatureClass()
+func SealClass() SealClassLike {
+	return doc.SealClass()
 }
 
-func Signature(
+func Seal(
 	algorithm fra.QuoteLike,
 	base64 fra.BinaryLike,
-) SignatureLike {
-	return SignatureClass().Signature(
+) SealLike {
+	return SealClass().Seal(
 		algorithm,
 		base64,
 	)
 }
 
-func SignatureFromString(
+func SealFromString(
 	source string,
-) SignatureLike {
-	return SignatureClass().SignatureFromString(
+) SealLike {
+	return SealClass().SealFromString(
 		source,
 	)
 }

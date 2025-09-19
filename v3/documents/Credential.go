@@ -30,20 +30,20 @@ func CredentialClass() CredentialClassLike {
 
 func (c *credentialClass_) Credential(
 	account fra.TagLike,
-	signatory fra.ResourceLike,
+	notary fra.ResourceLike,
 ) CredentialLike {
 	if uti.IsUndefined(account) {
 		panic("The \"account\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(signatory) {
-		panic("The \"signatory\" attribute is required by this class.")
+	if uti.IsUndefined(notary) {
+		panic("The \"notary\" attribute is required by this class.")
 	}
 
 	var timestamp = fra.Now()
 	var component = doc.ParseSource(`[
     $content: ` + timestamp.AsString() + `
     $account: ` + account.AsString() + `
-    $signatory: ` + signatory.AsString() + `
+    $notary: ` + notary.AsString() + `
 ]($type: <bali:/types/notary/Credential:v3>)`,
 	)
 
@@ -102,29 +102,29 @@ func (v *credential_) GetAccount() fra.TagLike {
 	return fra.TagFromString(doc.FormatComponent(object))
 }
 
-func (v *credential_) GetSignatory() fra.ResourceLike {
-	var object = v.GetObject(fra.Symbol("signatory"))
+func (v *credential_) GetNotary() fra.ResourceLike {
+	var object = v.GetObject(fra.Symbol("notary"))
 	return fra.ResourceFromString(doc.FormatComponent(object))
 }
 
-func (v *credential_) GetSignature() SignatureLike {
-	var signature SignatureLike
-	var object = v.GetObject(fra.Symbol("signature"))
+func (v *credential_) GetSeal() SealLike {
+	var seal SealLike
+	var object = v.GetObject(fra.Symbol("seal"))
 	if uti.IsDefined(object) {
-		signature = SignatureClass().SignatureFromString(doc.FormatComponent(object))
+		seal = SealClass().SealFromString(doc.FormatComponent(object))
 	}
-	return signature
+	return seal
 }
 
-func (v *credential_) SetSignature(
-	signature SignatureLike,
+func (v *credential_) SetSeal(
+	seal SealLike,
 ) {
-	var component = doc.ParseSource(signature.AsString())
-	v.SetObject(component, fra.Symbol("signature"))
+	var component = doc.ParseSource(seal.AsString())
+	v.SetObject(component, fra.Symbol("seal"))
 }
 
-func (v *credential_) RemoveSignature() {
-	v.RemoveObject(fra.Symbol("signature"))
+func (v *credential_) RemoveSeal() {
+	v.RemoveObject(fra.Symbol("seal"))
 }
 
 // Private Methods

@@ -49,7 +49,7 @@ type CertificateClassLike interface {
 	Certificate(
 		key KeyLike,
 		account fra.TagLike,
-		signatory fra.ResourceLike,
+		notary fra.ResourceLike,
 	) CertificateLike
 	CertificateFromString(
 		source string,
@@ -86,7 +86,7 @@ type ContractClassLike interface {
 	Contract(
 		draft Parameterized,
 		account fra.TagLike,
-		signatory fra.ResourceLike,
+		notary fra.ResourceLike,
 	) ContractLike
 	ContractFromString(
 		source string,
@@ -102,7 +102,7 @@ type CredentialClassLike interface {
 	// Constructor Methods
 	Credential(
 		account fra.TagLike,
-		signatory fra.ResourceLike,
+		notary fra.ResourceLike,
 	) CredentialLike
 	CredentialFromString(
 		source string,
@@ -164,19 +164,19 @@ type KeyClassLike interface {
 }
 
 /*
-SignatureClassLike is a class interface that declares the complete set of
+SealClassLike is a class interface that declares the complete set of
 class constructors, constants and functions that must be supported by each
-concrete signature-like class.
+concrete seal-like class.
 */
-type SignatureClassLike interface {
+type SealClassLike interface {
 	// Constructor Methods
-	Signature(
+	Seal(
 		algorithm fra.QuoteLike,
 		base64 fra.BinaryLike,
-	) SignatureLike
-	SignatureFromString(
+	) SealLike
+	SealFromString(
 		source string,
-	) SignatureLike
+	) SealLike
 }
 
 // INSTANCE DECLARATIONS
@@ -298,13 +298,13 @@ type KeyLike interface {
 }
 
 /*
-SignatureLike is an instance interface that declares the complete set of
+SealLike is an instance interface that declares the complete set of
 principal, attribute and aspect methods that must be supported by each instance
-of a concrete signature-like class.
+of a concrete seal-like class.
 */
-type SignatureLike interface {
+type SealLike interface {
 	// Principal Methods
-	GetClass() SignatureClassLike
+	GetClass() SealClassLike
 	AsIntrinsic() doc.ComponentLike
 	AsString() string
 	GetAlgorithm() fra.QuoteLike
@@ -325,12 +325,12 @@ type Notarized interface {
 	AsString() string
 	GetContent() doc.ComponentLike
 	GetAccount() fra.TagLike
-	GetSignatory() fra.ResourceLike
-	GetSignature() SignatureLike
-	SetSignature(
-		signature SignatureLike,
+	GetNotary() fra.ResourceLike
+	GetSeal() SealLike
+	SetSeal(
+		seal SealLike,
 	)
-	RemoveSignature()
+	RemoveSeal()
 }
 
 /*

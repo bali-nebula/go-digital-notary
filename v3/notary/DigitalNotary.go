@@ -141,11 +141,11 @@ func (v *digitalNotary_) GenerateKey() doc.CertificateLike {
 
 	// Create the new certificate.
 	var account = v.account_
-	var signatory = citation.AsResource()
+	var notary = citation.AsResource()
 	var certificate = doc.CertificateClass().Certificate(
 		key,
 		account,
-		signatory,
+		notary,
 	)
 
 	// Notarized the new certificate.
@@ -153,11 +153,11 @@ func (v *digitalNotary_) GenerateKey() doc.CertificateLike {
 	source = certificate.AsString()
 	bytes = v.hsm_.SignBytes([]byte(source)) // Notarized using the new key.
 	base64 = fra.Binary(bytes)
-	var signature = doc.SignatureClass().Signature(
+	var seal = doc.SealClass().Seal(
 		algorithm,
 		base64,
 	)
-	certificate.SetSignature(signature)
+	certificate.SetSeal(seal)
 
 	return certificate
 }
@@ -206,11 +206,11 @@ func (v *digitalNotary_) RefreshKey() doc.CertificateLike {
 
 	// Create the new certificate.
 	var account = v.account_
-	var signatory = previous
+	var notary = previous
 	var certificate = doc.CertificateClass().Certificate(
 		key,
 		account,
-		signatory,
+		notary,
 	)
 
 	// Notarized the new certificate.
@@ -218,11 +218,11 @@ func (v *digitalNotary_) RefreshKey() doc.CertificateLike {
 	source = certificate.AsString()
 	bytes = v.hsm_.SignBytes([]byte(source)) // Notarized using the previous key.
 	base64 = fra.Binary(bytes)
-	var signature = doc.SignatureClass().Signature(
+	var seal = doc.SealClass().Seal(
 		algorithm,
 		base64,
 	)
-	certificate.SetSignature(signature)
+	certificate.SetSeal(seal)
 
 	return certificate
 }
@@ -246,10 +246,10 @@ func (v *digitalNotary_) GenerateCredential() doc.CredentialLike {
 
 	// Create the credential.
 	var account = v.account_
-	var signatory = v.GetCitation()
+	var notary = v.GetCitation()
 	var credential = doc.CredentialClass().Credential(
 		account,
-		signatory,
+		notary,
 	)
 
 	// Notarized the credential.
@@ -257,11 +257,11 @@ func (v *digitalNotary_) GenerateCredential() doc.CredentialLike {
 	var source = credential.AsString()
 	var bytes = v.hsm_.SignBytes([]byte(source)) // Notarized using the current key.
 	var base64 = fra.Binary(bytes)
-	var signature = doc.SignatureClass().Signature(
+	var seal = doc.SealClass().Seal(
 		algorithm,
 		base64,
 	)
-	credential.SetSignature(signature)
+	credential.SetSeal(seal)
 
 	return credential
 }
@@ -285,43 +285,43 @@ func (v *digitalNotary_) NotarizeDraft(
 	var source = contract.AsString()
 	var bytes = []byte(source)
 	var base64 = fra.Binary(v.hsm_.SignBytes(bytes))
-	var signature = doc.SignatureClass().Signature(
+	var seal = doc.SealClass().Seal(
 		algorithm,
 		base64,
 	)
-	contract.SetSignature(signature)
+	contract.SetSeal(seal)
 	return contract
 }
 
-func (v *digitalNotary_) SignatureMatches(
+func (v *digitalNotary_) SealMatches(
 	document doc.Notarized,
 	key doc.KeyLike,
 ) bool {
 	// Check for any errors at the end.
 	defer v.errorCheck(
-		"An error occurred while attempting to match a document signature",
+		"An error occurred while attempting to match a document seal",
 	)
 
-	// Validate the signature on the document using the public key.
+	// Validate the seal on the document using the public key.
 	var keyAlgorithm = string(key.GetAlgorithm().AsIntrinsic())
 	var ssmAlgorithm = v.ssm_.GetSignatureAlgorithm()
 	if keyAlgorithm != ssmAlgorithm {
 		var message = fmt.Sprintf(
-			"The key signature algorithm %q is incompatible with the SSM algorithm %q.",
+			"The key seal algorithm %q is incompatible with the SSM algorithm %q.",
 			keyAlgorithm,
 			ssmAlgorithm,
 		)
 		panic(message)
 	}
 	var publicKey = key.GetBase64()
-	var signature = document.GetSignature()
-	document.RemoveSignature()
+	var seal = document.GetSeal()
+	document.RemoveSeal()
 	var source = document.AsString()
 	var sourceBytes = []byte(source)
-	document.SetSignature(signature)
+	document.SetSeal(seal)
 	var keyBytes = publicKey.AsIntrinsic()
-	var signatureBytes = signature.GetBase64().AsIntrinsic()
-	return v.ssm_.IsValid(keyBytes, signatureBytes, sourceBytes)
+	var sealBytes = seal.GetBase64().AsIntrinsic()
+	return v.ssm_.IsValid(keyBytes, sealBytes, sourceBytes)
 }
 
 func (v *digitalNotary_) CiteDraft(

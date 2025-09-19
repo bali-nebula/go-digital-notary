@@ -45,12 +45,12 @@ func TestParsingCredentials(t *tes.T) {
 	var credential = not.CredentialFromString(source)
 	var formatted = credential.AsString()
 	ass.Equal(t, source, formatted)
-	var signature = credential.GetSignature()
+	var seal = credential.GetSeal()
 	credential = not.Credential(
 		credential.GetAccount(),
-		credential.GetSignatory(),
+		credential.GetNotary(),
 	)
-	credential.SetSignature(signature)
+	credential.SetSeal(seal)
 	uti.WriteFile(filename, source)
 }
 
@@ -61,13 +61,13 @@ func TestParsingCertificates(t *tes.T) {
 	var certificate = not.CertificateFromString(source)
 	var formatted = certificate.AsString()
 	ass.Equal(t, source, formatted)
-	var signature = certificate.GetSignature()
+	var seal = certificate.GetSeal()
 	certificate = not.Certificate(
 		certificate.GetKey(),
 		certificate.GetAccount(),
-		certificate.GetSignatory(),
+		certificate.GetNotary(),
 	)
-	certificate.SetSignature(signature)
+	certificate.SetSeal(seal)
 	source = certificate.AsString()
 	uti.WriteFile(filename, source)
 }
@@ -98,13 +98,13 @@ func TestParsingContracts(t *tes.T) {
 	var contract = not.ContractFromString(source)
 	var formatted = contract.AsString()
 	ass.Equal(t, source, formatted)
-	var signature = contract.GetSignature()
+	var seal = contract.GetSeal()
 	contract = not.Contract(
 		contract.GetDraft(),
 		contract.GetAccount(),
-		contract.GetSignatory(),
+		contract.GetNotary(),
 	)
-	contract.SetSignature(signature)
+	contract.SetSeal(seal)
 	source = contract.AsString()
 	uti.WriteFile(filename, source)
 }
@@ -122,12 +122,12 @@ func TestSSM(t *tes.T) {
 	module.EraseKeys()
 	var publicKey = module.GenerateKeys()
 
-	var signature = module.SignBytes(bytes)
-	ass.True(t, module.IsValid(publicKey, signature, bytes))
+	var seal = module.SignBytes(bytes)
+	ass.True(t, module.IsValid(publicKey, seal, bytes))
 
 	var newPublicKey = module.RotateKeys()
-	signature = module.SignBytes(newPublicKey)
-	ass.True(t, module.IsValid(publicKey, signature, newPublicKey))
+	seal = module.SignBytes(newPublicKey)
+	ass.True(t, module.IsValid(publicKey, seal, newPublicKey))
 
 	module.EraseKeys()
 }
@@ -175,7 +175,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	var keyV1 = certificateV1.GetKey()
 	ass.True(
 		t,
-		notary.SignatureMatches(
+		notary.SealMatches(
 			certificateV1,
 			keyV1,
 		),
@@ -204,11 +204,11 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	var citation = notary.CiteDraft(transaction)
 	ass.True(t, notary.CitationMatches(citation, transaction))
 
-	// Notarize the transaction document to create a signed contract.
+	// Notarize the transaction document to create a notarized contract.
 	var contract = notary.NotarizeDraft(transaction)
 	ass.True(
 		t,
-		notary.SignatureMatches(
+		notary.SealMatches(
 			contract,
 			keyV1,
 		),
@@ -222,7 +222,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	var certificateV2 = notary.RefreshKey()
 	ass.True(
 		t,
-		notary.SignatureMatches(
+		notary.SealMatches(
 			certificateV2,
 			keyV1,
 		),
@@ -236,7 +236,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	var keyV2 = certificateV2.GetKey()
 	ass.True(
 		t,
-		notary.SignatureMatches(
+		notary.SealMatches(
 			credential,
 			keyV2,
 		),

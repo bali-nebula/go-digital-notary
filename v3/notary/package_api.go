@@ -12,7 +12,7 @@
 
 /*
 Package "notary" provides an implementation of a digital notary that can be used
-to digitally sign (notarize) digital documents.
+to digitally notarize digital documents.
 
 For detailed documentation on this package refer to the wiki:
   - https://github.com/bali-nebula/go-digital-notary/wiki
@@ -44,9 +44,9 @@ DigitalNotaryClassLike is a class interface that declares the complete set of
 class constructors, constants and functions that must be supported by each
 concrete digital-notary-like class.
 
-A digital notary may be used to digitally sign digital draft documents using a
-hardware security module (HSM). It may also be used to validate the signature
-on a contract that was signed using this or any other digital notary.
+A digital notary may be used to digitally notarize digital draft documents using
+a hardware security module (HSM). It may also be used to validate the seal on a
+contract that was notarized using this or any other digital notary.
 */
 type DigitalNotaryClassLike interface {
 	// Constructor Methods
@@ -75,7 +75,7 @@ type DigitalNotaryLike interface {
 	NotarizeDraft(
 		draft doc.Parameterized,
 	) doc.ContractLike
-	SignatureMatches(
+	SealMatches(
 		document doc.Notarized,
 		key doc.KeyLike,
 	) bool
@@ -102,7 +102,7 @@ type Trusted interface {
 	) []byte
 	IsValid(
 		key []byte,
-		signature []byte,
+		seal []byte,
 		bytes []byte,
 	) bool
 }

@@ -31,7 +31,7 @@ func ContractClass() ContractClassLike {
 func (c *contractClass_) Contract(
 	draft Parameterized,
 	account fra.TagLike,
-	signatory fra.ResourceLike,
+	notary fra.ResourceLike,
 ) ContractLike {
 	if uti.IsUndefined(draft) {
 		panic("The \"draft\" attribute is required by this class.")
@@ -39,14 +39,14 @@ func (c *contractClass_) Contract(
 	if uti.IsUndefined(account) {
 		panic("The \"account\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(signatory) {
-		panic("The \"signatory\" attribute is required by this class.")
+	if uti.IsUndefined(notary) {
+		panic("The \"notary\" attribute is required by this class.")
 	}
 
 	var component = doc.ParseSource(`[
     $content: ` + draft.AsString() + `
     $account: ` + account.AsString() + `
-    $signatory: ` + signatory.AsString() + `
+    $notary: ` + notary.AsString() + `
 ]($type: <bali:/types/notary/Contract:v3>)`,
 	)
 
@@ -111,29 +111,29 @@ func (v *contract_) GetAccount() fra.TagLike {
 	return fra.TagFromString(doc.FormatComponent(object))
 }
 
-func (v *contract_) GetSignatory() fra.ResourceLike {
-	var object = v.GetObject(fra.Symbol("signatory"))
+func (v *contract_) GetNotary() fra.ResourceLike {
+	var object = v.GetObject(fra.Symbol("notary"))
 	return fra.ResourceFromString(doc.FormatComponent(object))
 }
 
-func (v *contract_) GetSignature() SignatureLike {
-	var signature SignatureLike
-	var object = v.GetObject(fra.Symbol("signature"))
+func (v *contract_) GetSeal() SealLike {
+	var seal SealLike
+	var object = v.GetObject(fra.Symbol("seal"))
 	if uti.IsDefined(object) {
-		signature = SignatureClass().SignatureFromString(doc.FormatComponent(object))
+		seal = SealClass().SealFromString(doc.FormatComponent(object))
 	}
-	return signature
+	return seal
 }
 
-func (v *contract_) SetSignature(
-	signature SignatureLike,
+func (v *contract_) SetSeal(
+	seal SealLike,
 ) {
-	var component = doc.ParseSource(signature.AsString())
-	v.SetObject(component, fra.Symbol("signature"))
+	var component = doc.ParseSource(seal.AsString())
+	v.SetObject(component, fra.Symbol("seal"))
 }
 
-func (v *contract_) RemoveSignature() {
-	v.RemoveObject(fra.Symbol("signature"))
+func (v *contract_) RemoveSeal() {
+	v.RemoveObject(fra.Symbol("seal"))
 }
 
 // PROTECTED INTERFACE

@@ -22,16 +22,16 @@ import (
 
 // Access Function
 
-func SignatureClass() SignatureClassLike {
-	return signatureClass()
+func SealClass() SealClassLike {
+	return sealClass()
 }
 
 // Constructor Methods
 
-func (c *signatureClass_) Signature(
+func (c *sealClass_) Seal(
 	algorithm fra.QuoteLike,
 	base64 fra.BinaryLike,
-) SignatureLike {
+) SealLike {
 	if uti.IsUndefined(algorithm) {
 		panic("The \"algorithm\" attribute is required by this class.")
 	}
@@ -42,10 +42,10 @@ func (c *signatureClass_) Signature(
 	var component = doc.ParseSource(`[
     $algorithm: ` + algorithm.AsString() + `
     $base64: ` + base64.AsString() + `
-]($type: <bali:/types/notary/Signature:v3>)`,
+]($type: <bali:/types/notary/Seal:v3>)`,
 	)
 
-	var instance = &signature_{
+	var instance = &seal_{
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
@@ -54,11 +54,11 @@ func (c *signatureClass_) Signature(
 	return instance
 }
 
-func (c *signatureClass_) SignatureFromString(
+func (c *sealClass_) SealFromString(
 	source string,
-) SignatureLike {
+) SealLike {
 	var component = doc.ParseSource(source)
-	var instance = &signature_{
+	var instance = &seal_{
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
@@ -75,24 +75,24 @@ func (c *signatureClass_) SignatureFromString(
 
 // Principal Methods
 
-func (v *signature_) GetClass() SignatureClassLike {
-	return signatureClass()
+func (v *seal_) GetClass() SealClassLike {
+	return sealClass()
 }
 
-func (v *signature_) AsIntrinsic() doc.ComponentLike {
+func (v *seal_) AsIntrinsic() doc.ComponentLike {
 	return v.Declarative.(doc.ComponentLike)
 }
 
-func (v *signature_) AsString() string {
+func (v *seal_) AsString() string {
 	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
 }
 
-func (v *signature_) GetAlgorithm() fra.QuoteLike {
+func (v *seal_) GetAlgorithm() fra.QuoteLike {
 	var object = v.GetObject(fra.Symbol("algorithm"))
 	return fra.QuoteFromString(doc.FormatComponent(object))
 }
 
-func (v *signature_) GetBase64() fra.BinaryLike {
+func (v *seal_) GetBase64() fra.BinaryLike {
 	var object = v.GetObject(fra.Symbol("base64"))
 	return fra.BinaryFromString(doc.FormatComponent(object))
 }
@@ -105,7 +105,7 @@ func (v *signature_) GetBase64() fra.BinaryLike {
 
 // Instance Structure
 
-type signature_ struct {
+type seal_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
@@ -114,16 +114,16 @@ type signature_ struct {
 
 // Class Structure
 
-type signatureClass_ struct {
+type sealClass_ struct {
 	// Declare the class constants.
 }
 
 // Class Reference
 
-func signatureClass() *signatureClass_ {
-	return signatureClassReference_
+func sealClass() *sealClass_ {
+	return sealClassReference_
 }
 
-var signatureClassReference_ = &signatureClass_{
+var sealClassReference_ = &sealClass_{
 	// Initialize the class constants.
 }
