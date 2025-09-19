@@ -12,7 +12,7 @@
 
 /*
 Package "notary" provides an implementation of a digital notary that can be used
-to digitally notarize digital documents.
+to digitally notarize Bali documents.
 
 For detailed documentation on this package refer to the wiki:
   - https://github.com/bali-nebula/go-digital-notary/wiki
@@ -67,19 +67,18 @@ of a concrete digital-notary-like class.
 type DigitalNotaryLike interface {
 	// Principal Methods
 	GetClass() DigitalNotaryClassLike
-	GetCitation() fra.ResourceLike
 	GenerateKey() doc.CertificateLike
 	RefreshKey() doc.CertificateLike
 	ForgetKey()
 	GenerateCredential() doc.CredentialLike
-	NotarizeDraft(
+	NotarizeDocument(
 		draft doc.Parameterized,
 	) doc.ContractLike
 	SealMatches(
 		document doc.Notarized,
 		key doc.KeyLike,
 	) bool
-	CiteDraft(
+	CiteDocument(
 		draft doc.Parameterized,
 	) fra.ResourceLike
 	CitationMatches(
@@ -96,7 +95,6 @@ trusted security modules.  No private key is needed by this interface.
 */
 type Trusted interface {
 	GetDigestAlgorithm() string
-	GetSignatureAlgorithm() string
 	DigestBytes(
 		bytes []byte,
 	) []byte
@@ -113,11 +111,7 @@ hardened security modules.  This interface requires a private key.
 */
 type Hardened interface {
 	GetTag() string
-	GetDigestAlgorithm() string
 	GetSignatureAlgorithm() string
-	DigestBytes(
-		bytes []byte,
-	) []byte
 	GenerateKeys() []byte
 	SignBytes(
 		bytes []byte,

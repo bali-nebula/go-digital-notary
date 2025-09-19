@@ -123,8 +123,15 @@ func (v *credential_) SetSeal(
 	v.SetObject(component, fra.Symbol("seal"))
 }
 
-func (v *credential_) RemoveSeal() {
-	v.RemoveObject(fra.Symbol("seal"))
+func (v *credential_) RemoveSeal() SealLike {
+	var seal SealLike
+	var symbol = fra.Symbol("seal")
+	var object = v.GetObject(symbol)
+	if uti.IsDefined(object) {
+		v.RemoveObject(symbol)
+		seal = SealClass().SealFromString(doc.FormatComponent(object))
+	}
+	return seal
 }
 
 // Private Methods

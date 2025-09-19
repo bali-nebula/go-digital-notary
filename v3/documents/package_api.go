@@ -330,7 +330,7 @@ type Notarized interface {
 	SetSeal(
 		seal SealLike,
 	)
-	RemoveSeal()
+	RemoveSeal() SealLike
 }
 
 /*

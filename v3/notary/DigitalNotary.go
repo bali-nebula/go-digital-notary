@@ -83,23 +83,6 @@ func (v *digitalNotary_) GetClass() DigitalNotaryClassLike {
 	return digitalNotaryClass()
 }
 
-func (v *digitalNotary_) GetCitation() fra.ResourceLike {
-	// Check for any errors at the end.
-	defer v.errorCheck(
-		"An error occurred while attempting to retrieve the certificate citation",
-	)
-
-	// Retrieve the citation to the current certificate.
-	if !uti.PathExists(v.filename_) {
-		panic("The digital notary has not yet been initialized.")
-	}
-	var source = uti.ReadFile(v.filename_)
-	var citation = doc.CitationClass().CitationFromString(source)
-
-	// Convert the citation to a resource.
-	return citation.AsResource()
-}
-
 func (v *digitalNotary_) GenerateKey() doc.CertificateLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
@@ -120,9 +103,9 @@ func (v *digitalNotary_) GenerateKey() doc.CertificateLike {
 	)
 
 	// Create a digest of the new public key.
-	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetDigestAlgorithm() + `"`)
+	algorithm = fra.QuoteFromString(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
 	bytes = []byte(key.AsString())
-	base64 = fra.Binary(v.hsm_.DigestBytes(bytes))
+	base64 = fra.Binary(v.ssm_.DigestBytes(bytes))
 	var digest = doc.DigestClass().Digest(
 		algorithm,
 		base64,
@@ -174,7 +157,7 @@ func (v *digitalNotary_) RefreshKey() doc.CertificateLike {
 	var base64 = fra.Binary(bytes)
 
 	// Generate the next version of the public key.
-	var previous = v.GetCitation()
+	var previous = v.getCitation()
 	var citation = doc.CitationClass().CitationFromResource(previous)
 	var tag = citation.GetTag()
 	var current = citation.GetVersion()
@@ -187,9 +170,9 @@ func (v *digitalNotary_) RefreshKey() doc.CertificateLike {
 	)
 
 	// Create a citation to the new public key.
-	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetDigestAlgorithm() + `"`)
+	algorithm = fra.QuoteFromString(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
 	bytes = []byte(key.AsString())
-	base64 = fra.Binary(v.hsm_.DigestBytes(bytes))
+	base64 = fra.Binary(v.ssm_.DigestBytes(bytes))
 	var digest = doc.DigestClass().Digest(
 		algorithm,
 		base64,
@@ -246,7 +229,7 @@ func (v *digitalNotary_) GenerateCredential() doc.CredentialLike {
 
 	// Create the credential.
 	var account = v.account_
-	var notary = v.GetCitation()
+	var notary = v.getCitation()
 	var credential = doc.CredentialClass().Credential(
 		account,
 		notary,
@@ -266,7 +249,7 @@ func (v *digitalNotary_) GenerateCredential() doc.CredentialLike {
 	return credential
 }
 
-func (v *digitalNotary_) NotarizeDraft(
+func (v *digitalNotary_) NotarizeDocument(
 	draft doc.Parameterized,
 ) doc.ContractLike {
 	// Check for any errors at the end.
@@ -274,13 +257,15 @@ func (v *digitalNotary_) NotarizeDraft(
 		"An error occurred while attempting to notarize a draft document",
 	)
 
-	// Notarize the draft document.
-	var citation = v.GetCitation()
+	// Wrap the draft document in a contract.
+	var notary = v.getCitation()
 	var contract = doc.ContractClass().Contract(
 		draft,
 		v.account_,
-		citation,
+		notary,
 	)
+
+	// Notarize the contract.
 	var algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var source = contract.AsString()
 	var bytes = []byte(source)
@@ -290,6 +275,7 @@ func (v *digitalNotary_) NotarizeDraft(
 		base64,
 	)
 	contract.SetSeal(seal)
+
 	return contract
 }
 
@@ -302,20 +288,21 @@ func (v *digitalNotary_) SealMatches(
 		"An error occurred while attempting to match a document seal",
 	)
 
-	// Validate the seal on the document using the public key.
+	// Compare the signature algorithms for the public key and SSM.
 	var keyAlgorithm = string(key.GetAlgorithm().AsIntrinsic())
-	var ssmAlgorithm = v.ssm_.GetSignatureAlgorithm()
-	if keyAlgorithm != ssmAlgorithm {
+	var hsmAlgorithm = v.hsm_.GetSignatureAlgorithm()
+	if keyAlgorithm != hsmAlgorithm {
 		var message = fmt.Sprintf(
 			"The key seal algorithm %q is incompatible with the SSM algorithm %q.",
 			keyAlgorithm,
-			ssmAlgorithm,
+			hsmAlgorithm,
 		)
 		panic(message)
 	}
+
+	// Validate the seal on the notarized document.
 	var publicKey = key.GetBase64()
-	var seal = document.GetSeal()
-	document.RemoveSeal()
+	var seal = document.RemoveSeal()
 	var source = document.AsString()
 	var sourceBytes = []byte(source)
 	document.SetSeal(seal)
@@ -324,7 +311,7 @@ func (v *digitalNotary_) SealMatches(
 	return v.ssm_.IsValid(keyBytes, sealBytes, sourceBytes)
 }
 
-func (v *digitalNotary_) CiteDraft(
+func (v *digitalNotary_) CiteDocument(
 	draft doc.Parameterized,
 ) fra.ResourceLike {
 	// Check for any errors at the end.
@@ -381,6 +368,15 @@ func (v *digitalNotary_) CitationMatches(
 // PROTECTED INTERFACE
 
 // Private Methods
+
+func (v *digitalNotary_) getCitation() fra.ResourceLike {
+	if !uti.PathExists(v.filename_) {
+		panic("The digital notary has not yet been initialized.")
+	}
+	var source = uti.ReadFile(v.filename_)
+	var citation = doc.CitationClass().CitationFromString(source)
+	return citation.AsResource()
+}
 
 func (v *digitalNotary_) errorCheck(
 	message string,

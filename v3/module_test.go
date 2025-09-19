@@ -137,14 +137,14 @@ func TestDigitalNotaryInitialization(t *tes.T) {
 	defer func() {
 		if e := recover(); e != nil {
 			var message = e.(string)
-			ass.Equal(t, "DigitalNotary: An error occurred while attempting to retrieve the certificate citation:\n    The digital notary has not yet been initialized.", message)
+			ass.Equal(t, "DigitalNotary: An error occurred while attempting to generate a security credential:\n    The digital notary has not yet been initialized.", message)
 		} else {
 			ass.Fail(t, "Test should result in recovered panic.")
 		}
 		notary.ForgetKey()
 	}()
 	notary.ForgetKey()
-	notary.GetCitation()
+	notary.GenerateCredential()
 }
 
 func TestDigitalNotaryGenerateKey(t *tes.T) {
@@ -184,9 +184,6 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	var source = certificateV1.AsString()
 	uti.WriteFile(filename, source)
 
-	// Extract the citation to the public certificate.
-	notary.GetCitation()
-
 	// Create and cite a new transaction document.
 	var transaction = not.DraftFromString(
 		`[
@@ -201,11 +198,11 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	$permissions: <bali:/permissions/Public:v3>
 )`,
 	)
-	var citation = notary.CiteDraft(transaction)
+	var citation = notary.CiteDocument(transaction)
 	ass.True(t, notary.CitationMatches(citation, transaction))
 
 	// Notarize the transaction document to create a notarized contract.
-	var contract = notary.NotarizeDraft(transaction)
+	var contract = notary.NotarizeDocument(transaction)
 	ass.True(
 		t,
 		notary.SealMatches(
