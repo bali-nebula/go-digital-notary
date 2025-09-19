@@ -38,6 +38,22 @@ func TestParsingCitations(t *tes.T) {
 	uti.WriteFile(filename, source)
 }
 
+func TestParsingCredentials(t *tes.T) {
+	var filename = directory + "documents/Credential.bali"
+	fmt.Println(filename)
+	var source = uti.ReadFile(filename)
+	var credential = not.CredentialFromString(source)
+	var formatted = credential.AsString()
+	ass.Equal(t, source, formatted)
+	var signature = credential.GetSignature()
+	credential = not.Credential(
+		credential.GetAccount(),
+		credential.GetSignatory(),
+	)
+	credential.SetSignature(signature)
+	uti.WriteFile(filename, source)
+}
+
 func TestParsingCertificates(t *tes.T) {
 	var filename = directory + "documents/Certificate.bali"
 	fmt.Println(filename)
@@ -225,4 +241,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 			keyV2,
 		),
 	)
+	filename = "./test/notary/Credential.bali"
+	source = credential.AsString()
+	uti.WriteFile(filename, source)
 }

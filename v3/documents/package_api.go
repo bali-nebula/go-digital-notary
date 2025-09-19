@@ -94,6 +94,22 @@ type ContractClassLike interface {
 }
 
 /*
+CredentialClassLike is a class interface that declares the complete set of
+class constructors, constants and functions that must be supported by each
+concrete credential-like class.
+*/
+type CredentialClassLike interface {
+	// Constructor Methods
+	Credential(
+		account fra.TagLike,
+		signatory fra.ResourceLike,
+	) CredentialLike
+	CredentialFromString(
+		source string,
+	) CredentialLike
+}
+
+/*
 DigestClassLike is a class interface that declares the complete set of
 class constructors, constants and functions that must be supported by each
 concrete digest-like class.
@@ -217,6 +233,21 @@ type ContractLike interface {
 }
 
 /*
+CredentialLike is an instance interface that declares the complete set of
+principal, attribute and aspect methods that must be supported by each instance
+of a concrete credential-like class.
+*/
+type CredentialLike interface {
+	// Principal Methods
+	GetClass() CredentialClassLike
+	AsIntrinsic() doc.ComponentLike
+	AsString() string
+
+	// Aspect Interfaces
+	Notarized
+}
+
+/*
 DigestLike is an instance interface that declares the complete set of
 principal, attribute and aspect methods that must be supported by each instance
 of a concrete digest-like class.
@@ -292,7 +323,7 @@ all notarized documents.
 type Notarized interface {
 	doc.Declarative
 	AsString() string
-	GetContent() Parameterized
+	GetContent() doc.ComponentLike
 	GetAccount() fra.TagLike
 	GetSignatory() fra.ResourceLike
 	GetSignature() SignatureLike

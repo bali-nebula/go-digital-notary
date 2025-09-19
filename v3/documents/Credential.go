@@ -22,20 +22,16 @@ import (
 
 // Access Function
 
-func ContractClass() ContractClassLike {
-	return contractClass()
+func CredentialClass() CredentialClassLike {
+	return credentialClass()
 }
 
 // Constructor Methods
 
-func (c *contractClass_) Contract(
-	draft Parameterized,
+func (c *credentialClass_) Credential(
 	account fra.TagLike,
 	signatory fra.ResourceLike,
-) ContractLike {
-	if uti.IsUndefined(draft) {
-		panic("The \"draft\" attribute is required by this class.")
-	}
+) CredentialLike {
 	if uti.IsUndefined(account) {
 		panic("The \"account\" attribute is required by this class.")
 	}
@@ -43,27 +39,29 @@ func (c *contractClass_) Contract(
 		panic("The \"signatory\" attribute is required by this class.")
 	}
 
+	var timestamp = fra.Now()
 	var component = doc.ParseSource(`[
-    $content: ` + draft.AsString() + `
+    $content: ` + timestamp.AsString() + `
     $account: ` + account.AsString() + `
     $signatory: ` + signatory.AsString() + `
-]($type: <bali:/types/notary/Contract:v3>)`,
+]($type: <bali:/types/notary/Credential:v3>)`,
 	)
 
-	var instance = &contract_{
+	var instance = &credential_{
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
 		Declarative: component,
 	}
+
 	return instance
 }
 
-func (c *contractClass_) ContractFromString(
+func (c *credentialClass_) CredentialFromString(
 	source string,
-) ContractLike {
+) CredentialLike {
 	var component = doc.ParseSource(source)
-	var instance = &contract_{
+	var instance = &credential_{
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
@@ -80,43 +78,36 @@ func (c *contractClass_) ContractFromString(
 
 // Principal Methods
 
-func (v *contract_) GetClass() ContractClassLike {
-	return contractClass()
+func (v *credential_) GetClass() CredentialClassLike {
+	return credentialClass()
 }
 
-func (v *contract_) AsIntrinsic() doc.ComponentLike {
+func (v *credential_) AsIntrinsic() doc.ComponentLike {
 	return v.Declarative.(doc.ComponentLike)
 }
 
-func (v *contract_) AsString() string {
+func (v *credential_) AsString() string {
 	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
-}
-
-// Attribute Methods
-
-func (v *contract_) GetDraft() Parameterized {
-	var object = v.GetObject(fra.Symbol("content"))
-	return DraftClass().DraftFromString(doc.FormatComponent(object))
 }
 
 // Notarized Methods
 
-func (v *contract_) GetContent() doc.ComponentLike {
+func (v *credential_) GetContent() doc.ComponentLike {
 	var object = v.GetObject(fra.Symbol("content"))
 	return object.GetComponent()
 }
 
-func (v *contract_) GetAccount() fra.TagLike {
+func (v *credential_) GetAccount() fra.TagLike {
 	var object = v.GetObject(fra.Symbol("account"))
 	return fra.TagFromString(doc.FormatComponent(object))
 }
 
-func (v *contract_) GetSignatory() fra.ResourceLike {
+func (v *credential_) GetSignatory() fra.ResourceLike {
 	var object = v.GetObject(fra.Symbol("signatory"))
 	return fra.ResourceFromString(doc.FormatComponent(object))
 }
 
-func (v *contract_) GetSignature() SignatureLike {
+func (v *credential_) GetSignature() SignatureLike {
 	var signature SignatureLike
 	var object = v.GetObject(fra.Symbol("signature"))
 	if uti.IsDefined(object) {
@@ -125,24 +116,22 @@ func (v *contract_) GetSignature() SignatureLike {
 	return signature
 }
 
-func (v *contract_) SetSignature(
+func (v *credential_) SetSignature(
 	signature SignatureLike,
 ) {
 	var component = doc.ParseSource(signature.AsString())
 	v.SetObject(component, fra.Symbol("signature"))
 }
 
-func (v *contract_) RemoveSignature() {
+func (v *credential_) RemoveSignature() {
 	v.RemoveObject(fra.Symbol("signature"))
 }
-
-// PROTECTED INTERFACE
 
 // Private Methods
 
 // Instance Structure
 
-type contract_ struct {
+type credential_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
@@ -151,16 +140,16 @@ type contract_ struct {
 
 // Class Structure
 
-type contractClass_ struct {
+type credentialClass_ struct {
 	// Declare the class constants.
 }
 
 // Class Reference
 
-func contractClass() *contractClass_ {
-	return contractClassReference_
+func credentialClass() *credentialClass_ {
+	return credentialClassReference_
 }
 
-var contractClassReference_ = &contractClass_{
+var credentialClassReference_ = &credentialClass_{
 	// Initialize the class constants.
 }

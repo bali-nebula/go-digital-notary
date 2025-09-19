@@ -71,7 +71,7 @@ type DigitalNotaryLike interface {
 	GenerateKey() doc.CertificateLike
 	RefreshKey() doc.CertificateLike
 	ForgetKey()
-	GenerateCredential() doc.ContractLike
+	GenerateCredential() doc.CredentialLike
 	NotarizeDraft(
 		draft doc.Parameterized,
 	) doc.ContractLike

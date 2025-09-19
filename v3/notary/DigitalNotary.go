@@ -89,11 +89,14 @@ func (v *digitalNotary_) GetCitation() fra.ResourceLike {
 		"An error occurred while attempting to retrieve the certificate citation",
 	)
 
+	// Retrieve the citation to the current certificate.
 	if !uti.PathExists(v.filename_) {
 		panic("The digital notary has not yet been initialized.")
 	}
 	var source = uti.ReadFile(v.filename_)
 	var citation = doc.CitationClass().CitationFromString(source)
+
+	// Convert the citation to a resource.
 	return citation.AsResource()
 }
 
@@ -144,15 +147,18 @@ func (v *digitalNotary_) GenerateKey() doc.CertificateLike {
 		account,
 		signatory,
 	)
+
+	// Notarized the new certificate.
 	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	source = certificate.AsString()
-	bytes = v.hsm_.SignBytes([]byte(source))
+	bytes = v.hsm_.SignBytes([]byte(source)) // Notarized using the new key.
 	base64 = fra.Binary(bytes)
 	var signature = doc.SignatureClass().Signature(
 		algorithm,
 		base64,
 	)
 	certificate.SetSignature(signature)
+
 	return certificate
 }
 
@@ -167,7 +173,7 @@ func (v *digitalNotary_) RefreshKey() doc.CertificateLike {
 	var bytes = v.hsm_.RotateKeys() // Returns the new public key.
 	var base64 = fra.Binary(bytes)
 
-	// Generate a the next version of the certificate.
+	// Generate the next version of the public key.
 	var previous = v.GetCitation()
 	var citation = doc.CitationClass().CitationFromResource(previous)
 	var tag = citation.GetTag()
@@ -206,15 +212,18 @@ func (v *digitalNotary_) RefreshKey() doc.CertificateLike {
 		account,
 		signatory,
 	)
+
+	// Notarized the new certificate.
 	algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	source = certificate.AsString()
-	bytes = v.hsm_.SignBytes([]byte(source)) // Signed using the previous key.
+	bytes = v.hsm_.SignBytes([]byte(source)) // Notarized using the previous key.
 	base64 = fra.Binary(bytes)
 	var signature = doc.SignatureClass().Signature(
 		algorithm,
 		base64,
 	)
 	certificate.SetSignature(signature)
+
 	return certificate
 }
 
@@ -224,49 +233,37 @@ func (v *digitalNotary_) ForgetKey() {
 		"An error occurred while attempting to forget the private key",
 	)
 
+	// Erase the stored keys and certificate citation.
 	v.hsm_.EraseKeys()
 	uti.RemovePath(v.filename_)
 }
 
-func (v *digitalNotary_) GenerateCredential() doc.ContractLike {
+func (v *digitalNotary_) GenerateCredential() doc.CredentialLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
 		"An error occurred while attempting to generate a security credential",
 	)
 
-	// Create the credential document including timestamp component.
-	var timestamp = fra.Now()
-	var type_ = fra.ResourceFromString("<bali:/types/notary/Credential:v3>")
-	var tag = fra.TagWithSize(20)
-	var version = fra.VersionFromString("v1")
-	var permissions = fra.ResourceFromString("<bali:/permissions/Public:v3>")
-	var previous fra.ResourceLike
-	var draft = doc.DraftClass().Draft(
-		timestamp,
-		type_,
-		tag,
-		version,
-		permissions,
-		previous,
+	// Create the credential.
+	var account = v.account_
+	var signatory = v.GetCitation()
+	var credential = doc.CredentialClass().Credential(
+		account,
+		signatory,
 	)
 
-	// Digitally notarize the credential document.
-	var citation = v.GetCitation()
-	var contract = doc.ContractClass().Contract(
-		draft,
-		v.account_,
-		citation,
-	)
+	// Notarized the credential.
 	var algorithm = fra.QuoteFromString(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
-	var source = contract.AsString()
-	var bytes = []byte(source)
-	var base64 = fra.Binary(v.hsm_.SignBytes(bytes))
+	var source = credential.AsString()
+	var bytes = v.hsm_.SignBytes([]byte(source)) // Notarized using the current key.
+	var base64 = fra.Binary(bytes)
 	var signature = doc.SignatureClass().Signature(
 		algorithm,
 		base64,
 	)
-	contract.SetSignature(signature)
-	return contract
+	credential.SetSignature(signature)
+
+	return credential
 }
 
 func (v *digitalNotary_) NotarizeDraft(
@@ -277,7 +274,7 @@ func (v *digitalNotary_) NotarizeDraft(
 		"An error occurred while attempting to notarize a draft document",
 	)
 
-	// Digitally notarize the draft document.
+	// Notarize the draft document.
 	var citation = v.GetCitation()
 	var contract = doc.ContractClass().Contract(
 		draft,

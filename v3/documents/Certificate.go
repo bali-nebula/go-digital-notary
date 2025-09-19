@@ -102,9 +102,9 @@ func (v *certificate_) GetKey() KeyLike {
 
 // Notarized Methods
 
-func (v *certificate_) GetContent() Parameterized {
+func (v *certificate_) GetContent() doc.ComponentLike {
 	var object = v.GetObject(fra.Symbol("content"))
-	return KeyClass().KeyFromString(doc.FormatComponent(object))
+	return object.GetComponent()
 }
 
 func (v *certificate_) GetAccount() fra.TagLike {

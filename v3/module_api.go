@@ -45,6 +45,7 @@ type (
 	CertificateClassLike = doc.CertificateClassLike
 	CitationClassLike    = doc.CitationClassLike
 	ContractClassLike    = doc.ContractClassLike
+	CredentialClassLike  = doc.CredentialClassLike
 	DigestClassLike      = doc.DigestClassLike
 	DraftClassLike       = doc.DraftClassLike
 	KeyClassLike         = doc.KeyClassLike
@@ -55,6 +56,7 @@ type (
 	CertificateLike = doc.CertificateLike
 	CitationLike    = doc.CitationLike
 	ContractLike    = doc.ContractLike
+	CredentialLike  = doc.CredentialLike
 	DigestLike      = doc.DigestLike
 	DraftLike       = doc.DraftLike
 	KeyLike         = doc.KeyLike
@@ -171,6 +173,28 @@ func ContractFromString(
 	source string,
 ) ContractLike {
 	return ContractClass().ContractFromString(
+		source,
+	)
+}
+
+func CredentialClass() CredentialClassLike {
+	return doc.CredentialClass()
+}
+
+func Credential(
+	account fra.TagLike,
+	signatory fra.ResourceLike,
+) CredentialLike {
+	return CredentialClass().Credential(
+		account,
+		signatory,
+	)
+}
+
+func CredentialFromString(
+	source string,
+) CredentialLike {
+	return CredentialClass().CredentialFromString(
 		source,
 	)
 }
