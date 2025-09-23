@@ -89,17 +89,17 @@ func (v *seal_) AsString() string {
 }
 
 func (v *seal_) GetTimestamp() doc.MomentLike {
-	var object = v.GetObject(doc.Symbol("timestamp"))
+	var object = v.GetObject(doc.Symbol("$timestamp"))
 	return doc.Moment(doc.FormatComponent(object))
 }
 
 func (v *seal_) GetAlgorithm() doc.QuoteLike {
-	var object = v.GetObject(doc.Symbol("algorithm"))
+	var object = v.GetObject(doc.Symbol("$algorithm"))
 	return doc.Quote(doc.FormatComponent(object))
 }
 
 func (v *seal_) GetSignature() doc.BinaryLike {
-	var object = v.GetObject(doc.Symbol("signature"))
+	var object = v.GetObject(doc.Symbol("$signature"))
 	return doc.Binary(doc.FormatComponent(object))
 }
 

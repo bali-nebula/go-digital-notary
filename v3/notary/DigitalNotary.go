@@ -93,11 +93,21 @@ func (v *digitalNotary_) GenerateKey() not.ContractLike {
 	var bytes = v.hsm_.GenerateKeys() // Returns the new public key.
 	var key = doc.Binary(bytes)
 
-	// Create a citation to the new public key.
-	var algorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
-	var digest = doc.Binary(v.ssm_.DigestBytes(bytes))
+	// Create the new certificate.
+	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var tag = doc.Tag() // Generate a new random tag.
-	var version = doc.Version("v1")
+	var version = doc.Version()
+	var certificate = not.CertificateClass().Certificate(
+		algorithm,
+		key,
+		tag,
+		version,
+	)
+
+	// Create a citation to the new certificate.
+	algorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
+	bytes = []byte(certificate.AsString())
+	var digest = doc.Binary(v.ssm_.DigestBytes(bytes))
 	var citation = not.CitationClass().Citation(
 		algorithm,
 		digest,
@@ -109,16 +119,7 @@ func (v *digitalNotary_) GenerateKey() not.ContractLike {
 	var source = citation.AsString()
 	uti.WriteFile(v.filename_, source)
 
-	// Create the new certificate.
-	algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
-	var certificate = not.CertificateClass().Certificate(
-		algorithm,
-		key,
-		tag,
-		version,
-	)
-
-	// Notarized the new certificate.
+	// Wrap the new certificate in a contract.
 	var account = v.account_
 	var notary = citation.AsResource()
 	var contract = not.ContractClass().Contract(
@@ -126,8 +127,10 @@ func (v *digitalNotary_) GenerateKey() not.ContractLike {
 		account,
 		notary,
 	)
+
+	// Notarize the contract.
 	source = contract.AsString()
-	bytes = v.hsm_.SignBytes([]byte(source)) // Notarized using the new key.
+	bytes = v.hsm_.SignBytes([]byte(source)) // This certificate is self-signed.
 	var signature = doc.Binary(bytes)
 	var seal = not.SealClass().Seal(
 		algorithm,
@@ -148,13 +151,23 @@ func (v *digitalNotary_) RefreshKey() not.ContractLike {
 	var bytes = v.hsm_.RotateKeys() // Returns the new public key.
 	var key = doc.Binary(bytes)
 
-	// Create a citation to the new public key.
+	// Create the new certificate.
+	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var previous = v.getCitation()
 	var citation = not.CitationClass().CitationFromResource(previous)
 	var tag = citation.GetTag()
 	var current = citation.GetVersion()
 	var version = doc.VersionClass().GetNextVersion(current, 0)
-	var algorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
+	var certificate = not.CertificateClass().Certificate(
+		algorithm,
+		key,
+		tag,
+		version,
+	)
+
+	// Create a citation to the new certificate.
+	algorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
+	bytes = []byte(certificate.AsString())
 	var digest = doc.Binary(v.ssm_.DigestBytes(bytes))
 	citation = not.CitationClass().Citation(
 		algorithm,
@@ -167,16 +180,7 @@ func (v *digitalNotary_) RefreshKey() not.ContractLike {
 	var source = citation.AsString()
 	uti.WriteFile(v.filename_, source)
 
-	// Create the new certificate.
-	algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
-	var certificate = not.CertificateClass().Certificate(
-		algorithm,
-		key,
-		tag,
-		version,
-	)
-
-	// Notarized the new certificate.
+	// Wrap the new certificate in a contract.
 	var account = v.account_
 	var notary = previous
 	var contract = not.ContractClass().Contract(
@@ -184,8 +188,10 @@ func (v *digitalNotary_) RefreshKey() not.ContractLike {
 		account,
 		notary,
 	)
+
+	// Notarize the contract.
 	source = contract.AsString()
-	bytes = v.hsm_.SignBytes([]byte(source)) // Notarized using the new key.
+	bytes = v.hsm_.SignBytes([]byte(source)) // Signed with previous certificate.
 	var signature = doc.Binary(bytes)
 	var seal = not.SealClass().Seal(
 		algorithm,

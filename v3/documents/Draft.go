@@ -114,28 +114,28 @@ func (v *draft_) GetEntity() any {
 }
 
 func (v *draft_) GetType() doc.ResourceLike {
-	var component = v.GetParameter(doc.Symbol("type"))
+	var component = v.GetParameter(doc.Symbol("$type"))
 	return doc.Resource(doc.FormatComponent(component))
 }
 
 func (v *draft_) GetTag() doc.TagLike {
-	var component = v.GetParameter(doc.Symbol("tag"))
+	var component = v.GetParameter(doc.Symbol("$tag"))
 	return doc.Tag(doc.FormatComponent(component))
 }
 
 func (v *draft_) GetVersion() doc.VersionLike {
-	var component = v.GetParameter(doc.Symbol("version"))
+	var component = v.GetParameter(doc.Symbol("$version"))
 	return doc.Version(doc.FormatComponent(component))
 }
 
 func (v *draft_) GetPermissions() doc.ResourceLike {
-	var component = v.GetParameter(doc.Symbol("permissions"))
+	var component = v.GetParameter(doc.Symbol("$permissions"))
 	return doc.Resource(doc.FormatComponent(component))
 }
 
 func (v *draft_) GetOptionalPrevious() doc.ResourceLike {
 	var previous doc.ResourceLike
-	var component = v.GetParameter(doc.Symbol("previous"))
+	var component = v.GetParameter(doc.Symbol("$previous"))
 	if uti.IsDefined(component) {
 		var source = doc.FormatComponent(component)
 		if source != "none" {

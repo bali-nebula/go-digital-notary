@@ -112,17 +112,17 @@ func (v *certificate_) AsString() string {
 // Attribute Methods
 
 func (v *certificate_) GetTimestamp() doc.MomentLike {
-	var object = v.GetObject(doc.Symbol("timestamp"))
+	var object = v.GetObject(doc.Symbol("$timestamp"))
 	return doc.Moment(doc.FormatComponent(object))
 }
 
 func (v *certificate_) GetAlgorithm() doc.QuoteLike {
-	var object = v.GetObject(doc.Symbol("algorithm"))
+	var object = v.GetObject(doc.Symbol("$algorithm"))
 	return doc.Quote(doc.FormatComponent(object))
 }
 
 func (v *certificate_) GetKey() doc.BinaryLike {
-	var object = v.GetObject(doc.Symbol("key"))
+	var object = v.GetObject(doc.Symbol("$key"))
 	return doc.Binary(doc.FormatComponent(object))
 }
 
@@ -133,28 +133,28 @@ func (v *certificate_) GetEntity() any {
 }
 
 func (v *certificate_) GetType() doc.ResourceLike {
-	var component = v.GetParameter(doc.Symbol("type"))
+	var component = v.GetParameter(doc.Symbol("$type"))
 	return doc.Resource(doc.FormatComponent(component))
 }
 
 func (v *certificate_) GetTag() doc.TagLike {
-	var component = v.GetParameter(doc.Symbol("tag"))
+	var component = v.GetParameter(doc.Symbol("$tag"))
 	return doc.Tag(doc.FormatComponent(component))
 }
 
 func (v *certificate_) GetVersion() doc.VersionLike {
-	var component = v.GetParameter(doc.Symbol("version"))
+	var component = v.GetParameter(doc.Symbol("$version"))
 	return doc.Version(doc.FormatComponent(component))
 }
 
 func (v *certificate_) GetPermissions() doc.ResourceLike {
-	var component = v.GetParameter(doc.Symbol("permissions"))
+	var component = v.GetParameter(doc.Symbol("$permissions"))
 	return doc.Resource(doc.FormatComponent(component))
 }
 
 func (v *certificate_) GetOptionalPrevious() doc.ResourceLike {
 	var previous doc.ResourceLike
-	var component = v.GetParameter(doc.Symbol("previous"))
+	var component = v.GetParameter(doc.Symbol("$previous"))
 	if uti.IsDefined(component) {
 		var source = doc.FormatComponent(component)
 		if source != "none" {

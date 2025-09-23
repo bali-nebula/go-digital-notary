@@ -17,7 +17,6 @@ import (
 	dig "crypto/sha512"
 	fmt "fmt"
 	doc "github.com/bali-nebula/go-bali-documents/v3"
-	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	sts "strings"
 )
@@ -43,7 +42,7 @@ func (c *ssmClass_) Ssm(
 	}
 	directory += "ssm/"
 	uti.MakeDirectory(directory)
-	var controller = fra.Controller(c.events_, c.transitions_, c.keyless_)
+	var controller = doc.Controller(c.events_, c.transitions_, c.keyless_)
 	var instance = &ssm_{
 		// Initialize the instance attributes.
 		directory_:  directory,
@@ -186,11 +185,11 @@ func (v *ssm_) IsValid(
 // Private Methods
 
 func (v *ssm_) createConfiguration() {
-	v.tag_ = fra.TagWithSize(20).AsString() // Results in a 32 character tag.
+	v.tag_ = doc.Tag().AsString() // Results in a 32 character tag.
 	v.publicKey_ = nil
 	v.privateKey_ = nil
 	v.previousKey_ = nil
-	v.controller_ = fra.Controller(
+	v.controller_ = doc.Controller(
 		ssmClass().events_,
 		ssmClass().transitions_,
 		ssmClass().keyless_,
@@ -218,32 +217,32 @@ func (v *ssm_) readConfiguration() {
 	fmt.Println(filename)
 
 	v.tag_ = doc.FormatComponent(
-		component.GetObject(fra.Symbol("tag")),
+		component.GetObject(doc.Symbol("$tag")),
 	)
 
 	var publicKey = doc.FormatComponent(
-		component.GetObject(fra.Symbol("publicKey")),
+		component.GetObject(doc.Symbol("$publicKey")),
 	)
 	if publicKey != "none" {
-		v.publicKey_ = fra.BinaryFromString(publicKey).AsIntrinsic()
+		v.publicKey_ = doc.Binary(publicKey).AsIntrinsic()
 	}
 
 	var privateKey = doc.FormatComponent(
-		component.GetObject(fra.Symbol("privateKey")),
+		component.GetObject(doc.Symbol("$privateKey")),
 	)
 	if privateKey != "none" {
-		v.privateKey_ = fra.BinaryFromString(privateKey).AsIntrinsic()
+		v.privateKey_ = doc.Binary(privateKey).AsIntrinsic()
 	}
 
 	var previousKey = doc.FormatComponent(
-		component.GetObject(fra.Symbol("previousKey")),
+		component.GetObject(doc.Symbol("$previousKey")),
 	)
 	if previousKey != "none" {
-		v.previousKey_ = fra.BinaryFromString(previousKey).AsIntrinsic()
+		v.previousKey_ = doc.Binary(previousKey).AsIntrinsic()
 	}
 
 	var state = doc.FormatComponent(
-		component.GetObject(fra.Symbol("state")),
+		component.GetObject(doc.Symbol("$state")),
 	)
 	switch state {
 	case "$Keyless":
@@ -274,17 +273,17 @@ func (v *ssm_) writeConfiguration() {
 
 	var publicKey = "none"
 	if uti.IsDefined(v.publicKey_) {
-		publicKey = fra.Binary(v.publicKey_).AsString()
+		publicKey = doc.Binary(v.publicKey_).AsString()
 	}
 
 	var privateKey = "none"
 	if uti.IsDefined(v.privateKey_) {
-		privateKey = fra.Binary(v.privateKey_).AsString()
+		privateKey = doc.Binary(v.privateKey_).AsString()
 	}
 
 	var previousKey = "none"
 	if uti.IsDefined(v.previousKey_) {
-		previousKey = fra.Binary(v.previousKey_).AsString()
+		previousKey = doc.Binary(v.previousKey_).AsString()
 	}
 
 	var source = `[
@@ -308,21 +307,21 @@ type ssm_ struct {
 	previousKey_ []byte
 	directory_   string
 	filename_    string
-	controller_  fra.ControllerLike
+	controller_  doc.ControllerLike
 }
 
 // Class Structure
 
 type ssmClass_ struct {
 	// Declare the class constants.
-	keyless_      fra.State
-	loneKey_      fra.State
-	twoKeys_      fra.State
-	generateKeys_ fra.Event
-	signBytes_    fra.Event
-	rotateKeys_   fra.Event
-	events_       []fra.Event
-	transitions_  map[fra.State]fra.Transitions
+	keyless_      doc.State
+	loneKey_      doc.State
+	twoKeys_      doc.State
+	generateKeys_ doc.Event
+	signBytes_    doc.Event
+	rotateKeys_   doc.Event
+	events_       []doc.Event
+	transitions_  map[doc.State]doc.Transitions
 }
 
 // Class Reference
@@ -339,10 +338,10 @@ var ssmClassReference_ = &ssmClass_{
 	generateKeys_: "$GenerateKeys",
 	signBytes_:    "$SignBytes",
 	rotateKeys_:   "$RotateKeys",
-	events_:       []fra.Event{"$GenerateKeys", "$SignBytes", "$RotateKeys"},
-	transitions_: map[fra.State]fra.Transitions{
-		"$Keyless": fra.Transitions{"$LoneKey", "$Invalid", "$Invalid"},
-		"$LoneKey": fra.Transitions{"$Invalid", "$LoneKey", "$TwoKeys"},
-		"$TwoKeys": fra.Transitions{"$Invalid", "$LoneKey", "$Invalid"},
+	events_:       []doc.Event{"$GenerateKeys", "$SignBytes", "$RotateKeys"},
+	transitions_: map[doc.State]doc.Transitions{
+		"$Keyless": doc.Transitions{"$LoneKey", "$Invalid", "$Invalid"},
+		"$LoneKey": doc.Transitions{"$Invalid", "$LoneKey", "$TwoKeys"},
+		"$TwoKeys": doc.Transitions{"$Invalid", "$LoneKey", "$Invalid"},
 	},
 }

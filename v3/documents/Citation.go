@@ -157,12 +157,12 @@ func (v *citation_) AsResource() doc.ResourceLike {
 // Attribute Methods
 
 func (v *citation_) GetAlgorithm() doc.QuoteLike {
-	var object = v.GetObject(doc.Symbol("algorithm"))
+	var object = v.GetObject(doc.Symbol("$algorithm"))
 	return doc.Quote(doc.FormatComponent(object))
 }
 
 func (v *citation_) GetDigest() doc.BinaryLike {
-	var object = v.GetObject(doc.Symbol("digest"))
+	var object = v.GetObject(doc.Symbol("$digest"))
 	return doc.Binary(doc.FormatComponent(object))
 }
 
@@ -173,28 +173,28 @@ func (v *citation_) GetEntity() any {
 }
 
 func (v *citation_) GetType() doc.ResourceLike {
-	var component = v.GetParameter(doc.Symbol("type"))
+	var component = v.GetParameter(doc.Symbol("$type"))
 	return doc.Resource(doc.FormatComponent(component))
 }
 
 func (v *citation_) GetTag() doc.TagLike {
-	var component = v.GetParameter(doc.Symbol("tag"))
+	var component = v.GetParameter(doc.Symbol("$tag"))
 	return doc.Tag(doc.FormatComponent(component))
 }
 
 func (v *citation_) GetVersion() doc.VersionLike {
-	var component = v.GetParameter(doc.Symbol("version"))
+	var component = v.GetParameter(doc.Symbol("$version"))
 	return doc.Version(doc.FormatComponent(component))
 }
 
 func (v *citation_) GetPermissions() doc.ResourceLike {
-	var component = v.GetParameter(doc.Symbol("permissions"))
+	var component = v.GetParameter(doc.Symbol("$permissions"))
 	return doc.Resource(doc.FormatComponent(component))
 }
 
 func (v *citation_) GetOptionalPrevious() doc.ResourceLike {
 	var previous doc.ResourceLike
-	var component = v.GetParameter(doc.Symbol("previous"))
+	var component = v.GetParameter(doc.Symbol("$previous"))
 	if uti.IsDefined(component) {
 		var source = doc.FormatComponent(component)
 		if source != "none" {

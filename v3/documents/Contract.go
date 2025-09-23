@@ -94,24 +94,24 @@ func (v *contract_) AsString() string {
 // Attribute Methods
 
 func (v *contract_) GetDraft() Parameterized {
-	var object = v.GetObject(doc.Symbol("content"))
+	var object = v.GetObject(doc.Symbol("$content"))
 	return DraftClass().DraftFromString(doc.FormatComponent(object))
 }
 
 // Notarized Methods
 
 func (v *contract_) GetContent() Parameterized {
-	var object = v.GetObject(doc.Symbol("content"))
+	var object = v.GetObject(doc.Symbol("$content"))
 	return DraftClass().DraftFromString(doc.FormatComponent(object))
 }
 
 func (v *contract_) GetAccount() doc.TagLike {
-	var object = v.GetObject(doc.Symbol("account"))
+	var object = v.GetObject(doc.Symbol("$account"))
 	return doc.Tag(doc.FormatComponent(object))
 }
 
 func (v *contract_) GetNotary() doc.ResourceLike {
-	var object = v.GetObject(doc.Symbol("notary"))
+	var object = v.GetObject(doc.Symbol("$notary"))
 	return doc.Resource(doc.FormatComponent(object))
 }
 
@@ -119,12 +119,12 @@ func (v *contract_) SetSeal(
 	seal SealLike,
 ) {
 	var component = doc.ParseSource(seal.AsString())
-	v.SetObject(component, doc.Symbol("seal"))
+	v.SetObject(component, doc.Symbol("$seal"))
 }
 
 func (v *contract_) RemoveSeal() SealLike {
 	var seal SealLike
-	var symbol = doc.Symbol("seal")
+	var symbol = doc.Symbol("$seal")
 	var object = v.GetObject(symbol)
 	if uti.IsDefined(object) {
 		v.RemoveObject(symbol)
