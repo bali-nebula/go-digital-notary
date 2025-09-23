@@ -1,11 +1,11 @@
 [
-    $timestamp: <2022-06-03T07:39:54>
+    $timestamp: <2025-09-23T15:42:15.935>
     $consumer: "Derk Norton"
     $merchant: <https://www.starbucks.com/>
-    $amount: 4.95($currency: $USD)
+    $amount: 7.95($currency: $USD)
 ](
-    $type: <bali:/examples/Draft:v1.2.3>
-    $tag: #1ZPDPZALRT90H6YMGYNTQJW9PJCRMVSP
+    $type: <bali:/examples/Transaction:v1.2.3>
+    $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
     $version: v1
     $permissions: <bali:/permissions/Public:v3>
     $previous: none

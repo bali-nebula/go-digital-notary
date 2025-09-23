@@ -30,7 +30,6 @@ package documents
 
 import (
 	doc "github.com/bali-nebula/go-bali-documents/v3"
-	fra "github.com/craterdog/go-component-framework/v7"
 )
 
 // TYPE DECLARATIONS
@@ -47,9 +46,10 @@ concrete certificate-like class.
 type CertificateClassLike interface {
 	// Constructor Methods
 	Certificate(
-		key KeyLike,
-		account fra.TagLike,
-		notary fra.ResourceLike,
+		algorithm doc.QuoteLike,
+		key doc.BinaryLike,
+		tag doc.TagLike,
+		version doc.VersionLike,
 	) CertificateLike
 	CertificateFromString(
 		source string,
@@ -64,12 +64,13 @@ concrete citation-like class.
 type CitationClassLike interface {
 	// Constructor Methods
 	Citation(
-		tag fra.TagLike,
-		version fra.VersionLike,
-		digest DigestLike,
+		algorithm doc.QuoteLike,
+		digest doc.BinaryLike,
+		tag doc.TagLike,
+		version doc.VersionLike,
 	) CitationLike
 	CitationFromResource(
-		resource fra.ResourceLike,
+		resource doc.ResourceLike,
 	) CitationLike
 	CitationFromString(
 		source string,
@@ -84,9 +85,9 @@ concrete contract-like class.
 type ContractClassLike interface {
 	// Constructor Methods
 	Contract(
-		draft Parameterized,
-		account fra.TagLike,
-		notary fra.ResourceLike,
+		content Parameterized,
+		account doc.TagLike,
+		notary doc.ResourceLike,
 	) ContractLike
 	ContractFromString(
 		source string,
@@ -101,28 +102,12 @@ concrete credential-like class.
 type CredentialClassLike interface {
 	// Constructor Methods
 	Credential(
-		account fra.TagLike,
-		notary fra.ResourceLike,
+		tag doc.TagLike,
+		version doc.VersionLike,
 	) CredentialLike
 	CredentialFromString(
 		source string,
 	) CredentialLike
-}
-
-/*
-DigestClassLike is a class interface that declares the complete set of
-class constructors, constants and functions that must be supported by each
-concrete digest-like class.
-*/
-type DigestClassLike interface {
-	// Constructor Methods
-	Digest(
-		algorithm fra.QuoteLike,
-		base64 fra.BinaryLike,
-	) DigestLike
-	DigestFromString(
-		source string,
-	) DigestLike
 }
 
 /*
@@ -134,33 +119,15 @@ type DraftClassLike interface {
 	// Constructor Methods
 	Draft(
 		entity any,
-		type_ fra.ResourceLike,
-		tag fra.TagLike,
-		version fra.VersionLike,
-		permissions fra.ResourceLike,
-		optionalPrevious fra.ResourceLike,
+		type_ doc.ResourceLike,
+		tag doc.TagLike,
+		version doc.VersionLike,
+		permissions doc.ResourceLike,
+		optionalPrevious doc.ResourceLike,
 	) DraftLike
 	DraftFromString(
 		source string,
 	) DraftLike
-}
-
-/*
-KeyClassLike is a class interface that declares the complete set of
-class constructors, constants and functions that must be supported by each
-concrete key-like class.
-*/
-type KeyClassLike interface {
-	// Constructor Methods
-	Key(
-		algorithm fra.QuoteLike,
-		base64 fra.BinaryLike,
-		tag fra.TagLike,
-		version fra.VersionLike,
-	) KeyLike
-	KeyFromString(
-		source string,
-	) KeyLike
 }
 
 /*
@@ -171,8 +138,8 @@ concrete seal-like class.
 type SealClassLike interface {
 	// Constructor Methods
 	Seal(
-		algorithm fra.QuoteLike,
-		base64 fra.BinaryLike,
+		algorithm doc.QuoteLike,
+		signature doc.BinaryLike,
 	) SealLike
 	SealFromString(
 		source string,
@@ -190,11 +157,12 @@ type CertificateLike interface {
 	// Principal Methods
 	GetClass() CertificateClassLike
 	AsIntrinsic() doc.ComponentLike
-	AsString() string
-	GetKey() KeyLike
+	GetTimestamp() doc.MomentLike
+	GetAlgorithm() doc.QuoteLike
+	GetKey() doc.BinaryLike
 
 	// Aspect Interfaces
-	Notarized
+	Parameterized
 }
 
 /*
@@ -206,14 +174,12 @@ type CitationLike interface {
 	// Principal Methods
 	GetClass() CitationClassLike
 	AsIntrinsic() doc.ComponentLike
-	AsResource() fra.ResourceLike
-	AsString() string
-	GetTag() fra.TagLike
-	GetVersion() fra.VersionLike
-	GetDigest() DigestLike
+	AsResource() doc.ResourceLike
+	GetAlgorithm() doc.QuoteLike
+	GetDigest() doc.BinaryLike
 
 	// Aspect Interfaces
-	doc.Declarative
+	Parameterized
 }
 
 /*
@@ -226,10 +192,13 @@ type ContractLike interface {
 	GetClass() ContractClassLike
 	AsIntrinsic() doc.ComponentLike
 	AsString() string
-	GetDraft() Parameterized
-
-	// Aspect Interfaces
-	Notarized
+	GetContent() Parameterized
+	GetAccount() doc.TagLike
+	GetNotary() doc.ResourceLike
+	SetSeal(
+		seal SealLike,
+	)
+	RemoveSeal() SealLike
 }
 
 /*
@@ -241,27 +210,10 @@ type CredentialLike interface {
 	// Principal Methods
 	GetClass() CredentialClassLike
 	AsIntrinsic() doc.ComponentLike
-	AsString() string
+	GetTimestamp() doc.MomentLike
 
 	// Aspect Interfaces
-	Notarized
-}
-
-/*
-DigestLike is an instance interface that declares the complete set of
-principal, attribute and aspect methods that must be supported by each instance
-of a concrete digest-like class.
-*/
-type DigestLike interface {
-	// Principal Methods
-	GetClass() DigestClassLike
-	AsIntrinsic() doc.ComponentLike
-	AsString() string
-	GetAlgorithm() fra.QuoteLike
-	GetBase64() fra.BinaryLike
-
-	// Aspect Interfaces
-	doc.Declarative
+	Parameterized
 }
 
 /*
@@ -273,25 +225,6 @@ type DraftLike interface {
 	// Principal Methods
 	GetClass() DraftClassLike
 	AsIntrinsic() doc.ComponentLike
-	AsString() string
-
-	// Aspect Interfaces
-	Parameterized
-}
-
-/*
-KeyLike is an instance interface that declares the complete set of
-principal, attribute and aspect methods that must be supported by each instance
-of a concrete key-like class.
-*/
-type KeyLike interface {
-	// Principal Methods
-	GetClass() KeyClassLike
-	AsIntrinsic() doc.ComponentLike
-	AsString() string
-	GetCreated() fra.MomentLike
-	GetAlgorithm() fra.QuoteLike
-	GetBase64() fra.BinaryLike
 
 	// Aspect Interfaces
 	Parameterized
@@ -307,31 +240,12 @@ type SealLike interface {
 	GetClass() SealClassLike
 	AsIntrinsic() doc.ComponentLike
 	AsString() string
-	GetAlgorithm() fra.QuoteLike
-	GetBase64() fra.BinaryLike
-
-	// Aspect Interfaces
-	doc.Declarative
+	GetTimestamp() doc.MomentLike
+	GetAlgorithm() doc.QuoteLike
+	GetSignature() doc.BinaryLike
 }
 
 // ASPECT DECLARATIONS
-
-/*
-Notarized declares the set of method signatures that must be supported by
-all notarized documents.
-*/
-type Notarized interface {
-	doc.Declarative
-	AsString() string
-	GetContent() doc.ComponentLike
-	GetAccount() fra.TagLike
-	GetNotary() fra.ResourceLike
-	GetSeal() SealLike
-	SetSeal(
-		seal SealLike,
-	)
-	RemoveSeal() SealLike
-}
 
 /*
 Parameterized declares the set of method signatures that must be supported by
@@ -341,9 +255,9 @@ type Parameterized interface {
 	doc.Declarative
 	AsString() string
 	GetEntity() any
-	GetType() fra.ResourceLike
-	GetTag() fra.TagLike
-	GetVersion() fra.VersionLike
-	GetPermissions() fra.ResourceLike
-	GetOptionalPrevious() fra.ResourceLike
+	GetType() doc.ResourceLike
+	GetTag() doc.TagLike
+	GetVersion() doc.VersionLike
+	GetPermissions() doc.ResourceLike
+	GetOptionalPrevious() doc.ResourceLike
 }

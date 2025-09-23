@@ -14,7 +14,6 @@ package documents
 
 import (
 	doc "github.com/bali-nebula/go-bali-documents/v3"
-	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
@@ -29,19 +28,21 @@ func SealClass() SealClassLike {
 // Constructor Methods
 
 func (c *sealClass_) Seal(
-	algorithm fra.QuoteLike,
-	base64 fra.BinaryLike,
+	algorithm doc.QuoteLike,
+	signature doc.BinaryLike,
 ) SealLike {
 	if uti.IsUndefined(algorithm) {
 		panic("The \"algorithm\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(base64) {
-		panic("The \"base64\" attribute is required by this class.")
+	if uti.IsUndefined(signature) {
+		panic("The \"signature\" attribute is required by this class.")
 	}
 
+	var timestamp = doc.Moment() // The current moment in time.
 	var component = doc.ParseSource(`[
+    $timestamp: ` + timestamp.AsString() + `
     $algorithm: ` + algorithm.AsString() + `
-    $base64: ` + base64.AsString() + `
+    $signature: ` + signature.AsString() + `
 ]($type: <bali:/types/notary/Seal:v3>)`,
 	)
 
@@ -87,14 +88,19 @@ func (v *seal_) AsString() string {
 	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
 }
 
-func (v *seal_) GetAlgorithm() fra.QuoteLike {
-	var object = v.GetObject(fra.Symbol("algorithm"))
-	return fra.QuoteFromString(doc.FormatComponent(object))
+func (v *seal_) GetTimestamp() doc.MomentLike {
+	var object = v.GetObject(doc.Symbol("timestamp"))
+	return doc.Moment(doc.FormatComponent(object))
 }
 
-func (v *seal_) GetBase64() fra.BinaryLike {
-	var object = v.GetObject(fra.Symbol("base64"))
-	return fra.BinaryFromString(doc.FormatComponent(object))
+func (v *seal_) GetAlgorithm() doc.QuoteLike {
+	var object = v.GetObject(doc.Symbol("algorithm"))
+	return doc.Quote(doc.FormatComponent(object))
+}
+
+func (v *seal_) GetSignature() doc.BinaryLike {
+	var object = v.GetObject(doc.Symbol("signature"))
+	return doc.Binary(doc.FormatComponent(object))
 }
 
 // Attribute Methods

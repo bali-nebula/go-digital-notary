@@ -31,10 +31,10 @@ For detailed documentation on this entire module refer to the wiki:
 package module
 
 import (
+	bal "github.com/bali-nebula/go-bali-documents/v3"
 	doc "github.com/bali-nebula/go-digital-notary/v3/documents"
 	not "github.com/bali-nebula/go-digital-notary/v3/notary"
 	ssm "github.com/bali-nebula/go-digital-notary/v3/ssm"
-	fra "github.com/craterdog/go-component-framework/v7"
 )
 
 // TYPE ALIASES
@@ -46,9 +46,7 @@ type (
 	CitationClassLike    = doc.CitationClassLike
 	ContractClassLike    = doc.ContractClassLike
 	CredentialClassLike  = doc.CredentialClassLike
-	DigestClassLike      = doc.DigestClassLike
 	DraftClassLike       = doc.DraftClassLike
-	KeyClassLike         = doc.KeyClassLike
 	SealClassLike        = doc.SealClassLike
 )
 
@@ -57,14 +55,11 @@ type (
 	CitationLike    = doc.CitationLike
 	ContractLike    = doc.ContractLike
 	CredentialLike  = doc.CredentialLike
-	DigestLike      = doc.DigestLike
 	DraftLike       = doc.DraftLike
-	KeyLike         = doc.KeyLike
 	SealLike        = doc.SealLike
 )
 
 type (
-	Notarized     = doc.Notarized
 	Parameterized = doc.Parameterized
 )
 
@@ -102,14 +97,16 @@ func CertificateClass() CertificateClassLike {
 }
 
 func Certificate(
-	key KeyLike,
-	account fra.TagLike,
-	notary fra.ResourceLike,
+	algorithm bal.QuoteLike,
+	key bal.BinaryLike,
+	tag bal.TagLike,
+	version bal.VersionLike,
 ) CertificateLike {
 	return CertificateClass().Certificate(
+		algorithm,
 		key,
-		account,
-		notary,
+		tag,
+		version,
 	)
 }
 
@@ -126,19 +123,21 @@ func CitationClass() CitationClassLike {
 }
 
 func Citation(
-	tag fra.TagLike,
-	version fra.VersionLike,
-	digest doc.DigestLike,
+	algorithm bal.QuoteLike,
+	digest bal.BinaryLike,
+	tag bal.TagLike,
+	version bal.VersionLike,
 ) CitationLike {
 	return CitationClass().Citation(
+		algorithm,
+		digest,
 		tag,
 		version,
-		digest,
 	)
 }
 
 func CitationFromResource(
-	resource fra.ResourceLike,
+	resource bal.ResourceLike,
 ) CitationLike {
 	return CitationClass().CitationFromResource(
 		resource,
@@ -158,14 +157,14 @@ func ContractClass() ContractClassLike {
 }
 
 func Contract(
-	entity doc.Parameterized,
-	account fra.TagLike,
-	certificate fra.ResourceLike,
+	content doc.Parameterized,
+	account bal.TagLike,
+	notary bal.ResourceLike,
 ) ContractLike {
 	return ContractClass().Contract(
-		entity,
+		content,
 		account,
-		certificate,
+		notary,
 	)
 }
 
@@ -182,12 +181,12 @@ func CredentialClass() CredentialClassLike {
 }
 
 func Credential(
-	account fra.TagLike,
-	notary fra.ResourceLike,
+	tag bal.TagLike,
+	version bal.VersionLike,
 ) CredentialLike {
 	return CredentialClass().Credential(
-		account,
-		notary,
+		tag,
+		version,
 	)
 }
 
@@ -199,39 +198,17 @@ func CredentialFromString(
 	)
 }
 
-func DigestClass() DigestClassLike {
-	return doc.DigestClass()
-}
-
-func Digest(
-	algorithm fra.QuoteLike,
-	base64 fra.BinaryLike,
-) DigestLike {
-	return DigestClass().Digest(
-		algorithm,
-		base64,
-	)
-}
-
-func DigestFromString(
-	source string,
-) DigestLike {
-	return DigestClass().DigestFromString(
-		source,
-	)
-}
-
 func DraftClass() DraftClassLike {
 	return doc.DraftClass()
 }
 
 func Draft(
 	entity any,
-	type_ fra.ResourceLike,
-	tag fra.TagLike,
-	version fra.VersionLike,
-	permissions fra.ResourceLike,
-	optionalPrevious fra.ResourceLike,
+	type_ bal.ResourceLike,
+	tag bal.TagLike,
+	version bal.VersionLike,
+	permissions bal.ResourceLike,
+	optionalPrevious bal.ResourceLike,
 ) DraftLike {
 	return DraftClass().Draft(
 		entity,
@@ -251,43 +228,17 @@ func DraftFromString(
 	)
 }
 
-func KeyClass() KeyClassLike {
-	return doc.KeyClass()
-}
-
-func Key(
-	algorithm fra.QuoteLike,
-	base64 fra.BinaryLike,
-	tag fra.TagLike,
-	version fra.VersionLike,
-) KeyLike {
-	return KeyClass().Key(
-		algorithm,
-		base64,
-		tag,
-		version,
-	)
-}
-
-func KeyFromString(
-	source string,
-) KeyLike {
-	return KeyClass().KeyFromString(
-		source,
-	)
-}
-
 func SealClass() SealClassLike {
 	return doc.SealClass()
 }
 
 func Seal(
-	algorithm fra.QuoteLike,
-	base64 fra.BinaryLike,
+	algorithm bal.QuoteLike,
+	signature bal.BinaryLike,
 ) SealLike {
 	return SealClass().Seal(
 		algorithm,
-		base64,
+		signature,
 	)
 }
 

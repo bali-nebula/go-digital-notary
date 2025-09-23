@@ -14,7 +14,6 @@ package documents
 
 import (
 	doc "github.com/bali-nebula/go-bali-documents/v3"
-	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
@@ -30,11 +29,11 @@ func DraftClass() DraftClassLike {
 
 func (c *draftClass_) Draft(
 	entity any,
-	type_ fra.ResourceLike,
-	tag fra.TagLike,
-	version fra.VersionLike,
-	permissions fra.ResourceLike,
-	optionalPrevious fra.ResourceLike,
+	type_ doc.ResourceLike,
+	tag doc.TagLike,
+	version doc.VersionLike,
+	permissions doc.ResourceLike,
+	optionalPrevious doc.ResourceLike,
 ) DraftLike {
 	if uti.IsUndefined(entity) {
 		panic("The \"entity\" attribute is required by this class.")
@@ -56,15 +55,13 @@ func (c *draftClass_) Draft(
 		previous = optionalPrevious.AsString()
 	}
 
-	var component = doc.ParseSource(
-		doc.FormatComponent(entity) + `(
+	var component = doc.ParseSource(doc.FormatComponent(entity) + `(
     $type: ` + type_.AsString() + `
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
     $permissions: ` + permissions.AsString() + `
     $previous: ` + previous + `
-)`,
-	)
+)`)
 
 	var instance = &draft_{
 		// Initialize the instance attributes.
@@ -116,33 +113,33 @@ func (v *draft_) GetEntity() any {
 	return v.Declarative.(doc.ComponentLike).GetEntity()
 }
 
-func (v *draft_) GetType() fra.ResourceLike {
-	var component = v.GetParameter(fra.Symbol("type"))
-	return fra.ResourceFromString(doc.FormatComponent(component))
+func (v *draft_) GetType() doc.ResourceLike {
+	var component = v.GetParameter(doc.Symbol("type"))
+	return doc.Resource(doc.FormatComponent(component))
 }
 
-func (v *draft_) GetTag() fra.TagLike {
-	var component = v.GetParameter(fra.Symbol("tag"))
-	return fra.TagFromString(doc.FormatComponent(component))
+func (v *draft_) GetTag() doc.TagLike {
+	var component = v.GetParameter(doc.Symbol("tag"))
+	return doc.Tag(doc.FormatComponent(component))
 }
 
-func (v *draft_) GetVersion() fra.VersionLike {
-	var component = v.GetParameter(fra.Symbol("version"))
-	return fra.VersionFromString(doc.FormatComponent(component))
+func (v *draft_) GetVersion() doc.VersionLike {
+	var component = v.GetParameter(doc.Symbol("version"))
+	return doc.Version(doc.FormatComponent(component))
 }
 
-func (v *draft_) GetPermissions() fra.ResourceLike {
-	var component = v.GetParameter(fra.Symbol("permissions"))
-	return fra.ResourceFromString(doc.FormatComponent(component))
+func (v *draft_) GetPermissions() doc.ResourceLike {
+	var component = v.GetParameter(doc.Symbol("permissions"))
+	return doc.Resource(doc.FormatComponent(component))
 }
 
-func (v *draft_) GetOptionalPrevious() fra.ResourceLike {
-	var previous fra.ResourceLike
-	var component = v.GetParameter(fra.Symbol("previous"))
+func (v *draft_) GetOptionalPrevious() doc.ResourceLike {
+	var previous doc.ResourceLike
+	var component = v.GetParameter(doc.Symbol("previous"))
 	if uti.IsDefined(component) {
 		var source = doc.FormatComponent(component)
 		if source != "none" {
-			previous = fra.ResourceFromString(source)
+			previous = doc.Resource(source)
 		}
 	}
 	return previous

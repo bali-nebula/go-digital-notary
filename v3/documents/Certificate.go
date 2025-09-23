@@ -14,7 +14,6 @@ package documents
 
 import (
 	doc "github.com/bali-nebula/go-bali-documents/v3"
-	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
@@ -29,25 +28,42 @@ func CertificateClass() CertificateClassLike {
 // Constructor Methods
 
 func (c *certificateClass_) Certificate(
-	key KeyLike,
-	account fra.TagLike,
-	notary fra.ResourceLike,
+	algorithm doc.QuoteLike,
+	key doc.BinaryLike,
+	tag doc.TagLike,
+	version doc.VersionLike,
 ) CertificateLike {
+	if uti.IsUndefined(algorithm) {
+		panic("The \"algorithm\" attribute is required by this class.")
+	}
 	if uti.IsUndefined(key) {
 		panic("The \"key\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(account) {
-		panic("The \"account\" attribute is required by this class.")
+	if uti.IsUndefined(tag) {
+		panic("The \"tag\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(notary) {
-		panic("The \"notary\" attribute is required by this class.")
+	if uti.IsUndefined(version) {
+		panic("The \"version\" attribute is required by this class.")
 	}
 
+	var timestamp = doc.Moment() // The current moment in time.
+	var previous = "none"
+	var current = version.AsIntrinsic()[0]
+	if current > 1 {
+		previous = "<nebula:/" + tag.AsString()[1:] +
+			":" + doc.Version([]uint{current - 1}).AsString() + ">"
+	}
 	var component = doc.ParseSource(`[
-    $content: ` + key.AsString() + `
-    $account: ` + account.AsString() + `
-    $notary: ` + notary.AsString() + `
-]($type: <bali:/types/notary/Certificate:v3>)`,
+    $timestamp: ` + timestamp.AsString() + `
+    $algorithm: ` + algorithm.AsString() + `
+    $key: ` + key.AsString() + `
+](
+    $type: <bali:/types/notary/Certificate:v3>
+    $tag: ` + tag.AsString() + `
+    $version: ` + version.AsString() + `
+    $permissions: <bali:/permissions/Public:v3>
+    $previous: ` + previous + `
+)`,
 	)
 
 	var instance = &certificate_{
@@ -95,53 +111,57 @@ func (v *certificate_) AsString() string {
 
 // Attribute Methods
 
-func (v *certificate_) GetKey() KeyLike {
-	var object = v.GetObject(fra.Symbol("content"))
-	return KeyClass().KeyFromString(doc.FormatComponent(object))
+func (v *certificate_) GetTimestamp() doc.MomentLike {
+	var object = v.GetObject(doc.Symbol("timestamp"))
+	return doc.Moment(doc.FormatComponent(object))
 }
 
-// Notarized Methods
-
-func (v *certificate_) GetContent() doc.ComponentLike {
-	var object = v.GetObject(fra.Symbol("content"))
-	return object.GetComponent()
+func (v *certificate_) GetAlgorithm() doc.QuoteLike {
+	var object = v.GetObject(doc.Symbol("algorithm"))
+	return doc.Quote(doc.FormatComponent(object))
 }
 
-func (v *certificate_) GetAccount() fra.TagLike {
-	var object = v.GetObject(fra.Symbol("account"))
-	return fra.TagFromString(doc.FormatComponent(object))
+func (v *certificate_) GetKey() doc.BinaryLike {
+	var object = v.GetObject(doc.Symbol("key"))
+	return doc.Binary(doc.FormatComponent(object))
 }
 
-func (v *certificate_) GetNotary() fra.ResourceLike {
-	var object = v.GetObject(fra.Symbol("notary"))
-	return fra.ResourceFromString(doc.FormatComponent(object))
+// Parameterized Methods
+
+func (v *certificate_) GetEntity() any {
+	return v.Declarative.(doc.ComponentLike).GetEntity()
 }
 
-func (v *certificate_) GetSeal() SealLike {
-	var seal SealLike
-	var object = v.GetObject(fra.Symbol("seal"))
-	if uti.IsDefined(object) {
-		seal = SealClass().SealFromString(doc.FormatComponent(object))
+func (v *certificate_) GetType() doc.ResourceLike {
+	var component = v.GetParameter(doc.Symbol("type"))
+	return doc.Resource(doc.FormatComponent(component))
+}
+
+func (v *certificate_) GetTag() doc.TagLike {
+	var component = v.GetParameter(doc.Symbol("tag"))
+	return doc.Tag(doc.FormatComponent(component))
+}
+
+func (v *certificate_) GetVersion() doc.VersionLike {
+	var component = v.GetParameter(doc.Symbol("version"))
+	return doc.Version(doc.FormatComponent(component))
+}
+
+func (v *certificate_) GetPermissions() doc.ResourceLike {
+	var component = v.GetParameter(doc.Symbol("permissions"))
+	return doc.Resource(doc.FormatComponent(component))
+}
+
+func (v *certificate_) GetOptionalPrevious() doc.ResourceLike {
+	var previous doc.ResourceLike
+	var component = v.GetParameter(doc.Symbol("previous"))
+	if uti.IsDefined(component) {
+		var source = doc.FormatComponent(component)
+		if source != "none" {
+			previous = doc.Resource(source)
+		}
 	}
-	return seal
-}
-
-func (v *certificate_) SetSeal(
-	seal SealLike,
-) {
-	var component = doc.ParseSource(seal.AsString())
-	v.SetObject(component, fra.Symbol("seal"))
-}
-
-func (v *certificate_) RemoveSeal() SealLike {
-	var seal SealLike
-	var symbol = fra.Symbol("seal")
-	var object = v.GetObject(symbol)
-	if uti.IsDefined(object) {
-		v.RemoveObject(symbol)
-		seal = SealClass().SealFromString(doc.FormatComponent(object))
-	}
-	return seal
+	return previous
 }
 
 // Private Methods

@@ -1,24 +1,13 @@
 [
-    $content: [
-        $created: <2025-09-13T15:45:58.573>
-        $algorithm: "ED25519"
-        $base64: '>
-            cUCUo6R0BTikIsE3FmymY+Kkjy9uUsdM1lTegF5LASw
-        <'
-    ](
-        $type: <bali:/types/notary/Key:v3>
-        $tag: #61AN2QGC3NKG2F1DJXRXM134CPGXHFW8
-        $version: v2
-        $permissions: <bali:/permissions/Public:v3>
-        $previous: <nebula:/61AN2QGC3NKG2F1DJXRXM134CPGXHFW8:v1>
-    )
-    $account: #AAX9M20WHW4ZQZYK9SSX7LYJ5B7MBFQ2
-    $notary: <nebula:/61AN2QGC3NKG2F1DJXRXM134CPGXHFW8:v1?SHA512=MiRr3kyrEy-sipLZNB5_FV5727X3ViTLMnNFPy41tG7UMYKdjKe8Ar8UpxJvAK9Hi69SWs_58578_ZLteQY7RA>
-    $seal: [
-        $algorithm: "ED25519"
-        $base64: '>
-            4Y2W+kpV/aCH76hMLvFb8cilw2SCndBGoxHM0FGLKBsPVXmS1eoBqF6TQa3y
-            my9aLDlpWaCdjBkxqepgrew6Dg
-        <'
-    ]($type: <bali:/types/notary/Seal:v3>)
-]($type: <bali:/types/notary/Certificate:v3>)
+    $timestamp: <2025-09-23T14:31:06.800>
+    $algorithm: "ED25519"
+    $key: '>
+        8D4MBCK1UpkWtOSPhZ8tJ7/QE4URjDqYXr8366zSLD8
+    <'
+](
+    $type: <bali:/types/notary/Certificate:v3>
+    $tag: #PNWALS504HRK0K3L50Q02FK3VL8WG75J
+    $version: v2
+    $permissions: <bali:/permissions/Public:v3>
+    $previous: <nebula:/PNWALS504HRK0K3L50Q02FK3VL8WG75J:v1>
+)

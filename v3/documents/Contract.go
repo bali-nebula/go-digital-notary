@@ -14,7 +14,6 @@ package documents
 
 import (
 	doc "github.com/bali-nebula/go-bali-documents/v3"
-	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
@@ -30,8 +29,8 @@ func ContractClass() ContractClassLike {
 
 func (c *contractClass_) Contract(
 	draft Parameterized,
-	account fra.TagLike,
-	notary fra.ResourceLike,
+	account doc.TagLike,
+	notary doc.ResourceLike,
 ) ContractLike {
 	if uti.IsUndefined(draft) {
 		panic("The \"draft\" attribute is required by this class.")
@@ -95,46 +94,37 @@ func (v *contract_) AsString() string {
 // Attribute Methods
 
 func (v *contract_) GetDraft() Parameterized {
-	var object = v.GetObject(fra.Symbol("content"))
+	var object = v.GetObject(doc.Symbol("content"))
 	return DraftClass().DraftFromString(doc.FormatComponent(object))
 }
 
 // Notarized Methods
 
-func (v *contract_) GetContent() doc.ComponentLike {
-	var object = v.GetObject(fra.Symbol("content"))
-	return object.GetComponent()
+func (v *contract_) GetContent() Parameterized {
+	var object = v.GetObject(doc.Symbol("content"))
+	return DraftClass().DraftFromString(doc.FormatComponent(object))
 }
 
-func (v *contract_) GetAccount() fra.TagLike {
-	var object = v.GetObject(fra.Symbol("account"))
-	return fra.TagFromString(doc.FormatComponent(object))
+func (v *contract_) GetAccount() doc.TagLike {
+	var object = v.GetObject(doc.Symbol("account"))
+	return doc.Tag(doc.FormatComponent(object))
 }
 
-func (v *contract_) GetNotary() fra.ResourceLike {
-	var object = v.GetObject(fra.Symbol("notary"))
-	return fra.ResourceFromString(doc.FormatComponent(object))
-}
-
-func (v *contract_) GetSeal() SealLike {
-	var seal SealLike
-	var object = v.GetObject(fra.Symbol("seal"))
-	if uti.IsDefined(object) {
-		seal = SealClass().SealFromString(doc.FormatComponent(object))
-	}
-	return seal
+func (v *contract_) GetNotary() doc.ResourceLike {
+	var object = v.GetObject(doc.Symbol("notary"))
+	return doc.Resource(doc.FormatComponent(object))
 }
 
 func (v *contract_) SetSeal(
 	seal SealLike,
 ) {
 	var component = doc.ParseSource(seal.AsString())
-	v.SetObject(component, fra.Symbol("seal"))
+	v.SetObject(component, doc.Symbol("seal"))
 }
 
 func (v *contract_) RemoveSeal() SealLike {
 	var seal SealLike
-	var symbol = fra.Symbol("seal")
+	var symbol = doc.Symbol("seal")
 	var object = v.GetObject(symbol)
 	if uti.IsDefined(object) {
 		v.RemoveObject(symbol)

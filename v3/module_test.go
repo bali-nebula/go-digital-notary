@@ -14,6 +14,7 @@ package module_test
 
 import (
 	fmt "fmt"
+	doc "github.com/bali-nebula/go-bali-documents/v3"
 	not "github.com/bali-nebula/go-digital-notary/v3"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	ass "github.com/stretchr/testify/assert"
@@ -27,15 +28,18 @@ func TestParsingCitations(t *tes.T) {
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var citation = not.CitationFromString(source)
+	var algorithm = citation.GetAlgorithm()
+	var digest = citation.GetDigest()
+	var tag = citation.GetTag()
+	var version = citation.GetVersion()
+	citation = not.Citation(
+		algorithm,
+		digest,
+		tag,
+		version,
+	)
 	var formatted = citation.AsString()
 	ass.Equal(t, source, formatted)
-	citation = not.Citation(
-		citation.GetTag(),
-		citation.GetVersion(),
-		citation.GetDigest(),
-	)
-	source = citation.AsString()
-	uti.WriteFile(filename, source)
 }
 
 func TestParsingCredentials(t *tes.T) {
@@ -43,15 +47,16 @@ func TestParsingCredentials(t *tes.T) {
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var credential = not.CredentialFromString(source)
+	var timestamp = credential.GetTimestamp()
+	var tag = credential.GetTag()
+	var version = credential.GetVersion()
+	credential = not.Credential(
+		tag,
+		version,
+	)
+	credential.SetObject(timestamp, doc.Symbol("$timestamp"))
 	var formatted = credential.AsString()
 	ass.Equal(t, source, formatted)
-	var seal = credential.GetSeal()
-	credential = not.Credential(
-		credential.GetAccount(),
-		credential.GetNotary(),
-	)
-	credential.SetSeal(seal)
-	uti.WriteFile(filename, source)
 }
 
 func TestParsingCertificates(t *tes.T) {
@@ -59,17 +64,20 @@ func TestParsingCertificates(t *tes.T) {
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var certificate = not.CertificateFromString(source)
+	var timestamp = certificate.GetTimestamp()
+	var algorithm = certificate.GetAlgorithm()
+	var key = certificate.GetKey()
+	var tag = certificate.GetTag()
+	var version = certificate.GetVersion()
+	certificate = not.Certificate(
+		algorithm,
+		key,
+		tag,
+		version,
+	)
+	certificate.SetObject(timestamp, doc.Symbol("$timestamp"))
 	var formatted = certificate.AsString()
 	ass.Equal(t, source, formatted)
-	var seal = certificate.GetSeal()
-	certificate = not.Certificate(
-		certificate.GetKey(),
-		certificate.GetAccount(),
-		certificate.GetNotary(),
-	)
-	certificate.SetSeal(seal)
-	source = certificate.AsString()
-	uti.WriteFile(filename, source)
 }
 
 func TestParsingDrafts(t *tes.T) {
@@ -77,18 +85,22 @@ func TestParsingDrafts(t *tes.T) {
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var draft = not.DraftFromString(source)
+	var entity = draft.GetEntity()
+	var type_ = draft.GetType()
+	var tag = draft.GetTag()
+	var version = draft.GetVersion()
+	var permissions = draft.GetPermissions()
+	var optionalPrevious = draft.GetOptionalPrevious()
+	draft = not.Draft(
+		entity,
+		type_,
+		tag,
+		version,
+		permissions,
+		optionalPrevious,
+	)
 	var formatted = draft.AsString()
 	ass.Equal(t, source, formatted)
-	draft = not.Draft(
-		draft.GetEntity(),
-		draft.GetType(),
-		draft.GetTag(),
-		draft.GetVersion(),
-		draft.GetPermissions(),
-		draft.GetOptionalPrevious(),
-	)
-	source = draft.AsString()
-	uti.WriteFile(filename, source)
 }
 
 func TestParsingContracts(t *tes.T) {
@@ -96,17 +108,18 @@ func TestParsingContracts(t *tes.T) {
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var contract = not.ContractFromString(source)
-	var formatted = contract.AsString()
-	ass.Equal(t, source, formatted)
-	var seal = contract.GetSeal()
+	var content = contract.GetContent()
+	var account = contract.GetAccount()
+	var notary = contract.GetNotary()
+	var seal = contract.RemoveSeal()
 	contract = not.Contract(
-		contract.GetDraft(),
-		contract.GetAccount(),
-		contract.GetNotary(),
+		content,
+		account,
+		notary,
 	)
 	contract.SetSeal(seal)
-	source = contract.AsString()
-	uti.WriteFile(filename, source)
+	var formatted = contract.AsString()
+	ass.Equal(t, source, formatted)
 }
 
 // Create the security module and digital notary.
@@ -144,7 +157,9 @@ func TestDigitalNotaryInitialization(t *tes.T) {
 		notary.ForgetKey()
 	}()
 	notary.ForgetKey()
-	notary.GenerateCredential()
+	var tag = doc.Tag()
+	var version = doc.Version()
+	notary.GenerateCredential(tag, version)
 }
 
 func TestDigitalNotaryGenerateKey(t *tes.T) {
@@ -172,7 +187,8 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	// Generate and validate a new public-private key pair.
 	notary.ForgetKey()
 	var certificateV1 = notary.GenerateKey()
-	var keyV1 = certificateV1.GetKey()
+	var content = certificateV1.GetContent()
+	var keyV1 = not.CertificateFromString(content.AsString())
 	ass.True(
 		t,
 		notary.SealMatches(
@@ -185,19 +201,25 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	uti.WriteFile(filename, source)
 
 	// Create and cite a new transaction document.
+	var timestamp = doc.Moment().AsString()
 	var transaction = not.DraftFromString(
 		`[
-    $timestamp: <2022-06-03T07:39:54>
+    $timestamp: ` + timestamp + `
     $consumer: "Derk Norton"
-    $merchant: <https://www.starbucks.com>
-    $amount: 4.95($currency: $USD)
+    $merchant: <https://www.starbucks.com/>
+    $amount: 7.95($currency: $USD)
 ](
-	$type: <bali:/examples/Record:v1.2.3>
+	$type: <bali:/examples/Transaction:v1.2.3>
 	$tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
 	$version: v1
 	$permissions: <bali:/permissions/Public:v3>
+	$previous: none
 )`,
 	)
+	filename = "./test/notary/Draft.bali"
+	source = transaction.AsString()
+	uti.WriteFile(filename, source)
+
 	var citation = notary.CiteDocument(transaction)
 	ass.True(t, notary.CitationMatches(citation, transaction))
 
@@ -210,6 +232,9 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 			keyV1,
 		),
 	)
+	filename = "./test/notary/Contract.bali"
+	source = contract.AsString()
+	uti.WriteFile(filename, source)
 
 	// Pickup where we left off with a new security module and digital notary.
 	module = not.Ssm(directory)
@@ -229,8 +254,11 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	uti.WriteFile(filename, source)
 
 	// Generate an authentication credential.
-	var credential = notary.GenerateCredential()
-	var keyV2 = certificateV2.GetKey()
+	var tag = doc.Tag()
+	var version = doc.Version()
+	var credential = notary.GenerateCredential(tag, version)
+	content = certificateV2.GetContent()
+	var keyV2 = not.CertificateFromString(content.AsString())
 	ass.True(
 		t,
 		notary.SealMatches(

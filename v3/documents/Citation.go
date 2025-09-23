@@ -14,7 +14,6 @@ package documents
 
 import (
 	doc "github.com/bali-nebula/go-bali-documents/v3"
-	fra "github.com/craterdog/go-component-framework/v7"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	sts "strings"
 )
@@ -30,25 +29,40 @@ func CitationClass() CitationClassLike {
 // Constructor Methods
 
 func (c *citationClass_) Citation(
-	tag fra.TagLike,
-	version fra.VersionLike,
-	digest DigestLike,
+	algorithm doc.QuoteLike,
+	digest doc.BinaryLike,
+	tag doc.TagLike,
+	version doc.VersionLike,
 ) CitationLike {
+	if uti.IsUndefined(algorithm) {
+		panic("The \"algorithm\" attribute is required by this class.")
+	}
+	if uti.IsUndefined(digest) {
+		panic("The \"digest\" attribute is required by this class.")
+	}
 	if uti.IsUndefined(tag) {
 		panic("The \"tag\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(version) {
 		panic("The \"version\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(digest) {
-		panic("The \"digest\" attribute is required by this class.")
-	}
 
+	var previous = "none"
+	var current = version.AsIntrinsic()[0]
+	if current > 1 {
+		previous = "<nebula:/" + tag.AsString()[1:] +
+			":" + doc.Version([]uint{current - 1}).AsString() + ">"
+	}
 	var component = doc.ParseSource(`[
+    $algorithm: ` + algorithm.AsString() + `
+    $digest: ` + digest.AsString() + `
+](
+    $type: <bali:/types/notary/Citation:v3>
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
-    $digest: ` + digest.AsString() + `
-]($type: <bali:/types/notary/Citation:v3>)`,
+	$permissions: <bali:/permissions/Public:v3>
+    $previous: ` + previous + `
+)`,
 	)
 
 	var instance = &citation_{
@@ -74,32 +88,33 @@ func (c *citationClass_) CitationFromString(
 }
 
 func (c *citationClass_) CitationFromResource(
-	resource fra.ResourceLike,
+	resource doc.ResourceLike,
 ) CitationLike {
 	// Parse parts of the path.
 	var path = resource.GetPath()
 	var parts = sts.Split(path, "/")
 	parts = sts.Split(parts[1], ":")
-	var tag = fra.TagFromString("#" + parts[0])
-	var version = fra.VersionFromString(parts[1])
+	var tag = doc.Tag("#" + parts[0])
+	var version = doc.Version(parts[1])
 
 	// Parse parts of the query string.
 	var query = resource.GetQuery()
 	parts = sts.Split(query, "=")
 	var algorithm = parts[0]
-	var base64 = parts[1]
-	base64 = sts.ReplaceAll(base64, "-", "+")
-	base64 = sts.ReplaceAll(base64, "_", "/")
-	base64 = "\n        " + base64[:60] + "\n        " + base64[60:] + "\n"
+	var digest = parts[1]
+	digest = sts.ReplaceAll(digest, "-", "+")
+	digest = sts.ReplaceAll(digest, "_", "/")
+	digest = "'>\n        " + digest[:60] + "\n        " + digest[60:] + "\n<'"
 
-	// Construct the digest.
-	var digest = DigestClass().DigestFromString(`[
-    $algorithm: "` + algorithm + `"
-    $base64: '>` + base64 + `<'
-]($type: <bali:/types/notary/Digest:v3>)`,
+	// Construct the citation.
+	var instance = c.Citation(
+		doc.Quote(algorithm),
+		doc.Binary(digest),
+		doc.Tag(tag),
+		doc.Version(version),
 	)
 
-	return c.Citation(tag, version, digest)
+	return instance
 }
 
 // Constant Methods
@@ -122,40 +137,72 @@ func (v *citation_) AsString() string {
 	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
 }
 
-func (v *citation_) AsResource() fra.ResourceLike {
+func (v *citation_) AsResource() doc.ResourceLike {
+	var algorithm = v.GetAlgorithm().AsString()
+	algorithm = algorithm[1 : len(algorithm)-1] // Remove the double quotes.
+	var digest = v.GetDigest().AsString()
+	digest = digest[2 : len(digest)-2]
+	digest = sts.ReplaceAll(digest, " ", "")
+	digest = sts.ReplaceAll(digest, "\n", "")
+	digest = sts.ReplaceAll(digest, "+", "-")
+	digest = sts.ReplaceAll(digest, "/", "_")
 	var tag = v.GetTag().AsString()[1:]
 	var version = v.GetVersion().AsString()
-	var digest = v.GetDigest()
-	var algorithm = digest.GetAlgorithm().AsString()
-	algorithm = algorithm[1 : len(algorithm)-1] // Remove the double quotes.
-	var base64 = digest.GetBase64().AsString()
-	base64 = base64[2 : len(base64)-2]
-	base64 = sts.ReplaceAll(base64, " ", "")
-	base64 = sts.ReplaceAll(base64, "\n", "")
-	base64 = sts.ReplaceAll(base64, "+", "-")
-	base64 = sts.ReplaceAll(base64, "/", "_")
-	var resource = fra.ResourceFromString(
-		"<nebula:/" + tag + ":" + version + "?" + algorithm + "=" + base64 + ">",
+	var resource = doc.Resource(
+		"<nebula:/" + tag + ":" + version + "?" + algorithm + "=" + digest + ">",
 	)
 	return resource
 }
 
-func (v *citation_) GetTag() fra.TagLike {
-	var object = v.GetObject(fra.Symbol("tag"))
-	return fra.TagFromString(doc.FormatComponent(object))
-}
-
-func (v *citation_) GetVersion() fra.VersionLike {
-	var object = v.GetObject(fra.Symbol("version"))
-	return fra.VersionFromString(doc.FormatComponent(object))
-}
-
-func (v *citation_) GetDigest() DigestLike {
-	var object = v.GetObject(fra.Symbol("digest"))
-	return DigestClass().DigestFromString(doc.FormatComponent(object))
-}
-
 // Attribute Methods
+
+func (v *citation_) GetAlgorithm() doc.QuoteLike {
+	var object = v.GetObject(doc.Symbol("algorithm"))
+	return doc.Quote(doc.FormatComponent(object))
+}
+
+func (v *citation_) GetDigest() doc.BinaryLike {
+	var object = v.GetObject(doc.Symbol("digest"))
+	return doc.Binary(doc.FormatComponent(object))
+}
+
+// Parameterized Methods
+
+func (v *citation_) GetEntity() any {
+	return v.Declarative.(doc.ComponentLike).GetEntity()
+}
+
+func (v *citation_) GetType() doc.ResourceLike {
+	var component = v.GetParameter(doc.Symbol("type"))
+	return doc.Resource(doc.FormatComponent(component))
+}
+
+func (v *citation_) GetTag() doc.TagLike {
+	var component = v.GetParameter(doc.Symbol("tag"))
+	return doc.Tag(doc.FormatComponent(component))
+}
+
+func (v *citation_) GetVersion() doc.VersionLike {
+	var component = v.GetParameter(doc.Symbol("version"))
+	return doc.Version(doc.FormatComponent(component))
+}
+
+func (v *citation_) GetPermissions() doc.ResourceLike {
+	var component = v.GetParameter(doc.Symbol("permissions"))
+	return doc.Resource(doc.FormatComponent(component))
+}
+
+func (v *citation_) GetOptionalPrevious() doc.ResourceLike {
+	var previous doc.ResourceLike
+	var component = v.GetParameter(doc.Symbol("previous"))
+	if uti.IsDefined(component) {
+		var source = doc.FormatComponent(component)
+		if source != "none" {
+			previous = doc.Resource(source)
+		}
+	}
+	return previous
+}
 
 // PROTECTED INTERFACE
 

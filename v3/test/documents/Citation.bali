@@ -1,11 +1,13 @@
 [
-    $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
+    $algorithm: "SHA512"
+    $digest: '>
+        tXqZo2dUTokADujuxjD4fkyHxyHCCgsreUb6vyhYIDRGH3LRTBnzed/tCpRr
+        9UHSxLUmtFE0SVaNw8RjAcajEw
+    <'
+](
+    $type: <bali:/types/notary/Citation:v3>
+    $tag: #SNFXAHB7SFMQ83TXGDZ5X0CRZ600PBYN
     $version: v2
-    $digest: [
-        $algorithm: "SHA512"
-        $base64: '>
-            5WZpk3Dnwp7aUIEO9cSG0KfWJVXE7/Q+Yyfw2Zmbjzeq8TDws99lwqnavuVX
-            IyW7HwDwhmFp3QAx0W6BWjXJxw
-        <'
-    ]($type: <bali:/types/notary/Digest:v3>)
-]($type: <bali:/types/notary/Citation:v3>)
+    $permissions: <bali:/permissions/Public:v3>
+    $previous: <nebula:/SNFXAHB7SFMQ83TXGDZ5X0CRZ600PBYN:v1>
+)

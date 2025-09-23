@@ -29,8 +29,8 @@ on interfaces, not on each other.
 package notary
 
 import (
-	doc "github.com/bali-nebula/go-digital-notary/v3/documents"
-	fra "github.com/craterdog/go-component-framework/v7"
+	doc "github.com/bali-nebula/go-bali-documents/v3"
+	not "github.com/bali-nebula/go-digital-notary/v3/documents"
 )
 
 // TYPE DECLARATIONS
@@ -67,23 +67,26 @@ of a concrete digital-notary-like class.
 type DigitalNotaryLike interface {
 	// Principal Methods
 	GetClass() DigitalNotaryClassLike
-	GenerateKey() doc.CertificateLike
-	RefreshKey() doc.CertificateLike
+	GenerateKey() not.ContractLike
+	RefreshKey() not.ContractLike
 	ForgetKey()
-	GenerateCredential() doc.CredentialLike
+	GenerateCredential(
+		tag doc.TagLike,
+		version doc.VersionLike,
+	) not.ContractLike
 	NotarizeDocument(
-		draft doc.Parameterized,
-	) doc.ContractLike
+		draft not.Parameterized,
+	) not.ContractLike
 	SealMatches(
-		document doc.Notarized,
-		key doc.KeyLike,
+		document not.ContractLike,
+		certificate not.CertificateLike,
 	) bool
 	CiteDocument(
-		draft doc.Parameterized,
-	) fra.ResourceLike
+		draft not.Parameterized,
+	) doc.ResourceLike
 	CitationMatches(
-		citation fra.ResourceLike,
-		draft doc.Parameterized,
+		citation doc.ResourceLike,
+		draft not.Parameterized,
 	) bool
 }
 
