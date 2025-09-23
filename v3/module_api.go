@@ -97,11 +97,16 @@ func CertificateClass() CertificateClassLike {
 }
 
 func Certificate(
-	algorithm bal.QuoteLike,
-	key bal.BinaryLike,
-	tag bal.TagLike,
-	version bal.VersionLike,
+	arguments ...any,
 ) CertificateLike {
+	if len(arguments) == 1 {
+		var source = arguments[0].(string)
+		return CertificateClass().CertificateFromString(source)
+	}
+	var algorithm = arguments[0].(bal.QuoteLike)
+	var key = arguments[1].(bal.BinaryLike)
+	var tag = arguments[2].(bal.TagLike)
+	var version = arguments[3].(bal.VersionLike)
 	return CertificateClass().Certificate(
 		algorithm,
 		key,
@@ -110,24 +115,26 @@ func Certificate(
 	)
 }
 
-func CertificateFromString(
-	source string,
-) CertificateLike {
-	return CertificateClass().CertificateFromString(
-		source,
-	)
-}
-
 func CitationClass() CitationClassLike {
 	return doc.CitationClass()
 }
 
 func Citation(
-	algorithm bal.QuoteLike,
-	digest bal.BinaryLike,
-	tag bal.TagLike,
-	version bal.VersionLike,
+	arguments ...any,
 ) CitationLike {
+	if len(arguments) == 1 {
+		switch actual := arguments[0].(type) {
+		case string:
+			return CitationClass().CitationFromString(actual)
+		default:
+			var resource = arguments[0].(bal.ResourceLike)
+			return CitationClass().CitationFromResource(resource)
+		}
+	}
+	var algorithm = arguments[0].(bal.QuoteLike)
+	var digest = arguments[1].(bal.BinaryLike)
+	var tag = arguments[2].(bal.TagLike)
+	var version = arguments[3].(bal.VersionLike)
 	return CitationClass().Citation(
 		algorithm,
 		digest,
@@ -136,43 +143,24 @@ func Citation(
 	)
 }
 
-func CitationFromResource(
-	resource bal.ResourceLike,
-) CitationLike {
-	return CitationClass().CitationFromResource(
-		resource,
-	)
-}
-
-func CitationFromString(
-	source string,
-) CitationLike {
-	return CitationClass().CitationFromString(
-		source,
-	)
-}
-
 func ContractClass() ContractClassLike {
 	return doc.ContractClass()
 }
 
 func Contract(
-	content doc.Parameterized,
-	account bal.TagLike,
-	notary bal.ResourceLike,
+	arguments ...any,
 ) ContractLike {
+	if len(arguments) == 1 {
+		var source = arguments[0].(string)
+		return ContractClass().ContractFromString(source)
+	}
+	var content = arguments[0].(doc.Parameterized)
+	var account = arguments[1].(bal.TagLike)
+	var notary = arguments[2].(bal.ResourceLike)
 	return ContractClass().Contract(
 		content,
 		account,
 		notary,
-	)
-}
-
-func ContractFromString(
-	source string,
-) ContractLike {
-	return ContractClass().ContractFromString(
-		source,
 	)
 }
 
@@ -181,20 +169,17 @@ func CredentialClass() CredentialClassLike {
 }
 
 func Credential(
-	tag bal.TagLike,
-	version bal.VersionLike,
+	arguments ...any,
 ) CredentialLike {
+	if len(arguments) == 1 {
+		var source = arguments[0].(string)
+		return CredentialClass().CredentialFromString(source)
+	}
+	var tag = arguments[0].(bal.TagLike)
+	var version = arguments[1].(bal.VersionLike)
 	return CredentialClass().Credential(
 		tag,
 		version,
-	)
-}
-
-func CredentialFromString(
-	source string,
-) CredentialLike {
-	return CredentialClass().CredentialFromString(
-		source,
 	)
 }
 
@@ -203,13 +188,21 @@ func DraftClass() DraftClassLike {
 }
 
 func Draft(
-	entity any,
-	type_ bal.ResourceLike,
-	tag bal.TagLike,
-	version bal.VersionLike,
-	permissions bal.ResourceLike,
-	optionalPrevious bal.ResourceLike,
+	arguments ...any,
 ) DraftLike {
+	if len(arguments) == 1 {
+		var source = arguments[0].(string)
+		return DraftClass().DraftFromString(source)
+	}
+	var entity = arguments[0]
+	var type_ = arguments[1].(bal.ResourceLike)
+	var tag = arguments[2].(bal.TagLike)
+	var version = arguments[3].(bal.VersionLike)
+	var permissions = arguments[4].(bal.ResourceLike)
+	var optionalPrevious bal.ResourceLike
+	if len(arguments) == 6 && arguments[5] != nil {
+		optionalPrevious = arguments[5].(bal.ResourceLike)
+	}
 	return DraftClass().Draft(
 		entity,
 		type_,
@@ -220,33 +213,22 @@ func Draft(
 	)
 }
 
-func DraftFromString(
-	source string,
-) DraftLike {
-	return DraftClass().DraftFromString(
-		source,
-	)
-}
-
 func SealClass() SealClassLike {
 	return doc.SealClass()
 }
 
 func Seal(
-	algorithm bal.QuoteLike,
-	signature bal.BinaryLike,
+	arguments ...any,
 ) SealLike {
+	if len(arguments) == 1 {
+		var source = arguments[0].(string)
+		return SealClass().SealFromString(source)
+	}
+	var algorithm = arguments[0].(bal.QuoteLike)
+	var signature = arguments[1].(bal.BinaryLike)
 	return SealClass().Seal(
 		algorithm,
 		signature,
-	)
-}
-
-func SealFromString(
-	source string,
-) SealLike {
-	return SealClass().SealFromString(
-		source,
 	)
 }
 

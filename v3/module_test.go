@@ -27,7 +27,7 @@ func TestParsingCitations(t *tes.T) {
 	var filename = directory + "documents/Citation.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var citation = not.CitationFromString(source)
+	var citation = not.Citation(source)
 	var algorithm = citation.GetAlgorithm()
 	var digest = citation.GetDigest()
 	var tag = citation.GetTag()
@@ -46,7 +46,7 @@ func TestParsingCredentials(t *tes.T) {
 	var filename = directory + "documents/Credential.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var credential = not.CredentialFromString(source)
+	var credential = not.Credential(source)
 	var timestamp = credential.GetTimestamp()
 	var tag = credential.GetTag()
 	var version = credential.GetVersion()
@@ -63,7 +63,7 @@ func TestParsingCertificates(t *tes.T) {
 	var filename = directory + "documents/Certificate.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var certificate = not.CertificateFromString(source)
+	var certificate = not.Certificate(source)
 	var timestamp = certificate.GetTimestamp()
 	var algorithm = certificate.GetAlgorithm()
 	var key = certificate.GetKey()
@@ -84,7 +84,7 @@ func TestParsingDrafts(t *tes.T) {
 	var filename = directory + "documents/Draft.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var draft = not.DraftFromString(source)
+	var draft = not.Draft(source)
 	var entity = draft.GetEntity()
 	var type_ = draft.GetType()
 	var tag = draft.GetTag()
@@ -107,7 +107,7 @@ func TestParsingContracts(t *tes.T) {
 	var filename = directory + "documents/Contract.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var contract = not.ContractFromString(source)
+	var contract = not.Contract(source)
 	var content = contract.GetContent()
 	var account = contract.GetAccount()
 	var notary = contract.GetNotary()
@@ -188,7 +188,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	notary.ForgetKey()
 	var certificateV1 = notary.GenerateKey()
 	var content = certificateV1.GetContent()
-	var keyV1 = not.CertificateFromString(content.AsString())
+	var keyV1 = not.Certificate(content.AsString())
 	ass.True(
 		t,
 		notary.SealMatches(
@@ -202,7 +202,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 
 	// Create and cite a new transaction document.
 	var timestamp = doc.Moment().AsString()
-	var transaction = not.DraftFromString(
+	var transaction = not.Draft(
 		`[
     $timestamp: ` + timestamp + `
     $consumer: "Derk Norton"
@@ -258,7 +258,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	var version = doc.Version()
 	var credential = notary.GenerateCredential(tag, version)
 	content = certificateV2.GetContent()
-	var keyV2 = not.CertificateFromString(content.AsString())
+	var keyV2 = not.Certificate(content.AsString())
 	ass.True(
 		t,
 		notary.SealMatches(
