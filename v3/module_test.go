@@ -188,7 +188,6 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	notary.ForgetKey()
 	var certificateV1 = notary.GenerateKey()
 	var content = certificateV1.GetContent()
-	var citation = notary.CiteDocument(content)
 	ass.True(t, notary.CitationMatches(certificateV1.GetNotary(), content))
 	var keyV1 = not.Certificate(content.AsString())
 	ass.True(
@@ -222,7 +221,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	source = transaction.AsString()
 	uti.WriteFile(filename, source)
 
-	citation = notary.CiteDocument(transaction)
+	var citation = notary.CiteDocument(transaction)
 	ass.True(t, notary.CitationMatches(citation, transaction))
 
 	// Notarize the transaction document to create a notarized contract.
