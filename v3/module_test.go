@@ -13,7 +13,7 @@
 package module_test
 
 import (
-	//fmt "fmt"
+	fmt "fmt"
 	doc "github.com/bali-nebula/go-bali-documents/v3"
 	not "github.com/bali-nebula/go-digital-notary/v3"
 	uti "github.com/craterdog/go-missing-utilities/v7"
@@ -23,21 +23,20 @@ import (
 
 const directory = "./test/"
 
-/*
 func TestParsingCitations(t *tes.T) {
 	var filename = directory + "documents/Citation.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var citation = not.Citation(source)
-	var algorithm = citation.GetAlgorithm()
-	var digest = citation.GetDigest()
+	var citation = not.CitationFromString(source)
 	var tag = citation.GetTag()
 	var version = citation.GetVersion()
+	var algorithm = citation.GetAlgorithm()
+	var digest = citation.GetDigest()
 	citation = not.Citation(
-		algorithm,
-		digest,
 		tag,
 		version,
+		algorithm,
+		digest,
 	)
 	var formatted = citation.AsString()
 	ass.Equal(t, source, formatted)
@@ -47,15 +46,11 @@ func TestParsingCredentials(t *tes.T) {
 	var filename = directory + "documents/Credential.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var credential = not.Credential(source)
-	var timestamp = credential.GetTimestamp()
-	var tag = credential.GetTag()
-	var version = credential.GetVersion()
-	credential = not.Credential(
-		tag,
-		version,
-	)
-	credential.SetObject(timestamp, doc.Symbol("$timestamp"))
+	var credential = not.CredentialFromString(source)
+	credential.GetAccount()
+	credential.GetTag()
+	credential.GetVersion()
+	credential.GetTimestamp()
 	var formatted = credential.AsString()
 	ass.Equal(t, source, formatted)
 }
@@ -64,63 +59,57 @@ func TestParsingCertificates(t *tes.T) {
 	var filename = directory + "documents/Certificate.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var certificate = not.Certificate(source)
-	var timestamp = certificate.GetTimestamp()
-	var algorithm = certificate.GetAlgorithm()
-	var key = certificate.GetKey()
-	var tag = certificate.GetTag()
-	var version = certificate.GetVersion()
-	certificate = not.Certificate(
-		algorithm,
-		key,
-		tag,
-		version,
-	)
-	certificate.SetObject(timestamp, doc.Symbol("$timestamp"))
+	var certificate = not.CertificateFromString(source)
+	certificate.GetTimestamp()
+	certificate.GetTag()
+	certificate.GetVersion()
+	certificate.GetAlgorithm()
+	certificate.GetKey()
 	var formatted = certificate.AsString()
 	ass.Equal(t, source, formatted)
 }
 
-func TestParsingDrafts(t *tes.T) {
-	var filename = directory + "documents/Draft.bali"
+func TestParsingContents(t *tes.T) {
+	var filename = directory + "documents/Content.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var draft = not.Draft(source)
-	var entity = draft.GetEntity()
-	var type_ = draft.GetType()
-	var tag = draft.GetTag()
-	var version = draft.GetVersion()
-	var permissions = draft.GetPermissions()
-	var optionalPrevious = draft.GetOptionalPrevious()
-	draft = not.Draft(
+	var content = not.ContentFromString(source)
+	var entity = content.GetEntity()
+	var type_ = content.GetType()
+	var tag = content.GetTag()
+	var version = content.GetVersion()
+	var optionalPrevious = content.GetOptionalPrevious()
+	var permissions = content.GetPermissions()
+	var account = content.GetAccount()
+	content = not.Content(
 		entity,
 		type_,
 		tag,
 		version,
-		permissions,
 		optionalPrevious,
+		permissions,
+		account,
 	)
-	var formatted = draft.AsString()
+	var formatted = content.AsString()
 	ass.Equal(t, source, formatted)
 }
 
-func TestParsingContracts(t *tes.T) {
-	var filename = directory + "documents/Contract.bali"
+func TestParsingDocuments(t *tes.T) {
+	var filename = directory + "documents/Document.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var contract = not.Contract(source)
+	var contract = not.DocumentFromString(source)
 	var content = contract.GetContent()
 	var notary = contract.GetNotary()
 	var seal = contract.RemoveSeal()
-	contract = not.Contract(
+	contract = not.Document(
 		content,
-		notary,
 	)
+	contract.SetNotary(notary)
 	contract.SetSeal(seal)
 	var formatted = contract.AsString()
 	ass.Equal(t, source, formatted)
 }
-*/
 
 // Create the security module and digital notary.
 var module = not.Ssm(directory)

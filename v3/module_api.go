@@ -43,20 +43,20 @@ import (
 
 type (
 	CertificateClassLike = doc.CertificateClassLike
-	CitationClassLike = doc.CitationClassLike
-	ContentClassLike = doc.ContentClassLike
-	CredentialClassLike = doc.CredentialClassLike
-	DocumentClassLike = doc.DocumentClassLike
-	SealClassLike = doc.SealClassLike
+	CitationClassLike    = doc.CitationClassLike
+	ContentClassLike     = doc.ContentClassLike
+	CredentialClassLike  = doc.CredentialClassLike
+	DocumentClassLike    = doc.DocumentClassLike
+	SealClassLike        = doc.SealClassLike
 )
 
 type (
 	CertificateLike = doc.CertificateLike
-	CitationLike = doc.CitationLike
-	ContentLike = doc.ContentLike
-	CredentialLike = doc.CredentialLike
-	DocumentLike = doc.DocumentLike
-	SealLike = doc.SealLike
+	CitationLike    = doc.CitationLike
+	ContentLike     = doc.ContentLike
+	CredentialLike  = doc.CredentialLike
+	DocumentLike    = doc.DocumentLike
+	SealLike        = doc.SealLike
 )
 
 type (
@@ -74,7 +74,7 @@ type (
 )
 
 type (
-	Trusted = not.Trusted
+	Trusted  = not.Trusted
 	Hardened = not.Hardened
 )
 

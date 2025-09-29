@@ -7,7 +7,7 @@
     $type: <bali:/examples/Transaction:v1.2.3>
     $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
     $version: v1
-    $permissions: <bali:/permissions/Public:v3>
     $previous: none
+    $permissions: <bali:/permissions/Public:v3>
     $account: #AWYH6KXBL0QAJCF0L4HCHZAS3NFP2724
 )
