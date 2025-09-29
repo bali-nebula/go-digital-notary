@@ -29,40 +29,30 @@ func CitationClass() CitationClassLike {
 // Constructor Methods
 
 func (c *citationClass_) Citation(
-	algorithm doc.QuoteLike,
-	digest doc.BinaryLike,
 	tag doc.TagLike,
 	version doc.VersionLike,
+	algorithm doc.QuoteLike,
+	digest doc.BinaryLike,
 ) CitationLike {
-	if uti.IsUndefined(algorithm) {
-		panic("The \"algorithm\" attribute is required by this class.")
-	}
-	if uti.IsUndefined(digest) {
-		panic("The \"digest\" attribute is required by this class.")
-	}
 	if uti.IsUndefined(tag) {
 		panic("The \"tag\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(version) {
 		panic("The \"version\" attribute is required by this class.")
 	}
-
-	var previous = "none"
-	var current = version.AsIntrinsic()[0]
-	if current > 1 {
-		previous = "<nebula:/" + tag.AsString()[1:] +
-			":" + doc.Version([]uint{current - 1}).AsString() + ">"
+	if uti.IsUndefined(algorithm) {
+		panic("The \"algorithm\" attribute is required by this class.")
 	}
+	if uti.IsUndefined(digest) {
+		panic("The \"digest\" attribute is required by this class.")
+	}
+
 	var component = doc.ParseSource(`[
-    $algorithm: ` + algorithm.AsString() + `
-    $digest: ` + digest.AsString() + `
-](
-    $type: <bali:/types/notary/Citation:v3>
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
-	$permissions: <bali:/permissions/Public:v3>
-    $previous: ` + previous + `
-)`,
+    $algorithm: ` + algorithm.AsString() + `
+    $digest: ` + digest.AsString() + `
+]`,
 	)
 
 	var instance = &citation_{
@@ -108,10 +98,10 @@ func (c *citationClass_) CitationFromResource(
 
 	// Construct the citation.
 	var instance = c.Citation(
-		doc.Quote(algorithm),
-		doc.Binary(digest),
 		doc.Tag(tag),
 		doc.Version(version),
+		doc.Quote(algorithm),
+		doc.Binary(digest),
 	)
 
 	return instance
@@ -156,6 +146,16 @@ func (v *citation_) AsResource() doc.ResourceLike {
 
 // Attribute Methods
 
+func (v *citation_) GetTag() doc.TagLike {
+	var component = v.GetObject(doc.Symbol("$tag"))
+	return doc.Tag(doc.FormatComponent(component))
+}
+
+func (v *citation_) GetVersion() doc.VersionLike {
+	var component = v.GetObject(doc.Symbol("$version"))
+	return doc.Version(doc.FormatComponent(component))
+}
+
 func (v *citation_) GetAlgorithm() doc.QuoteLike {
 	var object = v.GetObject(doc.Symbol("$algorithm"))
 	return doc.Quote(doc.FormatComponent(object))
@@ -164,44 +164,6 @@ func (v *citation_) GetAlgorithm() doc.QuoteLike {
 func (v *citation_) GetDigest() doc.BinaryLike {
 	var object = v.GetObject(doc.Symbol("$digest"))
 	return doc.Binary(doc.FormatComponent(object))
-}
-
-// Parameterized Methods
-
-func (v *citation_) GetEntity() any {
-	return v.Declarative.(doc.ComponentLike).GetEntity()
-}
-
-func (v *citation_) GetType() doc.ResourceLike {
-	var component = v.GetParameter(doc.Symbol("$type"))
-	return doc.Resource(doc.FormatComponent(component))
-}
-
-func (v *citation_) GetTag() doc.TagLike {
-	var component = v.GetParameter(doc.Symbol("$tag"))
-	return doc.Tag(doc.FormatComponent(component))
-}
-
-func (v *citation_) GetVersion() doc.VersionLike {
-	var component = v.GetParameter(doc.Symbol("$version"))
-	return doc.Version(doc.FormatComponent(component))
-}
-
-func (v *citation_) GetPermissions() doc.ResourceLike {
-	var component = v.GetParameter(doc.Symbol("$permissions"))
-	return doc.Resource(doc.FormatComponent(component))
-}
-
-func (v *citation_) GetOptionalPrevious() doc.ResourceLike {
-	var previous doc.ResourceLike
-	var component = v.GetParameter(doc.Symbol("$previous"))
-	if uti.IsDefined(component) {
-		var source = doc.FormatComponent(component)
-		if source != "none" {
-			previous = doc.Resource(source)
-		}
-	}
-	return previous
 }
 
 // PROTECTED INTERFACE

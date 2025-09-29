@@ -1,13 +1,9 @@
 [
+    $tag: #RY6FC0R2BB1MTMRW0L81121BLSA8W4NN
+    $version: v2
     $algorithm: "SHA512"
     $digest: '>
-        tXqZo2dUTokADujuxjD4fkyHxyHCCgsreUb6vyhYIDRGH3LRTBnzed/tCpRr
-        9UHSxLUmtFE0SVaNw8RjAcajEw
+        vJ1RkQd+ynopZo8fd/T7fRnDBXWqs9dL90txicnZMKC4HxBXJUh/fjx7d7Ak
+        lgyFRw1wZ8q6Vj0C+V1K2jLTLQ
     <'
-](
-    $type: <bali:/types/notary/Citation:v3>
-    $tag: #SNFXAHB7SFMQ83TXGDZ5X0CRZ600PBYN
-    $version: v2
-    $permissions: <bali:/permissions/Public:v3>
-    $previous: <nebula:/SNFXAHB7SFMQ83TXGDZ5X0CRZ600PBYN:v1>
-)
+]

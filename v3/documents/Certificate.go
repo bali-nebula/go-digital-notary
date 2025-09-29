@@ -28,22 +28,26 @@ func CertificateClass() CertificateClassLike {
 // Constructor Methods
 
 func (c *certificateClass_) Certificate(
-	algorithm doc.QuoteLike,
-	key doc.BinaryLike,
+	account doc.TagLike,
 	tag doc.TagLike,
 	version doc.VersionLike,
+	algorithm doc.QuoteLike,
+	key doc.BinaryLike,
 ) CertificateLike {
-	if uti.IsUndefined(algorithm) {
-		panic("The \"algorithm\" attribute is required by this class.")
-	}
-	if uti.IsUndefined(key) {
-		panic("The \"key\" attribute is required by this class.")
+	if uti.IsUndefined(account) {
+		panic("The \"account\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(tag) {
 		panic("The \"tag\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(version) {
 		panic("The \"version\" attribute is required by this class.")
+	}
+	if uti.IsUndefined(algorithm) {
+		panic("The \"algorithm\" attribute is required by this class.")
+	}
+	if uti.IsUndefined(key) {
+		panic("The \"key\" attribute is required by this class.")
 	}
 
 	var timestamp = doc.Moment() // The current moment in time.
@@ -61,8 +65,9 @@ func (c *certificateClass_) Certificate(
     $type: <bali:/types/notary/Certificate:v3>
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
-    $permissions: <bali:/permissions/Public:v3>
     $previous: ` + previous + `
+    $permissions: <bali:/permissions/Public:v3>
+    $account: ` + account.AsString() + `
 )`,
 	)
 
@@ -147,11 +152,6 @@ func (v *certificate_) GetVersion() doc.VersionLike {
 	return doc.Version(doc.FormatComponent(component))
 }
 
-func (v *certificate_) GetPermissions() doc.ResourceLike {
-	var component = v.GetParameter(doc.Symbol("$permissions"))
-	return doc.Resource(doc.FormatComponent(component))
-}
-
 func (v *certificate_) GetOptionalPrevious() doc.ResourceLike {
 	var previous doc.ResourceLike
 	var component = v.GetParameter(doc.Symbol("$previous"))
@@ -162,6 +162,16 @@ func (v *certificate_) GetOptionalPrevious() doc.ResourceLike {
 		}
 	}
 	return previous
+}
+
+func (v *certificate_) GetPermissions() doc.ResourceLike {
+	var component = v.GetParameter(doc.Symbol("$permissions"))
+	return doc.Resource(doc.FormatComponent(component))
+}
+
+func (v *certificate_) GetAccount() doc.TagLike {
+	var component = v.GetParameter(doc.Symbol("$account"))
+	return doc.Tag(doc.FormatComponent(component))
 }
 
 // Private Methods

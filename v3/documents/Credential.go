@@ -28,9 +28,13 @@ func CredentialClass() CredentialClassLike {
 // Constructor Methods
 
 func (c *credentialClass_) Credential(
+	account doc.TagLike,
 	tag doc.TagLike,
 	version doc.VersionLike,
 ) CredentialLike {
+	if uti.IsUndefined(account) {
+		panic("The \"account\" attribute is required by this class.")
+	}
 	if uti.IsUndefined(tag) {
 		panic("The \"tag\" attribute is required by this class.")
 	}
@@ -51,8 +55,9 @@ func (c *credentialClass_) Credential(
     $type: <bali:/types/notary/Credential:v3>
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
-    $permissions: <bali:/permissions/Public:v3>
     $previous: ` + previous + `
+    $permissions: <bali:/permissions/Public:v3>
+    $account: ` + account.AsString() + `
 )`,
 	)
 
@@ -127,11 +132,6 @@ func (v *credential_) GetVersion() doc.VersionLike {
 	return doc.Version(doc.FormatComponent(component))
 }
 
-func (v *credential_) GetPermissions() doc.ResourceLike {
-	var component = v.GetParameter(doc.Symbol("$permissions"))
-	return doc.Resource(doc.FormatComponent(component))
-}
-
 func (v *credential_) GetOptionalPrevious() doc.ResourceLike {
 	var previous doc.ResourceLike
 	var component = v.GetParameter(doc.Symbol("$previous"))
@@ -142,6 +142,16 @@ func (v *credential_) GetOptionalPrevious() doc.ResourceLike {
 		}
 	}
 	return previous
+}
+
+func (v *credential_) GetPermissions() doc.ResourceLike {
+	var component = v.GetParameter(doc.Symbol("$permissions"))
+	return doc.Resource(doc.FormatComponent(component))
+}
+
+func (v *credential_) GetAccount() doc.TagLike {
+	var component = v.GetParameter(doc.Symbol("$account"))
+	return doc.Tag(doc.FormatComponent(component))
 }
 
 // Private Methods

@@ -83,7 +83,7 @@ func (v *digitalNotary_) GetClass() DigitalNotaryClassLike {
 	return digitalNotaryClass()
 }
 
-func (v *digitalNotary_) GenerateKey() not.ContractLike {
+func (v *digitalNotary_) GenerateKey() not.DocumentLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
 		"An error occurred while attempting to generate a new key pair",
@@ -94,54 +94,50 @@ func (v *digitalNotary_) GenerateKey() not.ContractLike {
 	var key = doc.Binary(bytes)
 
 	// Create the new certificate.
+	var account = v.account_
+	var tag = doc.Tag()         // Generate a new random tag.
+	var version = doc.Version() // v1
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
-	var tag = doc.Tag() // Generate a new random tag.
-	var version = doc.Version()
 	var certificate = not.CertificateClass().Certificate(
+		account,
+		tag,
+		version,
 		algorithm,
 		key,
-		tag,
-		version,
 	)
+	var document = not.DocumentClass().Document(certificate)
 
-	// Create a citation to the new certificate.
-	algorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
-	bytes = []byte(certificate.AsString())
-	var digest = doc.Binary(v.ssm_.DigestBytes(bytes))
-	var citation = not.CitationClass().Citation(
-		algorithm,
-		digest,
-		tag,
-		version,
-	)
-
-	// Save off the citation.
-	var source = citation.AsString()
-	uti.WriteFile(v.filename_, source)
-
-	// Wrap the new certificate in a contract.
-	var account = v.account_
-	var notary = citation.AsResource()
-	var contract = not.ContractClass().Contract(
-		certificate,
-		account,
-		notary,
-	)
-
-	// Notarize the contract.
-	source = contract.AsString()
-	bytes = v.hsm_.SignBytes([]byte(source)) // This certificate is self-signed.
+	// Notarize the document using its own key.
+	var notary doc.ResourceLike
+	document.SetNotary(notary)
+	var source = document.AsString()
+	bytes = v.hsm_.SignBytes([]byte(source))
 	var signature = doc.Binary(bytes)
 	var seal = not.SealClass().Seal(
 		algorithm,
 		signature,
 	)
-	contract.SetSeal(seal)
+	document.SetSeal(seal)
 
-	return contract
+	// Create a citation to the new certificate.
+	algorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
+	bytes = []byte(document.AsString())
+	var digest = doc.Binary(v.ssm_.DigestBytes(bytes))
+	var citation = not.CitationClass().Citation(
+		tag,
+		version,
+		algorithm,
+		digest,
+	)
+
+	// Save off the citation.
+	source = citation.AsString()
+	uti.WriteFile(v.filename_, source)
+
+	return document
 }
 
-func (v *digitalNotary_) RefreshKey() not.ContractLike {
+func (v *digitalNotary_) RefreshKey() not.DocumentLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
 		"An error occurred while attempting to refresh the key pair",
@@ -152,6 +148,7 @@ func (v *digitalNotary_) RefreshKey() not.ContractLike {
 	var key = doc.Binary(bytes)
 
 	// Create the new certificate.
+	var account = v.account_
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var previous = v.getCitation()
 	var citation = not.CitationClass().CitationFromResource(previous)
@@ -159,47 +156,41 @@ func (v *digitalNotary_) RefreshKey() not.ContractLike {
 	var current = citation.GetVersion()
 	var version = doc.VersionClass().GetNextVersion(current, 0)
 	var certificate = not.CertificateClass().Certificate(
+		account,
+		tag,
+		version,
 		algorithm,
 		key,
-		tag,
-		version,
 	)
+	var document = not.DocumentClass().Document(certificate)
 
-	// Create a citation to the new certificate.
-	algorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
-	bytes = []byte(certificate.AsString())
-	var digest = doc.Binary(v.ssm_.DigestBytes(bytes))
-	citation = not.CitationClass().Citation(
-		algorithm,
-		digest,
-		tag,
-		version,
-	)
-
-	// Save off the citation.
-	var source = citation.AsString()
-	uti.WriteFile(v.filename_, source)
-
-	// Wrap the new certificate in a contract.
-	var account = v.account_
-	var notary = previous
-	var contract = not.ContractClass().Contract(
-		certificate,
-		account,
-		notary,
-	)
-
-	// Notarize the contract.
-	source = contract.AsString()
-	bytes = v.hsm_.SignBytes([]byte(source)) // Signed with previous certificate.
+	// Notarize the document using the previous key.
+	document.SetNotary(previous)
+	var source = document.AsString()
+	bytes = v.hsm_.SignBytes([]byte(source))
 	var signature = doc.Binary(bytes)
 	var seal = not.SealClass().Seal(
 		algorithm,
 		signature,
 	)
-	contract.SetSeal(seal)
+	document.SetSeal(seal)
 
-	return contract
+	// Create a citation to the new certificate.
+	algorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
+	bytes = []byte(document.AsString())
+	var digest = doc.Binary(v.ssm_.DigestBytes(bytes))
+	citation = not.CitationClass().Citation(
+		tag,
+		version,
+		algorithm,
+		digest,
+	)
+
+	// Save off the citation.
+	source = citation.AsString()
+	uti.WriteFile(v.filename_, source)
+
+	return document
 }
 
 func (v *digitalNotary_) ForgetKey() {
@@ -216,72 +207,65 @@ func (v *digitalNotary_) ForgetKey() {
 func (v *digitalNotary_) GenerateCredential(
 	tag doc.TagLike,
 	version doc.VersionLike,
-) not.ContractLike {
+) not.DocumentLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
 		"An error occurred while attempting to generate a security credential",
 	)
 
 	// Create the credential.
+	var account = v.account_
 	var credential = not.CredentialClass().Credential(
+		account,
 		tag,
 		version,
 	)
 
 	// Notarized the credential.
-	var account = v.account_
-	var notary = v.getCitation()
-	var contract = not.ContractClass().Contract(
+	var document = not.DocumentClass().Document(
 		credential,
-		account,
-		notary,
 	)
+	var notary = v.getCitation()
+	document.SetNotary(notary)
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
-	var source = contract.AsString()
+	var source = document.AsString()
 	var bytes = v.hsm_.SignBytes([]byte(source))
 	var signature = doc.Binary(bytes)
 	var seal = not.SealClass().Seal(
 		algorithm,
 		signature,
 	)
-	contract.SetSeal(seal)
+	document.SetSeal(seal)
 
-	return contract
+	return document
 }
 
 func (v *digitalNotary_) NotarizeDocument(
-	draft not.Parameterized,
-) not.ContractLike {
+	document not.DocumentLike,
+) not.DocumentLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
-		"An error occurred while attempting to notarize a draft document",
+		"An error occurred while attempting to notarize a document",
 	)
 
-	// Wrap the draft document in a contract.
-	var account = v.account_
+	// Notarize the document.
 	var notary = v.getCitation()
-	var contract = not.ContractClass().Contract(
-		draft,
-		account,
-		notary,
-	)
-
-	// Notarize the contract.
+	document.SetNotary(notary)
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
-	var source = contract.AsString()
+	var source = document.AsString()
 	var bytes = v.hsm_.SignBytes([]byte(source))
 	var signature = doc.Binary(bytes)
 	var seal = not.SealClass().Seal(
 		algorithm,
 		signature,
 	)
-	contract.SetSeal(seal)
+	document.SetSeal(seal)
 
-	return contract
+	return document
 }
 
 func (v *digitalNotary_) SealMatches(
-	document not.ContractLike,
+	document not.DocumentLike,
 	certificate not.CertificateLike,
 ) bool {
 	// Check for any errors at the end.
@@ -313,25 +297,26 @@ func (v *digitalNotary_) SealMatches(
 }
 
 func (v *digitalNotary_) CiteDocument(
-	draft not.Parameterized,
+	document not.DocumentLike,
 ) doc.ResourceLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
-		"An error occurred while attempting to create a citation to a draft document",
+		"An error occurred while attempting to create a citation to a document",
 	)
 
-	// Create a citation to the draft document.
+	// Create a citation to the document.
 	var algorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
-	var source = draft.AsString()
+	var source = document.AsString()
 	var bytes = []byte(source)
 	var digest = doc.Binary(v.ssm_.DigestBytes(bytes))
-	var tag = draft.GetTag()
-	var version = draft.GetVersion()
+	var content = document.GetContent()
+	var tag = content.GetTag()
+	var version = content.GetVersion()
 	var citation = not.CitationClass().Citation(
-		algorithm,
-		digest,
 		tag,
 		version,
+		algorithm,
+		digest,
 	)
 	var resource = citation.AsResource()
 	return resource
@@ -339,25 +324,25 @@ func (v *digitalNotary_) CiteDocument(
 
 func (v *digitalNotary_) CitationMatches(
 	resource doc.ResourceLike,
-	draft not.Parameterized,
+	document not.DocumentLike,
 ) bool {
 	// Check for any errors at the end.
 	defer v.errorCheck(
 		"An error occurred while attempting to verify a document citation",
 	)
 
-	// Compare the citation digest with a digest of the draft document.
+	// Compare the citation digest with a digest of the document.
 	var citation = not.CitationClass().CitationFromResource(resource)
 	var citationAlgorithm = citation.GetAlgorithm()
 	var citationDigest = citation.GetDigest()
 	var ssmAlgorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
-	var source = draft.AsString()
+	var source = document.AsString()
 	var bytes = []byte(source)
-	var draftDigest = doc.Binary(v.ssm_.DigestBytes(bytes))
+	var documentDigest = doc.Binary(v.ssm_.DigestBytes(bytes))
 	if citationAlgorithm.AsString() != ssmAlgorithm.AsString() {
 		return false
 	}
-	if !byt.Equal(citationDigest.AsIntrinsic(), draftDigest.AsIntrinsic()) {
+	if !byt.Equal(citationDigest.AsIntrinsic(), documentDigest.AsIntrinsic()) {
 		return false
 	}
 	return true

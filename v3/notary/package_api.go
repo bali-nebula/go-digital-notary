@@ -44,9 +44,9 @@ DigitalNotaryClassLike is a class interface that declares the complete set of
 class constructors, constants and functions that must be supported by each
 concrete digital-notary-like class.
 
-A digital notary may be used to digitally notarize digital draft documents using
-a hardware security module (HSM). It may also be used to validate the seal on a
-contract that was notarized using this or any other digital notary.
+A digital notary may be used to digitally notarize digital documents using a
+hardware security module (HSM). It may also be used to validate the seal on a
+document that was notarized using this or any other digital notary.
 */
 type DigitalNotaryClassLike interface {
 	// Constructor Methods
@@ -67,26 +67,26 @@ of a concrete digital-notary-like class.
 type DigitalNotaryLike interface {
 	// Principal Methods
 	GetClass() DigitalNotaryClassLike
-	GenerateKey() not.ContractLike
-	RefreshKey() not.ContractLike
+	GenerateKey() not.DocumentLike
+	RefreshKey() not.DocumentLike
 	ForgetKey()
 	GenerateCredential(
 		tag doc.TagLike,
 		version doc.VersionLike,
-	) not.ContractLike
+	) not.DocumentLike
 	NotarizeDocument(
-		draft not.Parameterized,
-	) not.ContractLike
+		document not.DocumentLike,
+	) not.DocumentLike
 	SealMatches(
-		document not.ContractLike,
+		document not.DocumentLike,
 		certificate not.CertificateLike,
 	) bool
 	CiteDocument(
-		draft not.Parameterized,
+		document not.DocumentLike,
 	) doc.ResourceLike
 	CitationMatches(
 		citation doc.ResourceLike,
-		draft not.Parameterized,
+		document not.DocumentLike,
 	) bool
 }
 

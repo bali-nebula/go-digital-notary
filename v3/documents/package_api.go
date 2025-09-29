@@ -46,10 +46,11 @@ concrete certificate-like class.
 type CertificateClassLike interface {
 	// Constructor Methods
 	Certificate(
-		algorithm doc.QuoteLike,
-		key doc.BinaryLike,
+		account doc.TagLike,
 		tag doc.TagLike,
 		version doc.VersionLike,
+		algorithm doc.QuoteLike,
+		key doc.BinaryLike,
 	) CertificateLike
 	CertificateFromString(
 		source string,
@@ -64,10 +65,10 @@ concrete citation-like class.
 type CitationClassLike interface {
 	// Constructor Methods
 	Citation(
-		algorithm doc.QuoteLike,
-		digest doc.BinaryLike,
 		tag doc.TagLike,
 		version doc.VersionLike,
+		algorithm doc.QuoteLike,
+		digest doc.BinaryLike,
 	) CitationLike
 	CitationFromResource(
 		resource doc.ResourceLike,
@@ -78,20 +79,24 @@ type CitationClassLike interface {
 }
 
 /*
-ContractClassLike is a class interface that declares the complete set of
+ContentClassLike is a class interface that declares the complete set of
 class constructors, constants and functions that must be supported by each
-concrete contract-like class.
+concrete content-like class.
 */
-type ContractClassLike interface {
+type ContentClassLike interface {
 	// Constructor Methods
-	Contract(
-		content Parameterized,
+	Content(
+		entity any,
+		type_ doc.ResourceLike,
+		tag doc.TagLike,
+		version doc.VersionLike,
+		optionalPrevious doc.ResourceLike,
+		permissions doc.ResourceLike,
 		account doc.TagLike,
-		notary doc.ResourceLike,
-	) ContractLike
-	ContractFromString(
+	) ContentLike
+	ContentFromString(
 		source string,
-	) ContractLike
+	) ContentLike
 }
 
 /*
@@ -102,6 +107,7 @@ concrete credential-like class.
 type CredentialClassLike interface {
 	// Constructor Methods
 	Credential(
+		account doc.TagLike,
 		tag doc.TagLike,
 		version doc.VersionLike,
 	) CredentialLike
@@ -111,23 +117,18 @@ type CredentialClassLike interface {
 }
 
 /*
-DraftClassLike is a class interface that declares the complete set of
+DocumentClassLike is a class interface that declares the complete set of
 class constructors, constants and functions that must be supported by each
-concrete draft-like class.
+concrete document-like class.
 */
-type DraftClassLike interface {
+type DocumentClassLike interface {
 	// Constructor Methods
-	Draft(
-		entity any,
-		type_ doc.ResourceLike,
-		tag doc.TagLike,
-		version doc.VersionLike,
-		permissions doc.ResourceLike,
-		optionalPrevious doc.ResourceLike,
-	) DraftLike
-	DraftFromString(
+	Document(
+		content Parameterized,
+	) DocumentLike
+	DocumentFromString(
 		source string,
-	) DraftLike
+	) DocumentLike
 }
 
 /*
@@ -174,31 +175,26 @@ type CitationLike interface {
 	// Principal Methods
 	GetClass() CitationClassLike
 	AsIntrinsic() doc.ComponentLike
+	AsString() string
 	AsResource() doc.ResourceLike
+	GetTag() doc.TagLike
+	GetVersion() doc.VersionLike
 	GetAlgorithm() doc.QuoteLike
 	GetDigest() doc.BinaryLike
-
-	// Aspect Interfaces
-	Parameterized
 }
 
 /*
-ContractLike is an instance interface that declares the complete set of
+ContentLike is an instance interface that declares the complete set of
 principal, attribute and aspect methods that must be supported by each instance
-of a concrete contract-like class.
+of a concrete certificate-like class.
 */
-type ContractLike interface {
+type ContentLike interface {
 	// Principal Methods
-	GetClass() ContractClassLike
+	GetClass() ContentClassLike
 	AsIntrinsic() doc.ComponentLike
-	AsString() string
-	GetContent() Parameterized
-	GetAccount() doc.TagLike
-	GetNotary() doc.ResourceLike
-	SetSeal(
-		seal SealLike,
-	)
-	RemoveSeal() SealLike
+
+	// Aspect Interfaces
+	Parameterized
 }
 
 /*
@@ -217,17 +213,25 @@ type CredentialLike interface {
 }
 
 /*
-DraftLike is an instance interface that declares the complete set of
+DocumentLike is an instance interface that declares the complete set of
 principal, attribute and aspect methods that must be supported by each instance
-of a concrete draft-like class.
+of a concrete document-like class.
 */
-type DraftLike interface {
+type DocumentLike interface {
 	// Principal Methods
-	GetClass() DraftClassLike
+	GetClass() DocumentClassLike
 	AsIntrinsic() doc.ComponentLike
-
-	// Aspect Interfaces
-	Parameterized
+	AsString() string
+	GetContent() Parameterized
+	GetNotary() doc.ResourceLike
+	SetNotary(
+		notary doc.ResourceLike,
+	)
+	HasSeal() bool
+	SetSeal(
+		seal SealLike,
+	)
+	RemoveSeal() SealLike
 }
 
 /*
@@ -252,12 +256,12 @@ Parameterized declares the set of method signatures that must be supported by
 all parameterized documents.
 */
 type Parameterized interface {
-	doc.Declarative
 	AsString() string
 	GetEntity() any
 	GetType() doc.ResourceLike
 	GetTag() doc.TagLike
 	GetVersion() doc.VersionLike
-	GetPermissions() doc.ResourceLike
 	GetOptionalPrevious() doc.ResourceLike
+	GetPermissions() doc.ResourceLike
+	GetAccount() doc.TagLike
 }

@@ -21,35 +21,25 @@ import (
 
 // Access Function
 
-func ContractClass() ContractClassLike {
-	return contractClass()
+func DocumentClass() DocumentClassLike {
+	return documentClass()
 }
 
 // Constructor Methods
 
-func (c *contractClass_) Contract(
-	draft Parameterized,
-	account doc.TagLike,
-	notary doc.ResourceLike,
-) ContractLike {
-	if uti.IsUndefined(draft) {
-		panic("The \"draft\" attribute is required by this class.")
-	}
-	if uti.IsUndefined(account) {
-		panic("The \"account\" attribute is required by this class.")
-	}
-	if uti.IsUndefined(notary) {
-		panic("The \"notary\" attribute is required by this class.")
+func (c *documentClass_) Document(
+	content Parameterized,
+) DocumentLike {
+	if uti.IsUndefined(content) {
+		panic("The \"content\" attribute is required by this class.")
 	}
 
 	var component = doc.ParseSource(`[
-    $content: ` + draft.AsString() + `
-    $account: ` + account.AsString() + `
-    $notary: ` + notary.AsString() + `
-]($type: <bali:/types/notary/Contract:v3>)`,
+    $content: ` + content.AsString() + `
+]($type: <bali:/types/notary/Document:v3>)`,
 	)
 
-	var instance = &contract_{
+	var instance = &document_{
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
@@ -58,11 +48,11 @@ func (c *contractClass_) Contract(
 	return instance
 }
 
-func (c *contractClass_) ContractFromString(
+func (c *documentClass_) DocumentFromString(
 	source string,
-) ContractLike {
+) DocumentLike {
 	var component = doc.ParseSource(source)
-	var instance = &contract_{
+	var instance = &document_{
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
@@ -79,50 +69,61 @@ func (c *contractClass_) ContractFromString(
 
 // Principal Methods
 
-func (v *contract_) GetClass() ContractClassLike {
-	return contractClass()
+func (v *document_) GetClass() DocumentClassLike {
+	return documentClass()
 }
 
-func (v *contract_) AsIntrinsic() doc.ComponentLike {
+func (v *document_) AsIntrinsic() doc.ComponentLike {
 	return v.Declarative.(doc.ComponentLike)
 }
 
-func (v *contract_) AsString() string {
+func (v *document_) AsString() string {
 	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
 }
 
 // Attribute Methods
 
-func (v *contract_) GetDraft() Parameterized {
+func (v *document_) GetContent() Parameterized {
 	var object = v.GetObject(doc.Symbol("$content"))
-	return DraftClass().DraftFromString(doc.FormatComponent(object))
+	return ContentClass().ContentFromString(doc.FormatComponent(object))
 }
 
-// Notarized Methods
-
-func (v *contract_) GetContent() Parameterized {
-	var object = v.GetObject(doc.Symbol("$content"))
-	return DraftClass().DraftFromString(doc.FormatComponent(object))
-}
-
-func (v *contract_) GetAccount() doc.TagLike {
-	var object = v.GetObject(doc.Symbol("$account"))
-	return doc.Tag(doc.FormatComponent(object))
-}
-
-func (v *contract_) GetNotary() doc.ResourceLike {
+func (v *document_) GetNotary() doc.ResourceLike {
 	var object = v.GetObject(doc.Symbol("$notary"))
-	return doc.Resource(doc.FormatComponent(object))
+	var notary doc.ResourceLike
+	if uti.IsDefined(object) {
+		switch object.GetComponent().GetEntity().(type) {
+		case doc.ResourceLike:
+			notary = doc.Resource(doc.FormatComponent(object))
+		}
+	}
+	return notary
 }
 
-func (v *contract_) SetSeal(
+func (v *document_) SetNotary(
+	notary doc.ResourceLike,
+) {
+	var component = doc.ParseSource("none")
+	if uti.IsDefined(notary) {
+		component = doc.ParseSource(notary.AsString())
+	}
+	v.SetObject(component, doc.Symbol("$notary"))
+}
+
+func (v *document_) HasSeal() bool {
+	var symbol = doc.Symbol("$seal")
+	var object = v.GetObject(symbol)
+	return uti.IsDefined(object)
+}
+
+func (v *document_) SetSeal(
 	seal SealLike,
 ) {
 	var component = doc.ParseSource(seal.AsString())
 	v.SetObject(component, doc.Symbol("$seal"))
 }
 
-func (v *contract_) RemoveSeal() SealLike {
+func (v *document_) RemoveSeal() SealLike {
 	var seal SealLike
 	var symbol = doc.Symbol("$seal")
 	var object = v.GetObject(symbol)
@@ -139,7 +140,7 @@ func (v *contract_) RemoveSeal() SealLike {
 
 // Instance Structure
 
-type contract_ struct {
+type document_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
@@ -148,16 +149,16 @@ type contract_ struct {
 
 // Class Structure
 
-type contractClass_ struct {
+type documentClass_ struct {
 	// Declare the class constants.
 }
 
 // Class Reference
 
-func contractClass() *contractClass_ {
-	return contractClassReference_
+func documentClass() *documentClass_ {
+	return documentClassReference_
 }
 
-var contractClassReference_ = &contractClass_{
+var documentClassReference_ = &documentClass_{
 	// Initialize the class constants.
 }
