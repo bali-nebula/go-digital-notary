@@ -204,8 +204,7 @@ func (v *digitalNotary_) ForgetKey() {
 }
 
 func (v *digitalNotary_) GenerateCredential(
-	tag doc.TagLike,
-	version doc.VersionLike,
+	context any,
 ) not.DocumentLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
@@ -214,7 +213,10 @@ func (v *digitalNotary_) GenerateCredential(
 
 	// Create the credential.
 	var account = v.account_
+	var tag = doc.Tag()
+	var version = doc.Version()
 	var credential = not.CredentialClass().Credential(
+		context,
 		account,
 		tag,
 		version,
@@ -223,6 +225,47 @@ func (v *digitalNotary_) GenerateCredential(
 	// Notarized the credential.
 	var document = not.DocumentClass().Document(
 		credential,
+	)
+	var notary = v.getCitation()
+	document.SetNotary(notary)
+	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
+	var source = document.AsString()
+	var bytes = v.hsm_.SignBytes([]byte(source))
+	var signature = doc.Binary(bytes)
+	var seal = not.SealClass().Seal(
+		algorithm,
+		signature,
+	)
+	document.SetSeal(seal)
+
+	return document
+}
+
+func (v *digitalNotary_) RefreshCredential(
+	credential not.DocumentLike,
+	context any,
+) not.DocumentLike {
+	// Check for any errors at the end.
+	defer v.errorCheck(
+		"An error occurred while attempting to refresh a security credential",
+	)
+
+	// Create the next version of the credential.
+	var account = v.account_
+	var content = credential.GetContent()
+	var tag = content.GetTag()
+	var current = content.GetVersion()
+	var version = doc.VersionClass().GetNextVersion(current, 0)
+	content = not.CredentialClass().Credential(
+		context,
+		account,
+		tag,
+		version,
+	)
+
+	// Notarized the credential.
+	var document = not.DocumentClass().Document(
+		content,
 	)
 	var notary = v.getCitation()
 	document.SetNotary(notary)

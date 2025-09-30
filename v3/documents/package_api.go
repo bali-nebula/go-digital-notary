@@ -107,6 +107,7 @@ concrete credential-like class.
 type CredentialClassLike interface {
 	// Constructor Methods
 	Credential(
+		context any,
 		account doc.TagLike,
 		tag doc.TagLike,
 		version doc.VersionLike,
@@ -205,7 +206,7 @@ type CredentialLike interface {
 	// Principal Methods
 	GetClass() CredentialClassLike
 	AsIntrinsic() doc.ComponentLike
-	GetSalt() doc.MomentLike
+	GetContext() any
 
 	// Aspect Interfaces
 	Parameterized

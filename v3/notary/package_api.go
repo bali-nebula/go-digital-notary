@@ -29,7 +29,6 @@ on interfaces, not on each other.
 package notary
 
 import (
-	doc "github.com/bali-nebula/go-bali-documents/v3"
 	not "github.com/bali-nebula/go-digital-notary/v3/documents"
 )
 
@@ -71,8 +70,11 @@ type DigitalNotaryLike interface {
 	RefreshKey() not.DocumentLike
 	ForgetKey()
 	GenerateCredential(
-		tag doc.TagLike,
-		version doc.VersionLike,
+		context any,
+	) not.DocumentLike
+	RefreshCredential(
+		credential not.DocumentLike,
+		context any,
 	) not.DocumentLike
 	NotarizeDocument(
 		document not.DocumentLike,

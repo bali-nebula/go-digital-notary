@@ -191,11 +191,13 @@ func CredentialClass() CredentialClassLike {
 }
 
 func Credential(
+	context any,
 	account bal.TagLike,
 	tag bal.TagLike,
 	version bal.VersionLike,
 ) CredentialLike {
 	return CredentialClass().Credential(
+		context,
 		account,
 		tag,
 		version,

@@ -28,10 +28,14 @@ func CredentialClass() CredentialClassLike {
 // Constructor Methods
 
 func (c *credentialClass_) Credential(
+	context any,
 	account doc.TagLike,
 	tag doc.TagLike,
 	version doc.VersionLike,
 ) CredentialLike {
+	if uti.IsUndefined(context) {
+		panic("The \"context\" attribute is required by this class.")
+	}
 	if uti.IsUndefined(account) {
 		panic("The \"account\" attribute is required by this class.")
 	}
@@ -42,16 +46,14 @@ func (c *credentialClass_) Credential(
 		panic("The \"version\" attribute is required by this class.")
 	}
 
-	var salt = doc.Moment() // The current moment in time as a salt.
 	var previous = "none"
 	var current = version.AsIntrinsic()[0]
 	if current > 1 {
 		previous = "<nebula:/" + tag.AsString()[1:] +
 			":" + doc.Version([]uint{current - 1}).AsString() + ">"
 	}
-	var component = doc.ParseSource(`[
-    $salt: ` + salt.AsString() + `
-](
+	var source = doc.FormatComponent(doc.Component(context, nil))
+	var component = doc.ParseSource(source + `(
     $type: <bali:/types/notary/Credential:v3>
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
@@ -106,8 +108,8 @@ func (v *credential_) AsString() string {
 
 // Attribute Methods
 
-func (v *credential_) GetSalt() doc.MomentLike {
-	var object = v.GetObject(doc.Symbol("$salt"))
+func (v *credential_) GetContext() any {
+	var object = v.GetEntity()
 	return doc.Moment(doc.FormatComponent(object))
 }
 

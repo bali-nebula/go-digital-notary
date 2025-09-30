@@ -149,9 +149,8 @@ func TestDigitalNotaryInitialization(t *tes.T) {
 		notary.ForgetKey()
 	}()
 	notary.ForgetKey()
-	var tag = doc.Tag()
-	var version = doc.Version()
-	notary.GenerateCredential(tag, version)
+	var context = doc.Moment()
+	notary.GenerateCredential(context)
 }
 
 func TestDigitalNotaryGenerateKey(t *tes.T) {
@@ -246,9 +245,16 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	uti.WriteFile(filename, source)
 
 	// Generate an authentication credential.
-	var tag = doc.Tag()
-	var version = doc.Version()
-	var credential = notary.GenerateCredential(tag, version)
+	var context = doc.Moment()
+	var credential = notary.GenerateCredential(context)
+	ass.True(
+		t,
+		notary.SealMatches(
+			credential,
+			certificateV2,
+		),
+	)
+	credential = notary.RefreshCredential(credential, context)
 	ass.True(
 		t,
 		notary.SealMatches(
