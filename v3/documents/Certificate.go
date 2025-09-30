@@ -28,15 +28,11 @@ func CertificateClass() CertificateClassLike {
 // Constructor Methods
 
 func (c *certificateClass_) Certificate(
-	account doc.TagLike,
 	tag doc.TagLike,
 	version doc.VersionLike,
 	algorithm doc.QuoteLike,
 	key doc.BinaryLike,
 ) CertificateLike {
-	if uti.IsUndefined(account) {
-		panic("The \"account\" attribute is required by this class.")
-	}
 	if uti.IsUndefined(tag) {
 		panic("The \"tag\" attribute is required by this class.")
 	}
@@ -65,7 +61,6 @@ func (c *certificateClass_) Certificate(
     $version: ` + version.AsString() + `
     $previous: ` + previous + `
     $permissions: <bali:/permissions/Public:v3>
-    $account: ` + account.AsString() + `
 )`,
 	)
 
@@ -160,11 +155,6 @@ func (v *certificate_) GetOptionalPrevious() doc.ResourceLike {
 func (v *certificate_) GetPermissions() doc.ResourceLike {
 	var component = v.GetParameter(doc.Symbol("$permissions"))
 	return doc.Resource(doc.FormatComponent(component))
-}
-
-func (v *certificate_) GetAccount() doc.TagLike {
-	var component = v.GetParameter(doc.Symbol("$account"))
-	return doc.Tag(doc.FormatComponent(component))
 }
 
 // Private Methods

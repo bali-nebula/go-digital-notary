@@ -47,7 +47,6 @@ func TestParsingCredentials(t *tes.T) {
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var credential = not.CredentialFromString(source)
-	credential.GetAccount()
 	credential.GetTag()
 	credential.GetVersion()
 	var formatted = credential.AsString()
@@ -59,13 +58,11 @@ func TestParsingCertificates(t *tes.T) {
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var certificate = not.CertificateFromString(source)
-	var account = certificate.GetAccount()
 	var tag = certificate.GetTag()
 	var version = certificate.GetVersion()
 	var algorithm = certificate.GetAlgorithm()
 	var key = certificate.GetKey()
 	certificate = not.Certificate(
-		account,
 		tag,
 		version,
 		algorithm,
@@ -86,7 +83,6 @@ func TestParsingContents(t *tes.T) {
 	var version = content.GetVersion()
 	var optionalPrevious = content.GetOptionalPrevious()
 	var permissions = content.GetPermissions()
-	var account = content.GetAccount()
 	content = not.Content(
 		entity,
 		type_,
@@ -94,7 +90,6 @@ func TestParsingContents(t *tes.T) {
 		version,
 		optionalPrevious,
 		permissions,
-		account,
 	)
 	var formatted = content.AsString()
 	ass.Equal(t, source, formatted)
@@ -203,7 +198,6 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	$version: v1
 	$previous: none
 	$permissions: <bali:/permissions/Public:v3>
-	$account: #AWYH6KXBL0QAJCF0L4HCHZAS3NFP2724
 )`,
 	)
 	filename = "./test/notary/Content.bali"

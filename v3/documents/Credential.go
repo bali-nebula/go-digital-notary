@@ -29,15 +29,11 @@ func CredentialClass() CredentialClassLike {
 
 func (c *credentialClass_) Credential(
 	context any,
-	account doc.TagLike,
 	tag doc.TagLike,
 	version doc.VersionLike,
 ) CredentialLike {
 	if uti.IsUndefined(context) {
 		panic("The \"context\" attribute is required by this class.")
-	}
-	if uti.IsUndefined(account) {
-		panic("The \"account\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(tag) {
 		panic("The \"tag\" attribute is required by this class.")
@@ -59,7 +55,6 @@ func (c *credentialClass_) Credential(
     $version: ` + version.AsString() + `
     $previous: ` + previous + `
     $permissions: <bali:/permissions/Public:v3>
-    $account: ` + account.AsString() + `
 )`,
 	)
 
@@ -149,11 +144,6 @@ func (v *credential_) GetOptionalPrevious() doc.ResourceLike {
 func (v *credential_) GetPermissions() doc.ResourceLike {
 	var component = v.GetParameter(doc.Symbol("$permissions"))
 	return doc.Resource(doc.FormatComponent(component))
-}
-
-func (v *credential_) GetAccount() doc.TagLike {
-	var component = v.GetParameter(doc.Symbol("$account"))
-	return doc.Tag(doc.FormatComponent(component))
 }
 
 // Private Methods

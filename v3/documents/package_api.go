@@ -46,7 +46,6 @@ concrete certificate-like class.
 type CertificateClassLike interface {
 	// Constructor Methods
 	Certificate(
-		account doc.TagLike,
 		tag doc.TagLike,
 		version doc.VersionLike,
 		algorithm doc.QuoteLike,
@@ -92,7 +91,6 @@ type ContentClassLike interface {
 		version doc.VersionLike,
 		optionalPrevious doc.ResourceLike,
 		permissions doc.ResourceLike,
-		account doc.TagLike,
 	) ContentLike
 	ContentFromString(
 		source string,
@@ -108,7 +106,6 @@ type CredentialClassLike interface {
 	// Constructor Methods
 	Credential(
 		context any,
-		account doc.TagLike,
 		tag doc.TagLike,
 		version doc.VersionLike,
 	) CredentialLike
@@ -223,9 +220,11 @@ type DocumentLike interface {
 	AsIntrinsic() doc.ComponentLike
 	AsString() string
 	GetContent() Parameterized
+	GetAccount() doc.TagLike
 	GetTimestamp() doc.MomentLike
 	GetNotary() CitationLike
 	SetNotary(
+		account doc.TagLike,
 		notary CitationLike,
 	)
 	HasSeal() bool
@@ -263,5 +262,4 @@ type Parameterized interface {
 	GetVersion() doc.VersionLike
 	GetOptionalPrevious() doc.ResourceLike
 	GetPermissions() doc.ResourceLike
-	GetAccount() doc.TagLike
 }

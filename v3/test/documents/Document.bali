@@ -10,9 +10,9 @@
         $version: v1
         $permissions: <bali:/permissions/Public:v3>
         $previous: none
-        $account: #AWYH6KXBL0QAJCF0L4HCHZAS3NFP2724
     )
     $timestamp: <2025-09-30T12:31:51.480>
+    $account: #AWYH6KXBL0QAJCF0L4HCHZAS3NFP2724
     $notary: [
         $tag: #DB98S34CZ4SPSG6XWNBNT5GPHP77L95V
         $version: v1

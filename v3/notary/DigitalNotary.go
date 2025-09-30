@@ -94,12 +94,10 @@ func (v *digitalNotary_) GenerateKey() not.DocumentLike {
 	var key = doc.Binary(bytes)
 
 	// Create the new certificate.
-	var account = v.account_
 	var tag = doc.Tag()         // Generate a new random tag.
 	var version = doc.Version() // v1
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var certificate = not.CertificateClass().Certificate(
-		account,
 		tag,
 		version,
 		algorithm,
@@ -108,8 +106,9 @@ func (v *digitalNotary_) GenerateKey() not.DocumentLike {
 	var document = not.DocumentClass().Document(certificate)
 
 	// Notarize the document using its own key.
+	var account = v.account_
 	var notary not.CitationLike
-	document.SetNotary(notary)
+	document.SetNotary(account, notary)
 	var source = document.AsString()
 	bytes = v.hsm_.SignBytes([]byte(source))
 	var signature = doc.Binary(bytes)
@@ -148,14 +147,12 @@ func (v *digitalNotary_) RefreshKey() not.DocumentLike {
 	var key = doc.Binary(bytes)
 
 	// Create the new certificate.
-	var account = v.account_
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var previous = v.getCitation()
 	var tag = previous.GetTag()
 	var current = previous.GetVersion()
 	var version = doc.VersionClass().GetNextVersion(current, 0)
 	var certificate = not.CertificateClass().Certificate(
-		account,
 		tag,
 		version,
 		algorithm,
@@ -164,7 +161,8 @@ func (v *digitalNotary_) RefreshKey() not.DocumentLike {
 	var document = not.DocumentClass().Document(certificate)
 
 	// Notarize the document using the previous key.
-	document.SetNotary(previous)
+	var account = v.account_
+	document.SetNotary(account, previous)
 	var source = document.AsString()
 	bytes = v.hsm_.SignBytes([]byte(source))
 	var signature = doc.Binary(bytes)
@@ -212,12 +210,10 @@ func (v *digitalNotary_) GenerateCredential(
 	)
 
 	// Create the credential.
-	var account = v.account_
 	var tag = doc.Tag()
 	var version = doc.Version()
 	var credential = not.CredentialClass().Credential(
 		context,
-		account,
 		tag,
 		version,
 	)
@@ -226,8 +222,9 @@ func (v *digitalNotary_) GenerateCredential(
 	var document = not.DocumentClass().Document(
 		credential,
 	)
+	var account = v.account_
 	var notary = v.getCitation()
-	document.SetNotary(notary)
+	document.SetNotary(account, notary)
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var source = document.AsString()
 	var bytes = v.hsm_.SignBytes([]byte(source))
@@ -251,14 +248,12 @@ func (v *digitalNotary_) RefreshCredential(
 	)
 
 	// Create the next version of the credential.
-	var account = v.account_
 	var content = credential.GetContent()
 	var tag = content.GetTag()
 	var current = content.GetVersion()
 	var version = doc.VersionClass().GetNextVersion(current, 0)
 	content = not.CredentialClass().Credential(
 		context,
-		account,
 		tag,
 		version,
 	)
@@ -267,8 +262,9 @@ func (v *digitalNotary_) RefreshCredential(
 	var document = not.DocumentClass().Document(
 		content,
 	)
+	var account = v.account_
 	var notary = v.getCitation()
-	document.SetNotary(notary)
+	document.SetNotary(account, notary)
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var source = document.AsString()
 	var bytes = v.hsm_.SignBytes([]byte(source))
@@ -291,8 +287,9 @@ func (v *digitalNotary_) NotarizeDocument(
 	)
 
 	// Notarize the document.
+	var account = v.account_
 	var notary = v.getCitation()
-	document.SetNotary(notary)
+	document.SetNotary(account, notary)
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var source = document.AsString()
 	var bytes = v.hsm_.SignBytes([]byte(source))

@@ -34,7 +34,6 @@ func (c *contentClass_) Content(
 	version doc.VersionLike,
 	optionalPrevious doc.ResourceLike,
 	permissions doc.ResourceLike,
-	account doc.TagLike,
 ) ContentLike {
 	if uti.IsUndefined(entity) {
 		panic("The \"entity\" attribute is required by this class.")
@@ -55,9 +54,6 @@ func (c *contentClass_) Content(
 	if uti.IsUndefined(permissions) {
 		panic("The \"permissions\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(account) {
-		panic("The \"account\" attribute is required by this class.")
-	}
 
 	var component = doc.ParseSource(doc.FormatComponent(entity) + `(
     $type: ` + type_.AsString() + `
@@ -65,7 +61,6 @@ func (c *contentClass_) Content(
     $version: ` + version.AsString() + `
     $previous: ` + previous + `
     $permissions: ` + permissions.AsString() + `
-    $account: ` + account.AsString() + `
 )`)
 
 	var instance = &content_{
@@ -148,11 +143,6 @@ func (v *content_) GetOptionalPrevious() doc.ResourceLike {
 func (v *content_) GetPermissions() doc.ResourceLike {
 	var component = v.GetParameter(doc.Symbol("$permissions"))
 	return doc.Resource(doc.FormatComponent(component))
-}
-
-func (v *content_) GetAccount() doc.TagLike {
-	var component = v.GetParameter(doc.Symbol("$account"))
-	return doc.Tag(doc.FormatComponent(component))
 }
 
 // PROTECTED INTERFACE

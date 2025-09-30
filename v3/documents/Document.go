@@ -97,6 +97,15 @@ func (v *document_) GetTimestamp() doc.MomentLike {
 	return timestamp
 }
 
+func (v *document_) GetAccount() doc.TagLike {
+	var object = v.GetObject(doc.Symbol("$account"))
+	var account doc.TagLike
+	if uti.IsDefined(object) {
+		account = doc.Tag(doc.FormatComponent(object))
+	}
+	return account
+}
+
 func (v *document_) GetNotary() CitationLike {
 	var object = v.GetObject(doc.Symbol("$notary"))
 	var notary CitationLike
@@ -107,9 +116,12 @@ func (v *document_) GetNotary() CitationLike {
 }
 
 func (v *document_) SetNotary(
+	account doc.TagLike,
 	notary CitationLike,
 ) {
-	var component = doc.ParseSource(doc.Moment().AsString())
+	var component = doc.ParseSource(account.AsString())
+	v.SetObject(component, doc.Symbol("$account"))
+	component = doc.ParseSource(doc.Moment().AsString())
 	v.SetObject(component, doc.Symbol("$timestamp"))
 	component = doc.ParseSource("none")
 	if uti.IsDefined(notary) {

@@ -97,14 +97,12 @@ func CertificateClass() CertificateClassLike {
 }
 
 func Certificate(
-	account bal.TagLike,
 	tag bal.TagLike,
 	version bal.VersionLike,
 	algorithm bal.QuoteLike,
 	key bal.BinaryLike,
 ) CertificateLike {
 	return CertificateClass().Certificate(
-		account,
 		tag,
 		version,
 		algorithm,
@@ -165,7 +163,6 @@ func Content(
 	version bal.VersionLike,
 	optionalPrevious bal.ResourceLike,
 	permissions bal.ResourceLike,
-	account bal.TagLike,
 ) ContentLike {
 	return ContentClass().Content(
 		entity,
@@ -174,7 +171,6 @@ func Content(
 		version,
 		optionalPrevious,
 		permissions,
-		account,
 	)
 }
 
@@ -192,13 +188,11 @@ func CredentialClass() CredentialClassLike {
 
 func Credential(
 	context any,
-	account bal.TagLike,
 	tag bal.TagLike,
 	version bal.VersionLike,
 ) CredentialLike {
 	return CredentialClass().Credential(
 		context,
-		account,
 		tag,
 		version,
 	)
