@@ -79,13 +79,13 @@ type DigitalNotaryLike interface {
 	) not.DocumentLike
 	SealMatches(
 		document not.DocumentLike,
-		certificate not.CertificateLike,
+		certificate not.DocumentLike,
 	) bool
 	CiteDocument(
 		document not.DocumentLike,
-	) doc.ResourceLike
+	) not.CitationLike
 	CitationMatches(
-		citation doc.ResourceLike,
+		citation not.CitationLike,
 		document not.DocumentLike,
 	) bool
 }

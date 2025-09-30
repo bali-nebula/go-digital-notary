@@ -108,7 +108,7 @@ func (v *digitalNotary_) GenerateKey() not.DocumentLike {
 	var document = not.DocumentClass().Document(certificate)
 
 	// Notarize the document using its own key.
-	var notary doc.ResourceLike
+	var notary not.CitationLike
 	document.SetNotary(notary)
 	var source = document.AsString()
 	bytes = v.hsm_.SignBytes([]byte(source))
@@ -151,9 +151,8 @@ func (v *digitalNotary_) RefreshKey() not.DocumentLike {
 	var account = v.account_
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var previous = v.getCitation()
-	var citation = not.CitationClass().CitationFromResource(previous)
-	var tag = citation.GetTag()
-	var current = citation.GetVersion()
+	var tag = previous.GetTag()
+	var current = previous.GetVersion()
 	var version = doc.VersionClass().GetNextVersion(current, 0)
 	var certificate = not.CertificateClass().Certificate(
 		account,
@@ -179,7 +178,7 @@ func (v *digitalNotary_) RefreshKey() not.DocumentLike {
 	algorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
 	bytes = []byte(document.AsString())
 	var digest = doc.Binary(v.ssm_.DigestBytes(bytes))
-	citation = not.CitationClass().Citation(
+	var citation = not.CitationClass().Citation(
 		tag,
 		version,
 		algorithm,
@@ -266,7 +265,7 @@ func (v *digitalNotary_) NotarizeDocument(
 
 func (v *digitalNotary_) SealMatches(
 	document not.DocumentLike,
-	certificate not.CertificateLike,
+	certificate not.DocumentLike,
 ) bool {
 	// Check for any errors at the end.
 	defer v.errorCheck(
@@ -274,7 +273,10 @@ func (v *digitalNotary_) SealMatches(
 	)
 
 	// Compare the signature algorithms for the public certificate and SSM.
-	var certificateAlgorithm = string(certificate.GetAlgorithm().AsIntrinsic())
+	var content = not.CertificateClass().CertificateFromString(
+		certificate.GetContent().AsString(),
+	)
+	var certificateAlgorithm = string(content.GetAlgorithm().AsIntrinsic())
 	var hsmAlgorithm = v.hsm_.GetSignatureAlgorithm()
 	if certificateAlgorithm != hsmAlgorithm {
 		var message = fmt.Sprintf(
@@ -286,7 +288,7 @@ func (v *digitalNotary_) SealMatches(
 	}
 
 	// Validate the seal on the notarized document.
-	var publicKey = certificate.GetKey()
+	var publicKey = content.GetKey()
 	var seal = document.RemoveSeal()
 	var source = document.AsString()
 	var sourceBytes = []byte(source)
@@ -298,7 +300,7 @@ func (v *digitalNotary_) SealMatches(
 
 func (v *digitalNotary_) CiteDocument(
 	document not.DocumentLike,
-) doc.ResourceLike {
+) not.CitationLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
 		"An error occurred while attempting to create a citation to a document",
@@ -318,12 +320,11 @@ func (v *digitalNotary_) CiteDocument(
 		algorithm,
 		digest,
 	)
-	var resource = citation.AsResource()
-	return resource
+	return citation
 }
 
 func (v *digitalNotary_) CitationMatches(
-	resource doc.ResourceLike,
+	citation not.CitationLike,
 	document not.DocumentLike,
 ) bool {
 	// Check for any errors at the end.
@@ -332,7 +333,6 @@ func (v *digitalNotary_) CitationMatches(
 	)
 
 	// Compare the citation digest with a digest of the document.
-	var citation = not.CitationClass().CitationFromResource(resource)
 	var citationAlgorithm = citation.GetAlgorithm()
 	var citationDigest = citation.GetDigest()
 	var ssmAlgorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
@@ -354,13 +354,13 @@ func (v *digitalNotary_) CitationMatches(
 
 // Private Methods
 
-func (v *digitalNotary_) getCitation() doc.ResourceLike {
+func (v *digitalNotary_) getCitation() not.CitationLike {
 	if !uti.PathExists(v.filename_) {
 		panic("The digital notary has not yet been initialized.")
 	}
 	var source = uti.ReadFile(v.filename_)
 	var citation = not.CitationClass().CitationFromString(source)
-	return citation.AsResource()
+	return citation
 }
 
 func (v *digitalNotary_) errorCheck(

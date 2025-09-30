@@ -88,20 +88,20 @@ func (v *document_) GetContent() Parameterized {
 	return ContentClass().ContentFromString(doc.FormatComponent(object))
 }
 
-func (v *document_) GetNotary() doc.ResourceLike {
+func (v *document_) GetNotary() CitationLike {
 	var object = v.GetObject(doc.Symbol("$notary"))
-	var notary doc.ResourceLike
+	var notary CitationLike
 	if uti.IsDefined(object) {
 		switch object.GetComponent().GetEntity().(type) {
-		case doc.ResourceLike:
-			notary = doc.Resource(doc.FormatComponent(object))
+		case CitationLike:
+			notary = CitationClass().CitationFromString(doc.FormatComponent(object))
 		}
 	}
 	return notary
 }
 
 func (v *document_) SetNotary(
-	notary doc.ResourceLike,
+	notary CitationLike,
 ) {
 	var component = doc.ParseSource("none")
 	if uti.IsDefined(notary) {

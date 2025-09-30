@@ -1,14 +1,14 @@
 [
-    $timestamp: <2025-09-29T21:27:54.562>
+    $timestamp: <2025-09-30T12:31:51.494>
     $algorithm: "ED25519"
     $key: '>
-        aoQ8kPl3rbMcjjGP5peN+y2RiX0q5fzbxhoV/xRVowU
+        UvudJ6z9v4i9F/J4LrL3ORTTveMce+9lWZx7eCK8PTs
     <'
 ](
     $type: <bali:/types/notary/Certificate:v3>
-    $tag: #RY6FC0R2BB1MTMRW0L81121BLSA8W4NN
+    $tag: #DB98S34CZ4SPSG6XWNBNT5GPHP77L95V
     $version: v2
-    $previous: <nebula:/RY6FC0R2BB1MTMRW0L81121BLSA8W4NN:v1>
+    $previous: <nebula:/DB98S34CZ4SPSG6XWNBNT5GPHP77L95V:v1>
     $permissions: <bali:/permissions/Public:v3>
-    $account: #DZP0TK4R95GSH6PVYDJFZJFM6VW4B7JV
+    $account: #YWP9TBCGGYGV9DYBKAY6YDH0VWK2XRJ5
 )

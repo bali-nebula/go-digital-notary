@@ -176,13 +176,11 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	// Generate and validate a new public-private key pair.
 	notary.ForgetKey()
 	var certificateV1 = notary.GenerateKey()
-	var content = certificateV1.GetContent()
-	var keyV1 = not.CertificateFromString(content.AsString())
 	ass.True(
 		t,
 		notary.SealMatches(
 			certificateV1,
-			keyV1,
+			certificateV1,
 		),
 	)
 	var filename = "./test/notary/CertificateV1.bali"
@@ -201,8 +199,8 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	$type: <bali:/examples/Transaction:v1.2.3>
 	$tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
 	$version: v1
-	$permissions: <bali:/permissions/Public:v3>
 	$previous: none
+	$permissions: <bali:/permissions/Public:v3>
 	$account: #AWYH6KXBL0QAJCF0L4HCHZAS3NFP2724
 )`,
 	)
@@ -220,7 +218,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 		t,
 		notary.SealMatches(
 			contract,
-			keyV1,
+			certificateV1,
 		),
 	)
 	filename = "./test/notary/Document.bali"
@@ -237,7 +235,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 		t,
 		notary.SealMatches(
 			certificateV2,
-			keyV1,
+			certificateV1,
 		),
 	)
 	filename = "./test/notary/CertificateV2.bali"
@@ -248,13 +246,11 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	var tag = doc.Tag()
 	var version = doc.Version()
 	var credential = notary.GenerateCredential(tag, version)
-	content = certificateV2.GetContent()
-	var keyV2 = not.CertificateFromString(content.AsString())
 	ass.True(
 		t,
 		notary.SealMatches(
 			credential,
-			keyV2,
+			certificateV2,
 		),
 	)
 	filename = "./test/notary/Credential.bali"

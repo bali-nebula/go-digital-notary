@@ -1,6 +1,6 @@
 [
     $content: [
-        $timestamp: <2025-09-29T21:34:37.965>
+        $timestamp: <2025-09-30T12:31:51.480>
         $consumer: "Derk Norton"
         $merchant: <https://www.starbucks.com/>
         $amount: 7.95($currency: $USD)
@@ -12,13 +12,21 @@
         $previous: none
         $account: #AWYH6KXBL0QAJCF0L4HCHZAS3NFP2724
     )
-    $notary: <nebula:/TKVZ42A2AHYM8GXT5G237K0C5J6LGA3G:v1?SHA512=2w51l1R6XUoz0xmiQO0kgtj9s1YYhuzl6k8AZ-ELRSUEeEOPdcEgsVLKoIDA-q6Y68XFNxJilWXlZ9vgXOxTyg>
+    $notary: [
+        $tag: #DB98S34CZ4SPSG6XWNBNT5GPHP77L95V
+        $version: v1
+        $algorithm: "SHA512"
+        $digest: '>
+            rUm8TdSnfTeDUkkaDmwxR25Tszh0JXcs2+uFbXt1ML8dFcIRLfXVkQItTZxK
+            4CopXfSAsWTm2aeJgguI8O/Q0A
+        <'
+    ]
     $seal: [
-        $timestamp: <2025-09-29T21:34:37.975>
+        $timestamp: <2025-09-30T12:31:51.488>
         $algorithm: "ED25519"
         $signature: '>
-            864NuIwKmvvFj57pwTGiImCZlyIy3EupFCpscQnHA9JBU5BeoGAeZAFufT7O
-            +SLw7tyJ9RSh//QoIredteN6Cg
+            Y/VBlgodKuy/VvZ2loIFYtg+lO2TM8KbIVx6ucj/sOqq05wonSyWaSfQfig6
+            6VI16qsVDhblJuLIewPz8OSSBQ
         <'
     ]($type: <bali:/types/notary/Seal:v3>)
 ]($type: <bali:/types/notary/Document:v3>)

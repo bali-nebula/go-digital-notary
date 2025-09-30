@@ -223,9 +223,9 @@ type DocumentLike interface {
 	AsIntrinsic() doc.ComponentLike
 	AsString() string
 	GetContent() Parameterized
-	GetNotary() doc.ResourceLike
+	GetNotary() CitationLike
 	SetNotary(
-		notary doc.ResourceLike,
+		notary CitationLike,
 	)
 	HasSeal() bool
 	SetSeal(
