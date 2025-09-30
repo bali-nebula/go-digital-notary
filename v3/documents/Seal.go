@@ -38,9 +38,7 @@ func (c *sealClass_) Seal(
 		panic("The \"signature\" attribute is required by this class.")
 	}
 
-	var timestamp = doc.Moment() // The current moment in time.
 	var component = doc.ParseSource(`[
-    $timestamp: ` + timestamp.AsString() + `
     $algorithm: ` + algorithm.AsString() + `
     $signature: ` + signature.AsString() + `
 ]($type: <bali:/types/notary/Seal:v3>)`,
@@ -86,11 +84,6 @@ func (v *seal_) AsIntrinsic() doc.ComponentLike {
 
 func (v *seal_) AsString() string {
 	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
-}
-
-func (v *seal_) GetTimestamp() doc.MomentLike {
-	var object = v.GetObject(doc.Symbol("$timestamp"))
-	return doc.Moment(doc.FormatComponent(object))
 }
 
 func (v *seal_) GetAlgorithm() doc.QuoteLike {

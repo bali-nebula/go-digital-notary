@@ -12,6 +12,7 @@
         $previous: none
         $account: #AWYH6KXBL0QAJCF0L4HCHZAS3NFP2724
     )
+    $timestamp: <2025-09-30T12:31:51.480>
     $notary: [
         $tag: #DB98S34CZ4SPSG6XWNBNT5GPHP77L95V
         $version: v1
@@ -20,9 +21,8 @@
             rUm8TdSnfTeDUkkaDmwxR25Tszh0JXcs2+uFbXt1ML8dFcIRLfXVkQItTZxK
             4CopXfSAsWTm2aeJgguI8O/Q0A
         <'
-    ]
+    ]($type: <bali:/types/notary/Citation:v3>)
     $seal: [
-        $timestamp: <2025-09-30T12:31:51.488>
         $algorithm: "ED25519"
         $signature: '>
             Y/VBlgodKuy/VvZ2loIFYtg+lO2TM8KbIVx6ucj/sOqq05wonSyWaSfQfig6

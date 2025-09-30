@@ -42,7 +42,7 @@ func (c *credentialClass_) Credential(
 		panic("The \"version\" attribute is required by this class.")
 	}
 
-	var timestamp = doc.Moment() // The current moment in time as a salt.
+	var salt = doc.Moment() // The current moment in time as a salt.
 	var previous = "none"
 	var current = version.AsIntrinsic()[0]
 	if current > 1 {
@@ -50,7 +50,7 @@ func (c *credentialClass_) Credential(
 			":" + doc.Version([]uint{current - 1}).AsString() + ">"
 	}
 	var component = doc.ParseSource(`[
-    $timestamp: ` + timestamp.AsString() + `
+    $salt: ` + salt.AsString() + `
 ](
     $type: <bali:/types/notary/Credential:v3>
     $tag: ` + tag.AsString() + `
@@ -106,8 +106,8 @@ func (v *credential_) AsString() string {
 
 // Attribute Methods
 
-func (v *credential_) GetTimestamp() doc.MomentLike {
-	var object = v.GetObject(doc.Symbol("$timestamp"))
+func (v *credential_) GetSalt() doc.MomentLike {
+	var object = v.GetObject(doc.Symbol("$salt"))
 	return doc.Moment(doc.FormatComponent(object))
 }
 

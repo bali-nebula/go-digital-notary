@@ -50,7 +50,6 @@ func TestParsingCredentials(t *tes.T) {
 	credential.GetAccount()
 	credential.GetTag()
 	credential.GetVersion()
-	credential.GetTimestamp()
 	var formatted = credential.AsString()
 	ass.Equal(t, source, formatted)
 }
@@ -60,11 +59,18 @@ func TestParsingCertificates(t *tes.T) {
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var certificate = not.CertificateFromString(source)
-	certificate.GetTimestamp()
-	certificate.GetTag()
-	certificate.GetVersion()
-	certificate.GetAlgorithm()
-	certificate.GetKey()
+	var account = certificate.GetAccount()
+	var tag = certificate.GetTag()
+	var version = certificate.GetVersion()
+	var algorithm = certificate.GetAlgorithm()
+	var key = certificate.GetKey()
+	certificate = not.Certificate(
+		account,
+		tag,
+		version,
+		algorithm,
+		key,
+	)
 	var formatted = certificate.AsString()
 	ass.Equal(t, source, formatted)
 }
@@ -98,16 +104,13 @@ func TestParsingDocuments(t *tes.T) {
 	var filename = directory + "documents/Document.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var contract = not.DocumentFromString(source)
-	var content = contract.GetContent()
-	var notary = contract.GetNotary()
-	var seal = contract.RemoveSeal()
-	contract = not.Document(
-		content,
-	)
-	contract.SetNotary(notary)
-	contract.SetSeal(seal)
-	var formatted = contract.AsString()
+	var document = not.DocumentFromString(source)
+	document.GetContent()
+	document.GetTimestamp()
+	document.GetNotary()
+	var seal = document.RemoveSeal()
+	document.SetSeal(seal)
+	var formatted = document.AsString()
 	ass.Equal(t, source, formatted)
 }
 

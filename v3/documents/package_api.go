@@ -158,7 +158,6 @@ type CertificateLike interface {
 	// Principal Methods
 	GetClass() CertificateClassLike
 	AsIntrinsic() doc.ComponentLike
-	GetTimestamp() doc.MomentLike
 	GetAlgorithm() doc.QuoteLike
 	GetKey() doc.BinaryLike
 
@@ -206,7 +205,7 @@ type CredentialLike interface {
 	// Principal Methods
 	GetClass() CredentialClassLike
 	AsIntrinsic() doc.ComponentLike
-	GetTimestamp() doc.MomentLike
+	GetSalt() doc.MomentLike
 
 	// Aspect Interfaces
 	Parameterized
@@ -223,6 +222,7 @@ type DocumentLike interface {
 	AsIntrinsic() doc.ComponentLike
 	AsString() string
 	GetContent() Parameterized
+	GetTimestamp() doc.MomentLike
 	GetNotary() CitationLike
 	SetNotary(
 		notary CitationLike,
@@ -244,7 +244,6 @@ type SealLike interface {
 	GetClass() SealClassLike
 	AsIntrinsic() doc.ComponentLike
 	AsString() string
-	GetTimestamp() doc.MomentLike
 	GetAlgorithm() doc.QuoteLike
 	GetSignature() doc.BinaryLike
 }

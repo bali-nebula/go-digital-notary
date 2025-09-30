@@ -50,7 +50,6 @@ func (c *certificateClass_) Certificate(
 		panic("The \"key\" attribute is required by this class.")
 	}
 
-	var timestamp = doc.Moment() // The current moment in time.
 	var previous = "none"
 	var current = version.AsIntrinsic()[0]
 	if current > 1 {
@@ -58,7 +57,6 @@ func (c *certificateClass_) Certificate(
 			":" + doc.Version([]uint{current - 1}).AsString() + ">"
 	}
 	var component = doc.ParseSource(`[
-    $timestamp: ` + timestamp.AsString() + `
     $algorithm: ` + algorithm.AsString() + `
     $key: ` + key.AsString() + `
 ](
@@ -115,11 +113,6 @@ func (v *certificate_) AsString() string {
 }
 
 // Attribute Methods
-
-func (v *certificate_) GetTimestamp() doc.MomentLike {
-	var object = v.GetObject(doc.Symbol("$timestamp"))
-	return doc.Moment(doc.FormatComponent(object))
-}
 
 func (v *certificate_) GetAlgorithm() doc.QuoteLike {
 	var object = v.GetObject(doc.Symbol("$algorithm"))

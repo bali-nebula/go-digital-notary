@@ -88,14 +88,20 @@ func (v *document_) GetContent() Parameterized {
 	return ContentClass().ContentFromString(doc.FormatComponent(object))
 }
 
+func (v *document_) GetTimestamp() doc.MomentLike {
+	var object = v.GetObject(doc.Symbol("$timestamp"))
+	var timestamp doc.MomentLike
+	if uti.IsDefined(object) {
+		timestamp = doc.Moment(doc.FormatComponent(object))
+	}
+	return timestamp
+}
+
 func (v *document_) GetNotary() CitationLike {
 	var object = v.GetObject(doc.Symbol("$notary"))
 	var notary CitationLike
-	if uti.IsDefined(object) {
-		switch object.GetComponent().GetEntity().(type) {
-		case CitationLike:
-			notary = CitationClass().CitationFromString(doc.FormatComponent(object))
-		}
+	if uti.IsDefined(object) && doc.FormatComponent(object) != "none" {
+		notary = CitationClass().CitationFromString(doc.FormatComponent(object))
 	}
 	return notary
 }
@@ -103,7 +109,9 @@ func (v *document_) GetNotary() CitationLike {
 func (v *document_) SetNotary(
 	notary CitationLike,
 ) {
-	var component = doc.ParseSource("none")
+	var component = doc.ParseSource(doc.Moment().AsString())
+	v.SetObject(component, doc.Symbol("$timestamp"))
+	component = doc.ParseSource("none")
 	if uti.IsDefined(notary) {
 		component = doc.ParseSource(notary.AsString())
 	}
