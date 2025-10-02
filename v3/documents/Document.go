@@ -106,15 +106,6 @@ func (v *document_) GetAccount() doc.TagLike {
 	return account
 }
 
-func (v *document_) GetNotary() CitationLike {
-	var object = v.GetObject(doc.Symbol("$notary"))
-	var notary CitationLike
-	if uti.IsDefined(object) && doc.FormatComponent(object) != "none" {
-		notary = CitationClass().CitationFromString(doc.FormatComponent(object))
-	}
-	return notary
-}
-
 func (v *document_) SetNotary(
 	account doc.TagLike,
 	notary CitationLike,
@@ -130,10 +121,13 @@ func (v *document_) SetNotary(
 	v.SetObject(component, doc.Symbol("$notary"))
 }
 
-func (v *document_) HasSeal() bool {
-	var symbol = doc.Symbol("$seal")
-	var object = v.GetObject(symbol)
-	return uti.IsDefined(object)
+func (v *document_) GetNotary() CitationLike {
+	var object = v.GetObject(doc.Symbol("$notary"))
+	var notary CitationLike
+	if uti.IsDefined(object) && doc.FormatComponent(object) != "none" {
+		notary = CitationClass().CitationFromString(doc.FormatComponent(object))
+	}
+	return notary
 }
 
 func (v *document_) SetSeal(
@@ -141,6 +135,12 @@ func (v *document_) SetSeal(
 ) {
 	var component = doc.ParseSource(seal.AsString())
 	v.SetObject(component, doc.Symbol("$seal"))
+}
+
+func (v *document_) HasSeal() bool {
+	var symbol = doc.Symbol("$seal")
+	var object = v.GetObject(symbol)
+	return uti.IsDefined(object)
 }
 
 func (v *document_) RemoveSeal() SealLike {

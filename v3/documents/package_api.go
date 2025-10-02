@@ -222,15 +222,15 @@ type DocumentLike interface {
 	GetContent() Parameterized
 	GetAccount() doc.TagLike
 	GetTimestamp() doc.MomentLike
-	GetNotary() CitationLike
 	SetNotary(
 		account doc.TagLike,
 		notary CitationLike,
 	)
-	HasSeal() bool
+	GetNotary() CitationLike
 	SetSeal(
 		seal SealLike,
 	)
+	HasSeal() bool
 	RemoveSeal() SealLike
 }
 
