@@ -208,17 +208,17 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	var citation = notary.CiteDocument(document)
 	ass.True(t, notary.CitationMatches(citation, document))
 
-	// Notarize the transaction document to create a notarized contract.
-	var contract = notary.NotarizeDocument(document)
+	// Notarize the transaction document to create a notarized document.
+	notary.NotarizeDocument(document)
 	ass.True(
 		t,
 		notary.SealMatches(
-			contract,
+			document,
 			certificateV1,
 		),
 	)
 	filename = "./test/notary/Document.bali"
-	source = contract.AsString()
+	source = document.AsString()
 	uti.WriteFile(filename, source)
 
 	// Pickup where we left off with a new security module and digital notary.

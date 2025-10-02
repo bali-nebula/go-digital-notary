@@ -83,6 +83,56 @@ func (v *digitalNotary_) GetClass() DigitalNotaryClassLike {
 	return digitalNotaryClass()
 }
 
+func (v *digitalNotary_) CiteDocument(
+	document not.DocumentLike,
+) not.CitationLike {
+	// Check for any errors at the end.
+	defer v.errorCheck(
+		"An error occurred while attempting to create a citation to a document",
+	)
+
+	// Create a citation to the document.
+	var algorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
+	var source = document.AsString()
+	var bytes = []byte(source)
+	var digest = doc.Binary(v.ssm_.DigestBytes(bytes))
+	var content = document.GetContent()
+	var tag = content.GetTag()
+	var version = content.GetVersion()
+	var citation = not.CitationClass().Citation(
+		tag,
+		version,
+		algorithm,
+		digest,
+	)
+	return citation
+}
+
+func (v *digitalNotary_) CitationMatches(
+	citation not.CitationLike,
+	document not.DocumentLike,
+) bool {
+	// Check for any errors at the end.
+	defer v.errorCheck(
+		"An error occurred while attempting to verify a document citation",
+	)
+
+	// Compare the citation digest with a digest of the document.
+	var citationAlgorithm = citation.GetAlgorithm()
+	var citationDigest = citation.GetDigest()
+	var ssmAlgorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
+	var source = document.AsString()
+	var bytes = []byte(source)
+	var documentDigest = doc.Binary(v.ssm_.DigestBytes(bytes))
+	if citationAlgorithm.AsString() != ssmAlgorithm.AsString() {
+		return false
+	}
+	if !byt.Equal(citationDigest.AsIntrinsic(), documentDigest.AsIntrinsic()) {
+		return false
+	}
+	return true
+}
+
 func (v *digitalNotary_) GenerateKey() not.DocumentLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
@@ -280,7 +330,7 @@ func (v *digitalNotary_) RefreshCredential(
 
 func (v *digitalNotary_) NotarizeDocument(
 	document not.DocumentLike,
-) not.DocumentLike {
+) {
 	// Check for any errors at the end.
 	defer v.errorCheck(
 		"An error occurred while attempting to notarize a document",
@@ -299,8 +349,6 @@ func (v *digitalNotary_) NotarizeDocument(
 		signature,
 	)
 	document.SetSeal(seal)
-
-	return document
 }
 
 func (v *digitalNotary_) SealMatches(
@@ -336,56 +384,6 @@ func (v *digitalNotary_) SealMatches(
 	var certificateBytes = publicKey.AsIntrinsic()
 	var sealBytes = seal.GetSignature().AsIntrinsic()
 	return v.ssm_.IsValid(certificateBytes, sealBytes, sourceBytes)
-}
-
-func (v *digitalNotary_) CiteDocument(
-	document not.DocumentLike,
-) not.CitationLike {
-	// Check for any errors at the end.
-	defer v.errorCheck(
-		"An error occurred while attempting to create a citation to a document",
-	)
-
-	// Create a citation to the document.
-	var algorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
-	var source = document.AsString()
-	var bytes = []byte(source)
-	var digest = doc.Binary(v.ssm_.DigestBytes(bytes))
-	var content = document.GetContent()
-	var tag = content.GetTag()
-	var version = content.GetVersion()
-	var citation = not.CitationClass().Citation(
-		tag,
-		version,
-		algorithm,
-		digest,
-	)
-	return citation
-}
-
-func (v *digitalNotary_) CitationMatches(
-	citation not.CitationLike,
-	document not.DocumentLike,
-) bool {
-	// Check for any errors at the end.
-	defer v.errorCheck(
-		"An error occurred while attempting to verify a document citation",
-	)
-
-	// Compare the citation digest with a digest of the document.
-	var citationAlgorithm = citation.GetAlgorithm()
-	var citationDigest = citation.GetDigest()
-	var ssmAlgorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
-	var source = document.AsString()
-	var bytes = []byte(source)
-	var documentDigest = doc.Binary(v.ssm_.DigestBytes(bytes))
-	if citationAlgorithm.AsString() != ssmAlgorithm.AsString() {
-		return false
-	}
-	if !byt.Equal(citationDigest.AsIntrinsic(), documentDigest.AsIntrinsic()) {
-		return false
-	}
-	return true
 }
 
 // Attribute Methods

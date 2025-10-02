@@ -66,6 +66,13 @@ of a concrete digital-notary-like class.
 type DigitalNotaryLike interface {
 	// Principal Methods
 	GetClass() DigitalNotaryClassLike
+	CiteDocument(
+		document not.DocumentLike,
+	) not.CitationLike
+	CitationMatches(
+		citation not.CitationLike,
+		document not.DocumentLike,
+	) bool
 	GenerateKey() not.DocumentLike
 	RefreshKey() not.DocumentLike
 	ForgetKey()
@@ -78,17 +85,10 @@ type DigitalNotaryLike interface {
 	) not.DocumentLike
 	NotarizeDocument(
 		document not.DocumentLike,
-	) not.DocumentLike
+	)
 	SealMatches(
 		document not.DocumentLike,
 		certificate not.DocumentLike,
-	) bool
-	CiteDocument(
-		document not.DocumentLike,
-	) not.CitationLike
-	CitationMatches(
-		citation not.CitationLike,
-		document not.DocumentLike,
 	) bool
 }
 
