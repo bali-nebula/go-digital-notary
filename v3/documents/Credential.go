@@ -48,24 +48,15 @@ func (c *credentialClass_) Credential(
 		previous = "<nebula:/" + tag.AsString()[1:] +
 			":" + doc.Version([]uint{current - 1}).AsString() + ">"
 	}
-	var source = doc.FormatComponent(doc.Component(context, nil))
-	var component = doc.ParseSource(source + `(
+	var component = doc.Component(context, nil)
+	var source = doc.FormatComponent(component) + `(
     $type: <bali:/types/notary/Credential:v3>
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
     $previous: ` + previous + `
     $permissions: <bali:/permissions/Public:v3>
-)`,
-	)
-
-	var instance = &credential_{
-		// Initialize the instance attributes.
-
-		// Initialize the inherited aspects.
-		Declarative: component,
-	}
-
-	return instance
+)`
+	return c.CredentialFromString(source)
 }
 
 func (c *credentialClass_) CredentialFromString(

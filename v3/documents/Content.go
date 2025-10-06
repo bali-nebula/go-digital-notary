@@ -55,21 +55,14 @@ func (c *contentClass_) Content(
 		panic("The \"permissions\" attribute is required by this class.")
 	}
 
-	var component = doc.ParseSource(doc.FormatComponent(entity) + `(
+	var source = doc.FormatComponent(entity) + `(
     $type: ` + type_.AsString() + `
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
     $previous: ` + previous + `
     $permissions: ` + permissions.AsString() + `
-)`)
-
-	var instance = &content_{
-		// Initialize the instance attributes.
-
-		// Initialize the inherited aspects.
-		Declarative: component,
-	}
-	return instance
+)`
+	return c.ContentFromString(source)
 }
 
 func (c *contentClass_) ContentFromString(

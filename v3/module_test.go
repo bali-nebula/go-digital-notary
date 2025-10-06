@@ -27,7 +27,7 @@ func TestParsingCitations(t *tes.T) {
 	var filename = directory + "documents/Citation.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var citation = not.CitationFromString(source)
+	var citation = not.Citation(source)
 	var tag = citation.GetTag()
 	var version = citation.GetVersion()
 	var algorithm = citation.GetAlgorithm()
@@ -46,7 +46,7 @@ func TestParsingCredentials(t *tes.T) {
 	var filename = directory + "documents/Credential.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var credential = not.CredentialFromString(source)
+	var credential = not.Credential(source)
 	credential.GetTag()
 	credential.GetVersion()
 	var formatted = credential.AsString()
@@ -57,7 +57,7 @@ func TestParsingCertificates(t *tes.T) {
 	var filename = directory + "documents/Certificate.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var certificate = not.CertificateFromString(source)
+	var certificate = not.Certificate(source)
 	var tag = certificate.GetTag()
 	var version = certificate.GetVersion()
 	var algorithm = certificate.GetAlgorithm()
@@ -76,7 +76,7 @@ func TestParsingContents(t *tes.T) {
 	var filename = directory + "documents/Content.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var content = not.ContentFromString(source)
+	var content = not.Content(source)
 	var entity = content.GetEntity()
 	var type_ = content.GetType()
 	var tag = content.GetTag()
@@ -99,7 +99,7 @@ func TestParsingDocuments(t *tes.T) {
 	var filename = directory + "documents/Document.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var document = not.DocumentFromString(source)
+	var document = not.Document(source)
 	document.GetContent()
 	document.GetTimestamp()
 	document.GetNotary()
@@ -186,7 +186,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 
 	// Create and cite a new transaction document.
 	var timestamp = doc.Moment().AsString()
-	var transaction = not.ContentFromString(
+	var transaction = not.Content(
 		`[
     $timestamp: ` + timestamp + `
     $consumer: "Derk Norton"

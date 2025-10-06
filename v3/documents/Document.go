@@ -34,18 +34,10 @@ func (c *documentClass_) Document(
 		panic("The \"content\" attribute is required by this class.")
 	}
 
-	var component = doc.ParseSource(`[
+	var source = `[
     $content: ` + content.AsString() + `
-]($type: <bali:/types/notary/Document:v3>)`,
-	)
-
-	var instance = &document_{
-		// Initialize the instance attributes.
-
-		// Initialize the inherited aspects.
-		Declarative: component,
-	}
-	return instance
+]($type: <bali:/types/notary/Document:v3>)`
+	return c.DocumentFromString(source)
 }
 
 func (c *documentClass_) DocumentFromString(

@@ -31,10 +31,12 @@ For detailed documentation on this entire module refer to the wiki:
 package module
 
 import (
+	fmt "fmt"
 	bal "github.com/bali-nebula/go-bali-documents/v3"
 	doc "github.com/bali-nebula/go-digital-notary/v3/documents"
 	not "github.com/bali-nebula/go-digital-notary/v3/notary"
 	ssm "github.com/bali-nebula/go-digital-notary/v3/ssm"
+	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
 // TYPE ALIASES
@@ -96,156 +98,24 @@ func CertificateClass() CertificateClassLike {
 	return doc.CertificateClass()
 }
 
-func Certificate(
-	tag bal.TagLike,
-	version bal.VersionLike,
-	algorithm bal.QuoteLike,
-	key bal.BinaryLike,
-) CertificateLike {
-	return CertificateClass().Certificate(
-		tag,
-		version,
-		algorithm,
-		key,
-	)
-}
-
-func CertificateFromString(
-	source string,
-) CertificateLike {
-	return CertificateClass().CertificateFromString(
-		source,
-	)
-}
-
 func CitationClass() CitationClassLike {
 	return doc.CitationClass()
-}
-
-func Citation(
-	tag bal.TagLike,
-	version bal.VersionLike,
-	algorithm bal.QuoteLike,
-	digest bal.BinaryLike,
-) CitationLike {
-	return CitationClass().Citation(
-		tag,
-		version,
-		algorithm,
-		digest,
-	)
-}
-
-func CitationFromResource(
-	resource bal.ResourceLike,
-) CitationLike {
-	return CitationClass().CitationFromResource(
-		resource,
-	)
-}
-
-func CitationFromString(
-	source string,
-) CitationLike {
-	return CitationClass().CitationFromString(
-		source,
-	)
 }
 
 func ContentClass() ContentClassLike {
 	return doc.ContentClass()
 }
 
-func Content(
-	entity any,
-	type_ bal.ResourceLike,
-	tag bal.TagLike,
-	version bal.VersionLike,
-	optionalPrevious bal.ResourceLike,
-	permissions bal.ResourceLike,
-) ContentLike {
-	return ContentClass().Content(
-		entity,
-		type_,
-		tag,
-		version,
-		optionalPrevious,
-		permissions,
-	)
-}
-
-func ContentFromString(
-	source string,
-) ContentLike {
-	return ContentClass().ContentFromString(
-		source,
-	)
-}
-
 func CredentialClass() CredentialClassLike {
 	return doc.CredentialClass()
-}
-
-func Credential(
-	context any,
-	tag bal.TagLike,
-	version bal.VersionLike,
-) CredentialLike {
-	return CredentialClass().Credential(
-		context,
-		tag,
-		version,
-	)
-}
-
-func CredentialFromString(
-	source string,
-) CredentialLike {
-	return CredentialClass().CredentialFromString(
-		source,
-	)
 }
 
 func DocumentClass() DocumentClassLike {
 	return doc.DocumentClass()
 }
 
-func Document(
-	content doc.Parameterized,
-) DocumentLike {
-	return DocumentClass().Document(
-		content,
-	)
-}
-
-func DocumentFromString(
-	source string,
-) DocumentLike {
-	return DocumentClass().DocumentFromString(
-		source,
-	)
-}
-
 func SealClass() SealClassLike {
 	return doc.SealClass()
-}
-
-func Seal(
-	algorithm bal.QuoteLike,
-	signature bal.BinaryLike,
-) SealLike {
-	return SealClass().Seal(
-		algorithm,
-		signature,
-	)
-}
-
-func SealFromString(
-	source string,
-) SealLike {
-	return SealClass().SealFromString(
-		source,
-	)
 }
 
 // Notary
@@ -281,3 +151,117 @@ func Ssm(
 }
 
 // GLOBAL FUNCTIONS
+
+// Documents
+
+func Certificate(
+	value ...any,
+) CertificateLike {
+	if len(value) == 1 {
+		var source = value[0].(string)
+		return doc.CertificateClass().CertificateFromString(source)
+	}
+	var tag = value[0].(bal.TagLike)
+	var version = value[1].(bal.VersionLike)
+	var algorithm = value[2].(bal.QuoteLike)
+	var key = value[3].(bal.BinaryLike)
+	return CertificateClass().Certificate(tag, version, algorithm, key)
+}
+
+func Citation(
+	value ...any,
+) CitationLike {
+	if len(value) == 1 {
+		switch actual := value[0].(type) {
+		case string:
+			return doc.CitationClass().CitationFromString(actual)
+		case bal.ResourceLike:
+			return doc.CitationClass().CitationFromResource(actual)
+		default:
+			var message = fmt.Sprintf(
+				"An invalid argument type was passed into the Citation contructor: %v(%T)",
+				actual,
+				actual,
+			)
+			panic(message)
+		}
+	}
+	var tag = value[0].(bal.TagLike)
+	var version = value[1].(bal.VersionLike)
+	var algorithm = value[2].(bal.QuoteLike)
+	var digest = value[3].(bal.BinaryLike)
+	return CitationClass().Citation(tag, version, algorithm, digest)
+}
+
+func Content(
+	value ...any,
+) ContentLike {
+	if len(value) == 1 {
+		var source = value[0].(string)
+		return doc.ContentClass().ContentFromString(source)
+	}
+	var entity = value[0]
+	var type_ = value[1].(bal.ResourceLike)
+	var tag = value[2].(bal.TagLike)
+	var version = value[3].(bal.VersionLike)
+	var optionalPrevious bal.ResourceLike
+	if uti.IsDefined(value[4]) {
+		optionalPrevious = value[4].(bal.ResourceLike)
+	}
+	var permissions = value[5].(bal.ResourceLike)
+	return ContentClass().Content(
+		entity,
+		type_,
+		tag,
+		version,
+		optionalPrevious,
+		permissions,
+	)
+}
+
+func Credential(
+	value ...any,
+) CredentialLike {
+	if len(value) == 1 {
+		var source = value[0].(string)
+		return doc.CredentialClass().CredentialFromString(source)
+	}
+	var context = value[0]
+	var tag = value[1].(bal.TagLike)
+	var version = value[2].(bal.VersionLike)
+	return CredentialClass().Credential(
+		context,
+		tag,
+		version,
+	)
+}
+
+func Document(
+	value any,
+) DocumentLike {
+	switch actual := value.(type) {
+	case string:
+		return DocumentClass().DocumentFromString(actual)
+	case doc.Parameterized:
+		return DocumentClass().Document(actual)
+	default:
+		var message = fmt.Sprintf(
+			"An invalid argument type was passed into the Document contructor: %v(%T)",
+			actual,
+			actual,
+		)
+		panic(message)
+	}
+}
+
+func Seal(
+	value ...any,
+) SealLike {
+	if len(value) == 1 {
+		var source = value[0].(string)
+		return doc.SealClass().SealFromString(source)
+	}
+	var algorithm = value[0].(bal.QuoteLike)
+	var signature = value[1].(bal.BinaryLike)
+	return SealClass().Seal(algorithm, signature)
+}

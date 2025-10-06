@@ -38,19 +38,11 @@ func (c *sealClass_) Seal(
 		panic("The \"signature\" attribute is required by this class.")
 	}
 
-	var component = doc.ParseSource(`[
+	var source = `[
     $algorithm: ` + algorithm.AsString() + `
     $signature: ` + signature.AsString() + `
-]($type: <bali:/types/notary/Seal:v3>)`,
-	)
-
-	var instance = &seal_{
-		// Initialize the instance attributes.
-
-		// Initialize the inherited aspects.
-		Declarative: component,
-	}
-	return instance
+]($type: <bali:/types/notary/Seal:v3>)`
+	return c.SealFromString(source)
 }
 
 func (c *sealClass_) SealFromString(

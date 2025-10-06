@@ -52,7 +52,7 @@ func (c *certificateClass_) Certificate(
 		previous = "<nebula:/" + tag.AsString()[1:] +
 			":" + doc.Version([]uint{current - 1}).AsString() + ">"
 	}
-	var component = doc.ParseSource(`[
+	var source = `[
     $algorithm: ` + algorithm.AsString() + `
     $key: ` + key.AsString() + `
 ](
@@ -61,17 +61,8 @@ func (c *certificateClass_) Certificate(
     $version: ` + version.AsString() + `
     $previous: ` + previous + `
     $permissions: <bali:/permissions/Public:v3>
-)`,
-	)
-
-	var instance = &certificate_{
-		// Initialize the instance attributes.
-
-		// Initialize the inherited aspects.
-		Declarative: component,
-	}
-
-	return instance
+)`
+	return c.CertificateFromString(source)
 }
 
 func (c *certificateClass_) CertificateFromString(

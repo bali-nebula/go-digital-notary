@@ -47,21 +47,13 @@ func (c *citationClass_) Citation(
 		panic("The \"digest\" attribute is required by this class.")
 	}
 
-	var component = doc.ParseSource(`[
+	var source = `[
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
     $algorithm: ` + algorithm.AsString() + `
     $digest: ` + digest.AsString() + `
-]($type: <bali:/types/notary/Citation:v3>)`,
-	)
-
-	var instance = &citation_{
-		// Initialize the instance attributes.
-
-		// Initialize the inherited aspects.
-		Declarative: component,
-	}
-	return instance
+]($type: <bali:/types/notary/Citation:v3>)`
+	return c.CitationFromString(source)
 }
 
 func (c *citationClass_) CitationFromString(
