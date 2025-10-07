@@ -40,6 +40,9 @@ func TestParsingCitations(t *tes.T) {
 	)
 	var formatted = citation.AsString()
 	ass.Equal(t, source, formatted)
+	citation = not.Citation(citation.AsResource())
+	formatted = citation.AsString()
+	ass.Equal(t, source, formatted)
 }
 
 func TestParsingCredentials(t *tes.T) {

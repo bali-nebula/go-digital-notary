@@ -67,7 +67,7 @@ func (c *credentialClass_) CredentialFromString(
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
-		Declarative: component,
+		ComponentLike: component,
 	}
 	return instance
 }
@@ -85,11 +85,11 @@ func (v *credential_) GetClass() CredentialClassLike {
 }
 
 func (v *credential_) AsIntrinsic() doc.ComponentLike {
-	return v.Declarative.(doc.ComponentLike)
+	return v.ComponentLike
 }
 
 func (v *credential_) AsString() string {
-	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
+	return doc.FormatDocument(v.ComponentLike)
 }
 
 // Attribute Methods
@@ -100,10 +100,6 @@ func (v *credential_) GetContext() any {
 }
 
 // Parameterized Methods
-
-func (v *credential_) GetEntity() any {
-	return v.Declarative.(doc.ComponentLike).GetEntity()
-}
 
 func (v *credential_) GetType() doc.ResourceLike {
 	var component = v.GetParameter(doc.Symbol("$type"))
@@ -145,7 +141,7 @@ type credential_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
-	doc.Declarative
+	doc.ComponentLike
 }
 
 // Class Structure

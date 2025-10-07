@@ -64,7 +64,7 @@ func (c *citationClass_) CitationFromString(
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
-		Declarative: component,
+		ComponentLike: component,
 	}
 	return instance
 }
@@ -86,7 +86,7 @@ func (c *citationClass_) CitationFromResource(
 	var digest = parts[1]
 	digest = sts.ReplaceAll(digest, "-", "+")
 	digest = sts.ReplaceAll(digest, "_", "/")
-	digest = "'>\n        " + digest[:60] + "\n        " + digest[60:] + "\n<'"
+	digest = "'>\n    " + digest[:60] + "\n    " + digest[60:] + "\n<'"
 
 	// Construct the citation.
 	var instance = c.Citation(
@@ -112,11 +112,11 @@ func (v *citation_) GetClass() CitationClassLike {
 }
 
 func (v *citation_) AsIntrinsic() doc.ComponentLike {
-	return v.Declarative.(doc.ComponentLike)
+	return v.ComponentLike
 }
 
 func (v *citation_) AsString() string {
-	return doc.FormatDocument(v.Declarative.(doc.ComponentLike))
+	return doc.FormatDocument(v.ComponentLike)
 }
 
 func (v *citation_) AsResource() doc.ResourceLike {
@@ -155,7 +155,8 @@ func (v *citation_) GetAlgorithm() doc.QuoteLike {
 
 func (v *citation_) GetDigest() doc.BinaryLike {
 	var object = v.GetObject(doc.Symbol("$digest"))
-	return doc.Binary(doc.FormatComponent(object))
+	var source = doc.FormatComponent(object)
+	return doc.Binary(source)
 }
 
 // PROTECTED INTERFACE
@@ -168,7 +169,7 @@ type citation_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
-	doc.Declarative
+	doc.ComponentLike
 }
 
 // Class Structure
