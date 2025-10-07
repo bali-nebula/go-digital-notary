@@ -32,6 +32,7 @@ func (c *certificateClass_) Certificate(
 	version doc.VersionLike,
 	algorithm doc.QuoteLike,
 	key doc.BinaryLike,
+	optionalPrevious doc.ResourceLike,
 ) CertificateLike {
 	if uti.IsUndefined(tag) {
 		panic("The \"tag\" attribute is required by this class.")
@@ -47,10 +48,8 @@ func (c *certificateClass_) Certificate(
 	}
 
 	var previous = "none"
-	var current = version.AsIntrinsic()[0]
-	if current > 1 {
-		previous = "<nebula:/" + tag.AsString()[1:] +
-			":" + doc.Version([]uint{current - 1}).AsString() + ">"
+	if uti.IsDefined(optionalPrevious) {
+		previous = optionalPrevious.AsString()
 	}
 	var source = `[
     $algorithm: ` + algorithm.AsString() + `

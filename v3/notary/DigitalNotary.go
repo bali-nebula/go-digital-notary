@@ -147,11 +147,13 @@ func (v *digitalNotary_) GenerateKey() not.DocumentLike {
 	var tag = doc.Tag()         // Generate a new random tag.
 	var version = doc.Version() // v1
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
+	var previous doc.ResourceLike
 	var certificate = not.CertificateClass().Certificate(
 		tag,
 		version,
 		algorithm,
 		key,
+		previous,
 	)
 	var document = not.DocumentClass().Document(certificate)
 
@@ -207,6 +209,7 @@ func (v *digitalNotary_) RefreshKey() not.DocumentLike {
 		version,
 		algorithm,
 		key,
+		previous.AsResource(),
 	)
 	var document = not.DocumentClass().Document(certificate)
 
@@ -262,10 +265,12 @@ func (v *digitalNotary_) GenerateCredential(
 	// Create the credential.
 	var tag = doc.Tag()
 	var version = doc.Version()
+	var previous doc.ResourceLike
 	var credential = not.CredentialClass().Credential(
 		context,
 		tag,
 		version,
+		previous,
 	)
 
 	// Notarized the credential.
@@ -298,6 +303,7 @@ func (v *digitalNotary_) RefreshCredential(
 	)
 
 	// Create the next version of the credential.
+	var previous = v.CiteDocument(credential).AsResource()
 	var content = credential.GetContent()
 	var tag = content.GetTag()
 	var current = content.GetVersion()
@@ -306,6 +312,7 @@ func (v *digitalNotary_) RefreshCredential(
 		context,
 		tag,
 		version,
+		previous,
 	)
 
 	// Notarized the credential.

@@ -65,11 +65,13 @@ func TestParsingCertificates(t *tes.T) {
 	var version = certificate.GetVersion()
 	var algorithm = certificate.GetAlgorithm()
 	var key = certificate.GetKey()
+	var previous = certificate.GetOptionalPrevious()
 	certificate = not.Certificate(
 		tag,
 		version,
 		algorithm,
 		key,
+		previous,
 	)
 	var formatted = certificate.AsString()
 	ass.Equal(t, source, formatted)

@@ -130,9 +130,9 @@ func (v *citation_) AsResource() doc.ResourceLike {
 	digest = sts.ReplaceAll(digest, "/", "_")
 	var tag = v.GetTag().AsString()[1:]
 	var version = v.GetVersion().AsString()
-	var resource = doc.Resource(
-		"<nebula:/" + tag + ":" + version + "?" + algorithm + "=" + digest + ">",
-	)
+	var source = "<nebula:/" + tag + ":" + version + "?" +
+		algorithm + "=" + digest + ">"
+	var resource = doc.Resource(source)
 	return resource
 }
 

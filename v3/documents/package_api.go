@@ -50,6 +50,7 @@ type CertificateClassLike interface {
 		version doc.VersionLike,
 		algorithm doc.QuoteLike,
 		key doc.BinaryLike,
+		optionalPrevious doc.ResourceLike,
 	) CertificateLike
 	CertificateFromString(
 		source string,
@@ -108,6 +109,7 @@ type CredentialClassLike interface {
 		context any,
 		tag doc.TagLike,
 		version doc.VersionLike,
+		optionalPrevious doc.ResourceLike,
 	) CredentialLike
 	CredentialFromString(
 		source string,

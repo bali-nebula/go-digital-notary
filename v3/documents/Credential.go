@@ -31,6 +31,7 @@ func (c *credentialClass_) Credential(
 	context any,
 	tag doc.TagLike,
 	version doc.VersionLike,
+	optionalPrevious doc.ResourceLike,
 ) CredentialLike {
 	if uti.IsUndefined(context) {
 		panic("The \"context\" attribute is required by this class.")
@@ -43,10 +44,8 @@ func (c *credentialClass_) Credential(
 	}
 
 	var previous = "none"
-	var current = version.AsIntrinsic()[0]
-	if current > 1 {
-		previous = "<nebula:/" + tag.AsString()[1:] +
-			":" + doc.Version([]uint{current - 1}).AsString() + ">"
+	if uti.IsDefined(optionalPrevious) {
+		previous = optionalPrevious.AsString()
 	}
 	var component = doc.Component(context, nil)
 	var source = doc.FormatComponent(component) + `(

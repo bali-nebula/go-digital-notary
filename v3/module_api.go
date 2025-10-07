@@ -165,7 +165,8 @@ func Certificate(
 	var version = value[1].(bal.VersionLike)
 	var algorithm = value[2].(bal.QuoteLike)
 	var key = value[3].(bal.BinaryLike)
-	return CertificateClass().Certificate(tag, version, algorithm, key)
+	var previous = value[4].(bal.ResourceLike)
+	return CertificateClass().Certificate(tag, version, algorithm, key, previous)
 }
 
 func Citation(
@@ -229,10 +230,12 @@ func Credential(
 	var context = value[0]
 	var tag = value[1].(bal.TagLike)
 	var version = value[2].(bal.VersionLike)
+	var previous = value[3].(bal.ResourceLike)
 	return CredentialClass().Credential(
 		context,
 		tag,
 		version,
+		previous,
 	)
 }
 
