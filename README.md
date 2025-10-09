@@ -1,16 +1,18 @@
 <img src="https://craterdog.com/images/CraterDog.png" width="50%">
 
-### _\* \* \* NOTICE \* \* \*_
-_This project is still under development and is for reference purposes only. If
-you are interested in this project or have suggestions on how to improve it feel
-free to contact us at [craterdog@gmail.com](mailto:craterdog@gmail.com)._
+## Go Digital Notary
 
 ### Overview
 This project implements a digital notary agent that can be used to digitally
 sign documents containing
 [Bali Document Notation™](https://github.com/bali-nebula/go-bali-documents/wiki)
-(or "Bali" for short). Each notarized document can then be validated using the
-public certificate associated with the notary key used to sign the document.
+(or "Bali" for short). The notary seal on each notarized document can then be
+validated using the public certificate associated with the notary key used to
+sign the document.
+
+⚠️  This project is still under development and is for reference purposes only. If
+you are interested in this project or have suggestions on how to improve it feel
+free to contact us at [craterdog@gmail.com](mailto:craterdog@gmail.com).
 
 ### Quick Links
 For more information on this project click on the following links:
