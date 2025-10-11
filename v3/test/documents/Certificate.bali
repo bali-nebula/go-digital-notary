@@ -1,12 +1,12 @@
 [
     $algorithm: "ED25519"
     $key: '>
-        7rscp/yPIOT9M1vtya0rk1K1k7z3cgLM5n68MpVawmg
+        oVVGU2Wa/n+kdOHtZ8Zidq5jD9UZ3G60QOXMdAh6cqg
     <'
 ](
-    $type: <bali:/types/notary/Certificate:v3>
-    $tag: #N5PQ3VF0XGSP9FX11T93K7CQ5JZ2V97K
+    $type: /bali/types/notary/Certificate/v3
+    $tag: #BDBK83JS4YDAZJKAT9D646Z3PAXY4SXJ
     $version: v2
-    $previous: <nebula:/N5PQ3VF0XGSP9FX11T93K7CQ5JZ2V97K:v1?SHA512=UDL_-BEB6DE9ymVntCslNymr0LPy4MIRjRkW3-NMo85JQKoU-YHR0XVmZ2pzz29TqsvLSZ93kICjiViVpvA9cg>
-    $permissions: <bali:/permissions/Public:v3>
+    $permissions: /bali/permissions/Public/v3
+    $previous: <nebula:/BDBK83JS4YDAZJKAT9D646Z3PAXY4SXJ:v1?SHA512=sA0XXuqmJesroK5py29GyuovYP2Zv9BoemeVFc2_rB9QNyBNrAIh23gCTYSh8kAidILEBOyPSW5bUOnZW-mMrQ>
 )

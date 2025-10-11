@@ -1,9 +1,9 @@
 [
-    $tag: #DB98S34CZ4SPSG6XWNBNT5GPHP77L95V
+    $tag: #BDBK83JS4YDAZJKAT9D646Z3PAXY4SXJ
     $version: v2
     $algorithm: "SHA512"
     $digest: '>
-        DMbgxyiX9PnDijJhQZiLz1Xw9XJHY6qloASwltpO6rQkz77q+GzC38Kx7jl7
-        g1DzWmhOmpZMcutR8sCZhn7Q5g
+        1Ts7jJO4Bi3zittlvovRZ7Rv6SVbVdoAEznhXcbIXGfjLjJvIL7gAzNLgGNY
+        Y6VlSYxLQt4h1rOgH5Jm+ftmyQ
     <'
-]($type: <bali:/types/notary/Citation:v3>)
+]($type: /bali/types/notary/Citation/v3)

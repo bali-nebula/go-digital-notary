@@ -202,21 +202,21 @@ func Content(
 		return doc.ContentClass().ContentFromString(source)
 	}
 	var entity = value[0]
-	var type_ = value[1].(bal.ResourceLike)
+	var type_ = value[1].(bal.NameLike)
 	var tag = value[2].(bal.TagLike)
 	var version = value[3].(bal.VersionLike)
+	var permissions = value[4].(bal.NameLike)
 	var optionalPrevious bal.ResourceLike
-	if uti.IsDefined(value[4]) {
-		optionalPrevious = value[4].(bal.ResourceLike)
+	if uti.IsDefined(value[5]) {
+		optionalPrevious = value[5].(bal.ResourceLike)
 	}
-	var permissions = value[5].(bal.ResourceLike)
 	return ContentClass().Content(
 		entity,
 		type_,
 		tag,
 		version,
-		optionalPrevious,
 		permissions,
+		optionalPrevious,
 	)
 }
 

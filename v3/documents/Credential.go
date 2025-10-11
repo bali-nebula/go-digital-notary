@@ -49,11 +49,11 @@ func (c *credentialClass_) Credential(
 	}
 	var component = doc.Component(context, nil)
 	var source = doc.FormatComponent(component) + `(
-    $type: <bali:/types/notary/Credential:v3>
+	$type: /bali/types/notary/Credential/v3
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
+	$permissions: /bali/permissions/Public/v3
     $previous: ` + previous + `
-    $permissions: <bali:/permissions/Public:v3>
 )`
 	return c.CredentialFromString(source)
 }
@@ -100,9 +100,9 @@ func (v *credential_) GetContext() any {
 
 // Parameterized Methods
 
-func (v *credential_) GetType() doc.ResourceLike {
+func (v *credential_) GetType() doc.NameLike {
 	var component = v.GetParameter(doc.Symbol("$type"))
-	return doc.Resource(doc.FormatComponent(component))
+	return doc.Name(doc.FormatComponent(component))
 }
 
 func (v *credential_) GetTag() doc.TagLike {
@@ -115,6 +115,11 @@ func (v *credential_) GetVersion() doc.VersionLike {
 	return doc.Version(doc.FormatComponent(component))
 }
 
+func (v *credential_) GetPermissions() doc.NameLike {
+	var component = v.GetParameter(doc.Symbol("$permissions"))
+	return doc.Name(doc.FormatComponent(component))
+}
+
 func (v *credential_) GetOptionalPrevious() doc.ResourceLike {
 	var previous doc.ResourceLike
 	var component = v.GetParameter(doc.Symbol("$previous"))
@@ -125,11 +130,6 @@ func (v *credential_) GetOptionalPrevious() doc.ResourceLike {
 		}
 	}
 	return previous
-}
-
-func (v *credential_) GetPermissions() doc.ResourceLike {
-	var component = v.GetParameter(doc.Symbol("$permissions"))
-	return doc.Resource(doc.FormatComponent(component))
 }
 
 // Private Methods

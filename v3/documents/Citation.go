@@ -52,7 +52,7 @@ func (c *citationClass_) Citation(
     $version: ` + version.AsString() + `
     $algorithm: ` + algorithm.AsString() + `
     $digest: ` + digest.AsString() + `
-]($type: <bali:/types/notary/Citation:v3>)`
+]($type: /bali/types/notary/Citation/v3)`
 	return c.CitationFromString(source)
 }
 

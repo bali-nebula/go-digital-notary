@@ -87,11 +87,11 @@ type ContentClassLike interface {
 	// Constructor Methods
 	Content(
 		entity any,
-		type_ doc.ResourceLike,
+		type_ doc.NameLike,
 		tag doc.TagLike,
 		version doc.VersionLike,
+		permissions doc.NameLike,
 		optionalPrevious doc.ResourceLike,
-		permissions doc.ResourceLike,
 	) ContentLike
 	ContentFromString(
 		source string,
@@ -259,9 +259,9 @@ all parameterized documents.
 type Parameterized interface {
 	AsString() string
 	GetEntity() any
-	GetType() doc.ResourceLike
+	GetType() doc.NameLike
 	GetTag() doc.TagLike
 	GetVersion() doc.VersionLike
+	GetPermissions() doc.NameLike
 	GetOptionalPrevious() doc.ResourceLike
-	GetPermissions() doc.ResourceLike
 }

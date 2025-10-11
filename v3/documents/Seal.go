@@ -41,7 +41,7 @@ func (c *sealClass_) Seal(
 	var source = `[
     $algorithm: ` + algorithm.AsString() + `
     $signature: ` + signature.AsString() + `
-]($type: <bali:/types/notary/Seal:v3>)`
+]($type: /bali/types/notary/Seal/v3)`
 	return c.SealFromString(source)
 }
 

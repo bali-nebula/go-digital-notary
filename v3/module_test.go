@@ -93,8 +93,8 @@ func TestParsingContents(t *tes.T) {
 		type_,
 		tag,
 		version,
-		optionalPrevious,
 		permissions,
+		optionalPrevious,
 	)
 	var formatted = content.AsString()
 	ass.Equal(t, source, formatted)
@@ -198,11 +198,11 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
     $merchant: <https://www.starbucks.com/>
     $amount: 7.95($currency: $USD)
 ](
-	$type: <bali:/examples/Transaction:v1.2.3>
+	$type: /bali/examples/Transaction/v1.2.3
 	$tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
 	$version: v1
+	$permissions: /bali/permissions/Public/v3
 	$previous: none
-	$permissions: <bali:/permissions/Public:v3>
 )`,
 	)
 	filename = "./test/notary/Content.bali"
@@ -244,7 +244,10 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	uti.WriteFile(filename, source)
 
 	// Generate an authentication credential.
-	var context = doc.Moment()
+	var context = doc.ParseComponent(`[
+    $website: <https://bali-nebula.com/>
+    $sessionId: "ABC123456789"
+]`).GetEntity()
 	var credential = notary.GenerateCredential(context)
 	ass.True(
 		t,

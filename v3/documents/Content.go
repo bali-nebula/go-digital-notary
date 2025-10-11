@@ -29,11 +29,11 @@ func ContentClass() ContentClassLike {
 
 func (c *contentClass_) Content(
 	entity any,
-	type_ doc.ResourceLike,
+	type_ doc.NameLike,
 	tag doc.TagLike,
 	version doc.VersionLike,
+	permissions doc.NameLike,
 	optionalPrevious doc.ResourceLike,
-	permissions doc.ResourceLike,
 ) ContentLike {
 	if uti.IsUndefined(entity) {
 		panic("The \"entity\" attribute is required by this class.")
@@ -47,20 +47,20 @@ func (c *contentClass_) Content(
 	if uti.IsUndefined(version) {
 		panic("The \"version\" attribute is required by this class.")
 	}
+	if uti.IsUndefined(permissions) {
+		panic("The \"permissions\" attribute is required by this class.")
+	}
 	var previous = "none"
 	if uti.IsDefined(optionalPrevious) {
 		previous = optionalPrevious.AsString()
-	}
-	if uti.IsUndefined(permissions) {
-		panic("The \"permissions\" attribute is required by this class.")
 	}
 
 	var source = doc.FormatComponent(entity) + `(
     $type: ` + type_.AsString() + `
     $tag: ` + tag.AsString() + `
     $version: ` + version.AsString() + `
-    $previous: ` + previous + `
     $permissions: ` + permissions.AsString() + `
+    $previous: ` + previous + `
 )`
 	return c.ContentFromString(source)
 }
@@ -102,9 +102,9 @@ func (v *content_) AsString() string {
 	return doc.FormatComponent(v.ComponentLike) + "\n"
 }
 
-func (v *content_) GetType() doc.ResourceLike {
+func (v *content_) GetType() doc.NameLike {
 	var component = v.GetParameter(doc.Symbol("$type"))
-	return doc.Resource(doc.FormatComponent(component))
+	return doc.Name(doc.FormatComponent(component))
 }
 
 func (v *content_) GetTag() doc.TagLike {
@@ -117,6 +117,11 @@ func (v *content_) GetVersion() doc.VersionLike {
 	return doc.Version(doc.FormatComponent(component))
 }
 
+func (v *content_) GetPermissions() doc.NameLike {
+	var component = v.GetParameter(doc.Symbol("$permissions"))
+	return doc.Name(doc.FormatComponent(component))
+}
+
 func (v *content_) GetOptionalPrevious() doc.ResourceLike {
 	var previous doc.ResourceLike
 	var component = v.GetParameter(doc.Symbol("$previous"))
@@ -127,11 +132,6 @@ func (v *content_) GetOptionalPrevious() doc.ResourceLike {
 		}
 	}
 	return previous
-}
-
-func (v *content_) GetPermissions() doc.ResourceLike {
-	var component = v.GetParameter(doc.Symbol("$permissions"))
-	return doc.Resource(doc.FormatComponent(component))
 }
 
 // PROTECTED INTERFACE

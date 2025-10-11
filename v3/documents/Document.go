@@ -36,7 +36,7 @@ func (c *documentClass_) Document(
 
 	var source = `[
     $content: ` + content.AsString() + `
-]($type: <bali:/types/notary/Document:v3>)`
+]($type: /bali/types/notary/Document/v3)`
 	return c.DocumentFromString(source)
 }
 
