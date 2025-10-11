@@ -68,7 +68,7 @@ func (c *contentClass_) Content(
 func (c *contentClass_) ContentFromString(
 	source string,
 ) ContentLike {
-	var component = doc.ParseSource(source)
+	var component = doc.ParseComponent(source)
 	var instance = &content_{
 		// Initialize the instance attributes.
 
@@ -99,7 +99,7 @@ func (v *content_) AsIntrinsic() doc.ComponentLike {
 // Parameterized Methods
 
 func (v *content_) AsString() string {
-	return doc.FormatDocument(v.ComponentLike)
+	return doc.FormatComponent(v.ComponentLike) + "\n"
 }
 
 func (v *content_) GetType() doc.ResourceLike {

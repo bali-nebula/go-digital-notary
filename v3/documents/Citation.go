@@ -59,7 +59,7 @@ func (c *citationClass_) Citation(
 func (c *citationClass_) CitationFromString(
 	source string,
 ) CitationLike {
-	var component = doc.ParseSource(source)
+	var component = doc.ParseComponent(source)
 	var instance = &citation_{
 		// Initialize the instance attributes.
 
@@ -116,7 +116,7 @@ func (v *citation_) AsIntrinsic() doc.ComponentLike {
 }
 
 func (v *citation_) AsString() string {
-	return doc.FormatDocument(v.ComponentLike)
+	return doc.FormatComponent(v.ComponentLike) + "\n"
 }
 
 func (v *citation_) AsResource() doc.ResourceLike {

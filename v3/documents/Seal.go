@@ -48,7 +48,7 @@ func (c *sealClass_) Seal(
 func (c *sealClass_) SealFromString(
 	source string,
 ) SealLike {
-	var component = doc.ParseSource(source)
+	var component = doc.ParseComponent(source)
 	var instance = &seal_{
 		// Initialize the instance attributes.
 
@@ -75,7 +75,7 @@ func (v *seal_) AsIntrinsic() doc.ComponentLike {
 }
 
 func (v *seal_) AsString() string {
-	return doc.FormatDocument(v.ComponentLike)
+	return doc.FormatComponent(v.ComponentLike) + "\n"
 }
 
 func (v *seal_) GetAlgorithm() doc.QuoteLike {

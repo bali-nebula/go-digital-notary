@@ -43,7 +43,7 @@ func (c *documentClass_) Document(
 func (c *documentClass_) DocumentFromString(
 	source string,
 ) DocumentLike {
-	var component = doc.ParseSource(source)
+	var component = doc.ParseComponent(source)
 	var instance = &document_{
 		// Initialize the instance attributes.
 
@@ -70,7 +70,7 @@ func (v *document_) AsIntrinsic() doc.ComponentLike {
 }
 
 func (v *document_) AsString() string {
-	return doc.FormatDocument(v.ComponentLike)
+	return doc.FormatComponent(v.ComponentLike) + "\n"
 }
 
 // Attribute Methods
@@ -102,13 +102,13 @@ func (v *document_) SetNotary(
 	account doc.TagLike,
 	notary CitationLike,
 ) {
-	var component = doc.ParseSource(account.AsString())
+	var component = doc.ParseComponent(account.AsString())
 	v.SetObject(component, doc.Symbol("$account"))
-	component = doc.ParseSource(doc.Moment().AsString())
+	component = doc.ParseComponent(doc.Moment().AsString())
 	v.SetObject(component, doc.Symbol("$timestamp"))
-	component = doc.ParseSource("none")
+	component = doc.ParseComponent("none")
 	if uti.IsDefined(notary) {
-		component = doc.ParseSource(notary.AsString())
+		component = doc.ParseComponent(notary.AsString())
 	}
 	v.SetObject(component, doc.Symbol("$notary"))
 }
@@ -125,7 +125,7 @@ func (v *document_) GetNotary() CitationLike {
 func (v *document_) SetSeal(
 	seal SealLike,
 ) {
-	var component = doc.ParseSource(seal.AsString())
+	var component = doc.ParseComponent(seal.AsString())
 	v.SetObject(component, doc.Symbol("$seal"))
 }
 

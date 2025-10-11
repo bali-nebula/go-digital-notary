@@ -61,7 +61,7 @@ func (c *credentialClass_) Credential(
 func (c *credentialClass_) CredentialFromString(
 	source string,
 ) CredentialLike {
-	var component = doc.ParseSource(source)
+	var component = doc.ParseComponent(source)
 	var instance = &credential_{
 		// Initialize the instance attributes.
 
@@ -88,7 +88,7 @@ func (v *credential_) AsIntrinsic() doc.ComponentLike {
 }
 
 func (v *credential_) AsString() string {
-	return doc.FormatDocument(v.ComponentLike)
+	return doc.FormatComponent(v.ComponentLike) + "\n"
 }
 
 // Attribute Methods

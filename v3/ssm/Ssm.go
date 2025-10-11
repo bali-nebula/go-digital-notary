@@ -213,7 +213,7 @@ func (v *ssm_) errorCheck(
 func (v *ssm_) readConfiguration() {
 	var filename = v.directory_ + v.filename_
 	var source = uti.ReadFile(filename)
-	var component = doc.ParseSource(source)
+	var component = doc.ParseComponent(source)
 	fmt.Println(filename)
 
 	v.tag_ = doc.FormatComponent(

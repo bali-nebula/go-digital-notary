@@ -67,7 +67,7 @@ func (c *certificateClass_) Certificate(
 func (c *certificateClass_) CertificateFromString(
 	source string,
 ) CertificateLike {
-	var component = doc.ParseSource(source)
+	var component = doc.ParseComponent(source)
 	var instance = &certificate_{
 		// Initialize the instance attributes.
 
@@ -94,7 +94,7 @@ func (v *certificate_) AsIntrinsic() doc.ComponentLike {
 }
 
 func (v *certificate_) AsString() string {
-	return doc.FormatDocument(v.ComponentLike)
+	return doc.FormatComponent(v.ComponentLike) + "\n"
 }
 
 // Attribute Methods
