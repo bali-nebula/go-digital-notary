@@ -139,23 +139,23 @@ func (v *citation_) AsResource() doc.ResourceLike {
 // Attribute Methods
 
 func (v *citation_) GetTag() doc.TagLike {
-	var component = v.GetObject(doc.Symbol("$tag"))
+	var component = v.GetComposite(doc.Symbol("$tag"))
 	return doc.Tag(doc.FormatComponent(component))
 }
 
 func (v *citation_) GetVersion() doc.VersionLike {
-	var component = v.GetObject(doc.Symbol("$version"))
+	var component = v.GetComposite(doc.Symbol("$version"))
 	return doc.Version(doc.FormatComponent(component))
 }
 
 func (v *citation_) GetAlgorithm() doc.QuoteLike {
-	var object = v.GetObject(doc.Symbol("$algorithm"))
-	return doc.Quote(doc.FormatComponent(object))
+	var composite = v.GetComposite(doc.Symbol("$algorithm"))
+	return doc.Quote(doc.FormatComponent(composite))
 }
 
 func (v *citation_) GetDigest() doc.BinaryLike {
-	var object = v.GetObject(doc.Symbol("$digest"))
-	var source = doc.FormatComponent(object)
+	var composite = v.GetComposite(doc.Symbol("$digest"))
+	var source = doc.FormatComponent(composite)
 	return doc.Binary(source)
 }
 

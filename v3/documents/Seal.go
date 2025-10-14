@@ -79,13 +79,13 @@ func (v *seal_) AsSource() string {
 }
 
 func (v *seal_) GetAlgorithm() doc.QuoteLike {
-	var object = v.GetObject(doc.Symbol("$algorithm"))
-	return doc.Quote(doc.FormatComponent(object))
+	var composite = v.GetComposite(doc.Symbol("$algorithm"))
+	return doc.Quote(doc.FormatComponent(composite))
 }
 
 func (v *seal_) GetSignature() doc.BinaryLike {
-	var object = v.GetObject(doc.Symbol("$signature"))
-	return doc.Binary(doc.FormatComponent(object))
+	var composite = v.GetComposite(doc.Symbol("$signature"))
+	return doc.Binary(doc.FormatComponent(composite))
 }
 
 // Attribute Methods

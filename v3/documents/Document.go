@@ -76,24 +76,24 @@ func (v *document_) AsSource() string {
 // Attribute Methods
 
 func (v *document_) GetContent() Parameterized {
-	var object = v.GetObject(doc.Symbol("$content"))
-	return ContentClass().ContentFromSource(doc.FormatComponent(object))
+	var composite = v.GetComposite(doc.Symbol("$content"))
+	return ContentClass().ContentFromSource(doc.FormatComponent(composite))
 }
 
 func (v *document_) GetTimestamp() doc.MomentLike {
-	var object = v.GetObject(doc.Symbol("$timestamp"))
+	var composite = v.GetComposite(doc.Symbol("$timestamp"))
 	var timestamp doc.MomentLike
-	if uti.IsDefined(object) {
-		timestamp = doc.Moment(doc.FormatComponent(object))
+	if uti.IsDefined(composite) {
+		timestamp = doc.Moment(doc.FormatComponent(composite))
 	}
 	return timestamp
 }
 
 func (v *document_) GetAccount() doc.TagLike {
-	var object = v.GetObject(doc.Symbol("$account"))
+	var composite = v.GetComposite(doc.Symbol("$account"))
 	var account doc.TagLike
-	if uti.IsDefined(object) {
-		account = doc.Tag(doc.FormatComponent(object))
+	if uti.IsDefined(composite) {
+		account = doc.Tag(doc.FormatComponent(composite))
 	}
 	return account
 }
@@ -103,21 +103,21 @@ func (v *document_) SetNotary(
 	notary CitationLike,
 ) {
 	var component = doc.ParseComponent(account.AsSource())
-	v.SetObject(component, doc.Symbol("$account"))
+	v.SetComposite(component, doc.Symbol("$account"))
 	component = doc.ParseComponent(doc.Moment().AsSource())
-	v.SetObject(component, doc.Symbol("$timestamp"))
+	v.SetComposite(component, doc.Symbol("$timestamp"))
 	component = doc.ParseComponent("none")
 	if uti.IsDefined(notary) {
 		component = doc.ParseComponent(notary.AsSource())
 	}
-	v.SetObject(component, doc.Symbol("$notary"))
+	v.SetComposite(component, doc.Symbol("$notary"))
 }
 
 func (v *document_) GetNotary() CitationLike {
-	var object = v.GetObject(doc.Symbol("$notary"))
+	var composite = v.GetComposite(doc.Symbol("$notary"))
 	var notary CitationLike
-	if uti.IsDefined(object) && doc.FormatComponent(object) != "none" {
-		notary = CitationClass().CitationFromSource(doc.FormatComponent(object))
+	if uti.IsDefined(composite) && doc.FormatComponent(composite) != "none" {
+		notary = CitationClass().CitationFromSource(doc.FormatComponent(composite))
 	}
 	return notary
 }
@@ -126,22 +126,22 @@ func (v *document_) SetSeal(
 	seal SealLike,
 ) {
 	var component = doc.ParseComponent(seal.AsSource())
-	v.SetObject(component, doc.Symbol("$seal"))
+	v.SetComposite(component, doc.Symbol("$seal"))
 }
 
 func (v *document_) HasSeal() bool {
 	var symbol = doc.Symbol("$seal")
-	var object = v.GetObject(symbol)
-	return uti.IsDefined(object)
+	var composite = v.GetComposite(symbol)
+	return uti.IsDefined(composite)
 }
 
 func (v *document_) RemoveSeal() SealLike {
 	var seal SealLike
 	var symbol = doc.Symbol("$seal")
-	var object = v.GetObject(symbol)
-	if uti.IsDefined(object) {
-		v.RemoveObject(symbol)
-		seal = SealClass().SealFromSource(doc.FormatComponent(object))
+	var composite = v.GetComposite(symbol)
+	if uti.IsDefined(composite) {
+		v.RemoveComposite(symbol)
+		seal = SealClass().SealFromSource(doc.FormatComponent(composite))
 	}
 	return seal
 }
