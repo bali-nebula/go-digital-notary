@@ -159,7 +159,7 @@ func Certificate(
 ) CertificateLike {
 	if len(value) == 1 {
 		var source = value[0].(string)
-		return doc.CertificateClass().CertificateFromString(source)
+		return doc.CertificateClass().CertificateFromSource(source)
 	}
 	var tag = value[0].(bal.TagLike)
 	var version = value[1].(bal.VersionLike)
@@ -175,7 +175,7 @@ func Citation(
 	if len(value) == 1 {
 		switch actual := value[0].(type) {
 		case string:
-			return doc.CitationClass().CitationFromString(actual)
+			return doc.CitationClass().CitationFromSource(actual)
 		case bal.ResourceLike:
 			return doc.CitationClass().CitationFromResource(actual)
 		default:
@@ -199,7 +199,7 @@ func Content(
 ) ContentLike {
 	if len(value) == 1 {
 		var source = value[0].(string)
-		return doc.ContentClass().ContentFromString(source)
+		return doc.ContentClass().ContentFromSource(source)
 	}
 	var entity = value[0]
 	var type_ = value[1].(bal.NameLike)
@@ -225,7 +225,7 @@ func Credential(
 ) CredentialLike {
 	if len(value) == 1 {
 		var source = value[0].(string)
-		return doc.CredentialClass().CredentialFromString(source)
+		return doc.CredentialClass().CredentialFromSource(source)
 	}
 	var context = value[0]
 	var tag = value[1].(bal.TagLike)
@@ -244,7 +244,7 @@ func Document(
 ) DocumentLike {
 	switch actual := value.(type) {
 	case string:
-		return DocumentClass().DocumentFromString(actual)
+		return DocumentClass().DocumentFromSource(actual)
 	case doc.Parameterized:
 		return DocumentClass().Document(actual)
 	default:
@@ -262,7 +262,7 @@ func Seal(
 ) SealLike {
 	if len(value) == 1 {
 		var source = value[0].(string)
-		return doc.SealClass().SealFromString(source)
+		return doc.SealClass().SealFromSource(source)
 	}
 	var algorithm = value[0].(bal.QuoteLike)
 	var signature = value[1].(bal.BinaryLike)

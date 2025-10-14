@@ -52,20 +52,20 @@ func (c *contentClass_) Content(
 	}
 	var previous = "none"
 	if uti.IsDefined(optionalPrevious) {
-		previous = optionalPrevious.AsString()
+		previous = optionalPrevious.AsSource()
 	}
 
 	var source = doc.FormatComponent(entity) + `(
-    $type: ` + type_.AsString() + `
-    $tag: ` + tag.AsString() + `
-    $version: ` + version.AsString() + `
-    $permissions: ` + permissions.AsString() + `
+    $type: ` + type_.AsSource() + `
+    $tag: ` + tag.AsSource() + `
+    $version: ` + version.AsSource() + `
+    $permissions: ` + permissions.AsSource() + `
     $previous: ` + previous + `
 )`
-	return c.ContentFromString(source)
+	return c.ContentFromSource(source)
 }
 
-func (c *contentClass_) ContentFromString(
+func (c *contentClass_) ContentFromSource(
 	source string,
 ) ContentLike {
 	var component = doc.ParseComponent(source)
@@ -98,7 +98,7 @@ func (v *content_) AsIntrinsic() doc.ComponentLike {
 
 // Parameterized Methods
 
-func (v *content_) AsString() string {
+func (v *content_) AsSource() string {
 	return doc.FormatComponent(v.ComponentLike) + "\n"
 }
 

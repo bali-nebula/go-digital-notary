@@ -45,20 +45,20 @@ func (c *credentialClass_) Credential(
 
 	var previous = "none"
 	if uti.IsDefined(optionalPrevious) {
-		previous = optionalPrevious.AsString()
+		previous = optionalPrevious.AsSource()
 	}
 	var component = doc.Component(context, nil)
 	var source = doc.FormatComponent(component) + `(
 	$type: /bali/types/notary/Credential/v3
-    $tag: ` + tag.AsString() + `
-    $version: ` + version.AsString() + `
+    $tag: ` + tag.AsSource() + `
+    $version: ` + version.AsSource() + `
 	$permissions: /bali/permissions/Public/v3
     $previous: ` + previous + `
 )`
-	return c.CredentialFromString(source)
+	return c.CredentialFromSource(source)
 }
 
-func (c *credentialClass_) CredentialFromString(
+func (c *credentialClass_) CredentialFromSource(
 	source string,
 ) CredentialLike {
 	var component = doc.ParseComponent(source)
@@ -87,7 +87,7 @@ func (v *credential_) AsIntrinsic() doc.ComponentLike {
 	return v.ComponentLike
 }
 
-func (v *credential_) AsString() string {
+func (v *credential_) AsSource() string {
 	return doc.FormatComponent(v.ComponentLike) + "\n"
 }
 

@@ -48,15 +48,15 @@ func (c *citationClass_) Citation(
 	}
 
 	var source = `[
-    $tag: ` + tag.AsString() + `
-    $version: ` + version.AsString() + `
-    $algorithm: ` + algorithm.AsString() + `
-    $digest: ` + digest.AsString() + `
+    $tag: ` + tag.AsSource() + `
+    $version: ` + version.AsSource() + `
+    $algorithm: ` + algorithm.AsSource() + `
+    $digest: ` + digest.AsSource() + `
 ]($type: /bali/types/notary/Citation/v3)`
-	return c.CitationFromString(source)
+	return c.CitationFromSource(source)
 }
 
-func (c *citationClass_) CitationFromString(
+func (c *citationClass_) CitationFromSource(
 	source string,
 ) CitationLike {
 	var component = doc.ParseComponent(source)
@@ -115,21 +115,21 @@ func (v *citation_) AsIntrinsic() doc.ComponentLike {
 	return v.ComponentLike
 }
 
-func (v *citation_) AsString() string {
+func (v *citation_) AsSource() string {
 	return doc.FormatComponent(v.ComponentLike) + "\n"
 }
 
 func (v *citation_) AsResource() doc.ResourceLike {
-	var algorithm = v.GetAlgorithm().AsString()
+	var algorithm = v.GetAlgorithm().AsSource()
 	algorithm = algorithm[1 : len(algorithm)-1] // Remove the double quotes.
-	var digest = v.GetDigest().AsString()
+	var digest = v.GetDigest().AsSource()
 	digest = digest[2 : len(digest)-2]
 	digest = sts.ReplaceAll(digest, " ", "")
 	digest = sts.ReplaceAll(digest, "\n", "")
 	digest = sts.ReplaceAll(digest, "+", "-")
 	digest = sts.ReplaceAll(digest, "/", "_")
-	var tag = v.GetTag().AsString()[1:]
-	var version = v.GetVersion().AsString()
+	var tag = v.GetTag().AsSource()[1:]
+	var version = v.GetVersion().AsSource()
 	var source = "<nebula:/" + tag + ":" + version + "?" +
 		algorithm + "=" + digest + ">"
 	var resource = doc.Resource(source)

@@ -49,22 +49,22 @@ func (c *certificateClass_) Certificate(
 
 	var previous = "none"
 	if uti.IsDefined(optionalPrevious) {
-		previous = optionalPrevious.AsString()
+		previous = optionalPrevious.AsSource()
 	}
 	var source = `[
-    $algorithm: ` + algorithm.AsString() + `
-    $key: ` + key.AsString() + `
+    $algorithm: ` + algorithm.AsSource() + `
+    $key: ` + key.AsSource() + `
 ](
 	$type: /bali/types/notary/Certificate/v3
-    $tag: ` + tag.AsString() + `
-    $version: ` + version.AsString() + `
+    $tag: ` + tag.AsSource() + `
+    $version: ` + version.AsSource() + `
 	$permissions: /bali/permissions/Public/v3
     $previous: ` + previous + `
 )`
-	return c.CertificateFromString(source)
+	return c.CertificateFromSource(source)
 }
 
-func (c *certificateClass_) CertificateFromString(
+func (c *certificateClass_) CertificateFromSource(
 	source string,
 ) CertificateLike {
 	var component = doc.ParseComponent(source)
@@ -93,7 +93,7 @@ func (v *certificate_) AsIntrinsic() doc.ComponentLike {
 	return v.ComponentLike
 }
 
-func (v *certificate_) AsString() string {
+func (v *certificate_) AsSource() string {
 	return doc.FormatComponent(v.ComponentLike) + "\n"
 }
 

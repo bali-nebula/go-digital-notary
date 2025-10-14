@@ -39,13 +39,13 @@ func (c *sealClass_) Seal(
 	}
 
 	var source = `[
-    $algorithm: ` + algorithm.AsString() + `
-    $signature: ` + signature.AsString() + `
+    $algorithm: ` + algorithm.AsSource() + `
+    $signature: ` + signature.AsSource() + `
 ]($type: /bali/types/notary/Seal/v3)`
-	return c.SealFromString(source)
+	return c.SealFromSource(source)
 }
 
-func (c *sealClass_) SealFromString(
+func (c *sealClass_) SealFromSource(
 	source string,
 ) SealLike {
 	var component = doc.ParseComponent(source)
@@ -74,7 +74,7 @@ func (v *seal_) AsIntrinsic() doc.ComponentLike {
 	return v.ComponentLike
 }
 
-func (v *seal_) AsString() string {
+func (v *seal_) AsSource() string {
 	return doc.FormatComponent(v.ComponentLike) + "\n"
 }
 

@@ -93,7 +93,7 @@ func (v *digitalNotary_) CiteDocument(
 
 	// Create a citation to the document.
 	var algorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
-	var source = document.AsString()
+	var source = document.AsSource()
 	var bytes = []byte(source)
 	var digest = doc.Binary(v.ssm_.DigestBytes(bytes))
 	var content = document.GetContent()
@@ -121,10 +121,10 @@ func (v *digitalNotary_) CitationMatches(
 	var citationAlgorithm = citation.GetAlgorithm()
 	var citationDigest = citation.GetDigest()
 	var ssmAlgorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
-	var source = document.AsString()
+	var source = document.AsSource()
 	var bytes = []byte(source)
 	var documentDigest = doc.Binary(v.ssm_.DigestBytes(bytes))
-	if citationAlgorithm.AsString() != ssmAlgorithm.AsString() {
+	if citationAlgorithm.AsSource() != ssmAlgorithm.AsSource() {
 		return false
 	}
 	if !byt.Equal(citationDigest.AsIntrinsic(), documentDigest.AsIntrinsic()) {
@@ -161,7 +161,7 @@ func (v *digitalNotary_) GenerateKey() not.DocumentLike {
 	var account = v.account_
 	var notary not.CitationLike
 	document.SetNotary(account, notary)
-	var source = document.AsString()
+	var source = document.AsSource()
 	bytes = v.hsm_.SignBytes([]byte(source))
 	var signature = doc.Binary(bytes)
 	var seal = not.SealClass().Seal(
@@ -172,7 +172,7 @@ func (v *digitalNotary_) GenerateKey() not.DocumentLike {
 
 	// Create a citation to the new certificate.
 	algorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
-	bytes = []byte(document.AsString())
+	bytes = []byte(document.AsSource())
 	var digest = doc.Binary(v.ssm_.DigestBytes(bytes))
 	var citation = not.CitationClass().Citation(
 		tag,
@@ -182,7 +182,7 @@ func (v *digitalNotary_) GenerateKey() not.DocumentLike {
 	)
 
 	// Save off the citation.
-	source = citation.AsString()
+	source = citation.AsSource()
 	uti.WriteFile(v.filename_, source)
 
 	return document
@@ -216,7 +216,7 @@ func (v *digitalNotary_) RefreshKey() not.DocumentLike {
 	// Notarize the document using the previous key.
 	var account = v.account_
 	document.SetNotary(account, previous)
-	var source = document.AsString()
+	var source = document.AsSource()
 	bytes = v.hsm_.SignBytes([]byte(source))
 	var signature = doc.Binary(bytes)
 	var seal = not.SealClass().Seal(
@@ -227,7 +227,7 @@ func (v *digitalNotary_) RefreshKey() not.DocumentLike {
 
 	// Create a citation to the new certificate.
 	algorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
-	bytes = []byte(document.AsString())
+	bytes = []byte(document.AsSource())
 	var digest = doc.Binary(v.ssm_.DigestBytes(bytes))
 	var citation = not.CitationClass().Citation(
 		tag,
@@ -237,7 +237,7 @@ func (v *digitalNotary_) RefreshKey() not.DocumentLike {
 	)
 
 	// Save off the citation.
-	source = citation.AsString()
+	source = citation.AsSource()
 	uti.WriteFile(v.filename_, source)
 
 	return document
@@ -281,7 +281,7 @@ func (v *digitalNotary_) GenerateCredential(
 	var notary = v.getCitation()
 	document.SetNotary(account, notary)
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
-	var source = document.AsString()
+	var source = document.AsSource()
 	var bytes = v.hsm_.SignBytes([]byte(source))
 	var signature = doc.Binary(bytes)
 	var seal = not.SealClass().Seal(
@@ -323,7 +323,7 @@ func (v *digitalNotary_) RefreshCredential(
 	var notary = v.getCitation()
 	document.SetNotary(account, notary)
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
-	var source = document.AsString()
+	var source = document.AsSource()
 	var bytes = v.hsm_.SignBytes([]byte(source))
 	var signature = doc.Binary(bytes)
 	var seal = not.SealClass().Seal(
@@ -348,7 +348,7 @@ func (v *digitalNotary_) NotarizeDocument(
 	var notary = v.getCitation()
 	document.SetNotary(account, notary)
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
-	var source = document.AsString()
+	var source = document.AsSource()
 	var bytes = v.hsm_.SignBytes([]byte(source))
 	var signature = doc.Binary(bytes)
 	var seal = not.SealClass().Seal(
@@ -368,8 +368,8 @@ func (v *digitalNotary_) SealMatches(
 	)
 
 	// Compare the signature algorithms for the public certificate and SSM.
-	var content = not.CertificateClass().CertificateFromString(
-		certificate.GetContent().AsString(),
+	var content = not.CertificateClass().CertificateFromSource(
+		certificate.GetContent().AsSource(),
 	)
 	var certificateAlgorithm = string(content.GetAlgorithm().AsIntrinsic())
 	var hsmAlgorithm = v.hsm_.GetSignatureAlgorithm()
@@ -385,7 +385,7 @@ func (v *digitalNotary_) SealMatches(
 	// Validate the seal on the notarized document.
 	var publicKey = content.GetKey()
 	var seal = document.RemoveSeal()
-	var source = document.AsString()
+	var source = document.AsSource()
 	var sourceBytes = []byte(source)
 	document.SetSeal(seal)
 	var certificateBytes = publicKey.AsIntrinsic()
@@ -404,7 +404,7 @@ func (v *digitalNotary_) getCitation() not.CitationLike {
 		panic("The digital notary has not yet been initialized.")
 	}
 	var source = uti.ReadFile(v.filename_)
-	var citation = not.CitationClass().CitationFromString(source)
+	var citation = not.CitationClass().CitationFromSource(source)
 	return citation
 }
 

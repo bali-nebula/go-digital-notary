@@ -38,10 +38,10 @@ func TestParsingCitations(t *tes.T) {
 		algorithm,
 		digest,
 	)
-	var formatted = citation.AsString()
+	var formatted = citation.AsSource()
 	ass.Equal(t, source, formatted)
 	citation = not.Citation(citation.AsResource())
-	formatted = citation.AsString()
+	formatted = citation.AsSource()
 	ass.Equal(t, source, formatted)
 }
 
@@ -52,7 +52,7 @@ func TestParsingCredentials(t *tes.T) {
 	var credential = not.Credential(source)
 	credential.GetTag()
 	credential.GetVersion()
-	var formatted = credential.AsString()
+	var formatted = credential.AsSource()
 	ass.Equal(t, source, formatted)
 }
 
@@ -73,7 +73,7 @@ func TestParsingCertificates(t *tes.T) {
 		key,
 		previous,
 	)
-	var formatted = certificate.AsString()
+	var formatted = certificate.AsSource()
 	ass.Equal(t, source, formatted)
 }
 
@@ -96,7 +96,7 @@ func TestParsingContents(t *tes.T) {
 		permissions,
 		optionalPrevious,
 	)
-	var formatted = content.AsString()
+	var formatted = content.AsSource()
 	ass.Equal(t, source, formatted)
 }
 
@@ -110,7 +110,7 @@ func TestParsingDocuments(t *tes.T) {
 	document.GetNotary()
 	var seal = document.RemoveSeal()
 	document.SetSeal(seal)
-	var formatted = document.AsString()
+	var formatted = document.AsSource()
 	ass.Equal(t, source, formatted)
 }
 
@@ -186,11 +186,11 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 		),
 	)
 	var filename = "./test/notary/CertificateV1.bali"
-	var source = certificateV1.AsString()
+	var source = certificateV1.AsSource()
 	uti.WriteFile(filename, source)
 
 	// Create and cite a new transaction document.
-	var timestamp = doc.Moment().AsString()
+	var timestamp = doc.Moment().AsSource()
 	var transaction = not.Content(
 		`[
     $timestamp: ` + timestamp + `
@@ -206,7 +206,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 )`,
 	)
 	filename = "./test/notary/Content.bali"
-	source = transaction.AsString()
+	source = transaction.AsSource()
 	uti.WriteFile(filename, source)
 
 	var document = not.Document(transaction)
@@ -223,7 +223,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 		),
 	)
 	filename = "./test/notary/Document.bali"
-	source = document.AsString()
+	source = document.AsSource()
 	uti.WriteFile(filename, source)
 
 	// Pickup where we left off with a new security module and digital notary.
@@ -240,7 +240,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 		),
 	)
 	filename = "./test/notary/CertificateV2.bali"
-	source = certificateV2.AsString()
+	source = certificateV2.AsSource()
 	uti.WriteFile(filename, source)
 
 	// Generate an authentication credential.
@@ -265,6 +265,6 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 		),
 	)
 	filename = "./test/notary/Credential.bali"
-	source = credential.AsString()
+	source = credential.AsSource()
 	uti.WriteFile(filename, source)
 }

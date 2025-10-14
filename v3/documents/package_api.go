@@ -52,7 +52,7 @@ type CertificateClassLike interface {
 		key doc.BinaryLike,
 		optionalPrevious doc.ResourceLike,
 	) CertificateLike
-	CertificateFromString(
+	CertificateFromSource(
 		source string,
 	) CertificateLike
 }
@@ -73,7 +73,7 @@ type CitationClassLike interface {
 	CitationFromResource(
 		resource doc.ResourceLike,
 	) CitationLike
-	CitationFromString(
+	CitationFromSource(
 		source string,
 	) CitationLike
 }
@@ -93,7 +93,7 @@ type ContentClassLike interface {
 		permissions doc.NameLike,
 		optionalPrevious doc.ResourceLike,
 	) ContentLike
-	ContentFromString(
+	ContentFromSource(
 		source string,
 	) ContentLike
 }
@@ -111,7 +111,7 @@ type CredentialClassLike interface {
 		version doc.VersionLike,
 		optionalPrevious doc.ResourceLike,
 	) CredentialLike
-	CredentialFromString(
+	CredentialFromSource(
 		source string,
 	) CredentialLike
 }
@@ -126,7 +126,7 @@ type DocumentClassLike interface {
 	Document(
 		content Parameterized,
 	) DocumentLike
-	DocumentFromString(
+	DocumentFromSource(
 		source string,
 	) DocumentLike
 }
@@ -142,7 +142,7 @@ type SealClassLike interface {
 		algorithm doc.QuoteLike,
 		signature doc.BinaryLike,
 	) SealLike
-	SealFromString(
+	SealFromSource(
 		source string,
 	) SealLike
 }
@@ -174,7 +174,7 @@ type CitationLike interface {
 	// Principal Methods
 	GetClass() CitationClassLike
 	AsIntrinsic() doc.ComponentLike
-	AsString() string
+	AsSource() string
 	AsResource() doc.ResourceLike
 	GetTag() doc.TagLike
 	GetVersion() doc.VersionLike
@@ -220,7 +220,7 @@ type DocumentLike interface {
 	// Principal Methods
 	GetClass() DocumentClassLike
 	AsIntrinsic() doc.ComponentLike
-	AsString() string
+	AsSource() string
 	GetContent() Parameterized
 	GetAccount() doc.TagLike
 	GetTimestamp() doc.MomentLike
@@ -245,7 +245,7 @@ type SealLike interface {
 	// Principal Methods
 	GetClass() SealClassLike
 	AsIntrinsic() doc.ComponentLike
-	AsString() string
+	AsSource() string
 	GetAlgorithm() doc.QuoteLike
 	GetSignature() doc.BinaryLike
 }
@@ -257,7 +257,7 @@ Parameterized declares the set of method signatures that must be supported by
 all parameterized documents.
 */
 type Parameterized interface {
-	AsString() string
+	AsSource() string
 	GetEntity() any
 	GetType() doc.NameLike
 	GetTag() doc.TagLike

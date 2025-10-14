@@ -185,7 +185,7 @@ func (v *ssm_) IsValid(
 // Private Methods
 
 func (v *ssm_) createConfiguration() {
-	v.tag_ = doc.Tag().AsString() // Results in a 32 character tag.
+	v.tag_ = doc.Tag().AsSource() // Results in a 32 character tag.
 	v.publicKey_ = nil
 	v.privateKey_ = nil
 	v.previousKey_ = nil
@@ -273,17 +273,17 @@ func (v *ssm_) writeConfiguration() {
 
 	var publicKey = "none"
 	if uti.IsDefined(v.publicKey_) {
-		publicKey = doc.Binary(v.publicKey_).AsString()
+		publicKey = doc.Binary(v.publicKey_).AsSource()
 	}
 
 	var privateKey = "none"
 	if uti.IsDefined(v.privateKey_) {
-		privateKey = doc.Binary(v.privateKey_).AsString()
+		privateKey = doc.Binary(v.privateKey_).AsSource()
 	}
 
 	var previousKey = "none"
 	if uti.IsDefined(v.previousKey_) {
-		previousKey = doc.Binary(v.previousKey_).AsString()
+		previousKey = doc.Binary(v.previousKey_).AsSource()
 	}
 
 	var source = `[
