@@ -217,32 +217,32 @@ func (v *ssm_) readConfiguration() {
 	fmt.Println(filename)
 
 	v.tag_ = doc.FormatComponent(
-		component.GetComposite(doc.Symbol("$tag")),
+		component.GetSubcomponent(doc.Symbol("$tag")),
 	)
 
 	var publicKey = doc.FormatComponent(
-		component.GetComposite(doc.Symbol("$publicKey")),
+		component.GetSubcomponent(doc.Symbol("$publicKey")),
 	)
 	if publicKey != "none" {
 		v.publicKey_ = doc.Binary(publicKey).AsIntrinsic()
 	}
 
 	var privateKey = doc.FormatComponent(
-		component.GetComposite(doc.Symbol("$privateKey")),
+		component.GetSubcomponent(doc.Symbol("$privateKey")),
 	)
 	if privateKey != "none" {
 		v.privateKey_ = doc.Binary(privateKey).AsIntrinsic()
 	}
 
 	var previousKey = doc.FormatComponent(
-		component.GetComposite(doc.Symbol("$previousKey")),
+		component.GetSubcomponent(doc.Symbol("$previousKey")),
 	)
 	if previousKey != "none" {
 		v.previousKey_ = doc.Binary(previousKey).AsIntrinsic()
 	}
 
 	var state = doc.FormatComponent(
-		component.GetComposite(doc.Symbol("$state")),
+		component.GetSubcomponent(doc.Symbol("$state")),
 	)
 	switch state {
 	case "$Keyless":

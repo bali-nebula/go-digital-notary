@@ -100,12 +100,12 @@ func (v *certificate_) AsSource() string {
 // Attribute Methods
 
 func (v *certificate_) GetAlgorithm() doc.QuoteLike {
-	var composite = v.GetComposite(doc.Symbol("$algorithm"))
+	var composite = v.GetSubcomponent(doc.Symbol("$algorithm"))
 	return doc.Quote(doc.FormatComponent(composite))
 }
 
 func (v *certificate_) GetKey() doc.BinaryLike {
-	var composite = v.GetComposite(doc.Symbol("$key"))
+	var composite = v.GetSubcomponent(doc.Symbol("$key"))
 	return doc.Binary(doc.FormatComponent(composite))
 }
 

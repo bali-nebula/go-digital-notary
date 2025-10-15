@@ -79,12 +79,12 @@ func (v *seal_) AsSource() string {
 }
 
 func (v *seal_) GetAlgorithm() doc.QuoteLike {
-	var composite = v.GetComposite(doc.Symbol("$algorithm"))
+	var composite = v.GetSubcomponent(doc.Symbol("$algorithm"))
 	return doc.Quote(doc.FormatComponent(composite))
 }
 
 func (v *seal_) GetSignature() doc.BinaryLike {
-	var composite = v.GetComposite(doc.Symbol("$signature"))
+	var composite = v.GetSubcomponent(doc.Symbol("$signature"))
 	return doc.Binary(doc.FormatComponent(composite))
 }
 
