@@ -17,7 +17,7 @@ import (
 	dig "crypto/sha512"
 	fmt "fmt"
 	doc "github.com/bali-nebula/go-bali-documents/v3"
-	uti "github.com/craterdog/go-missing-utilities/v7"
+	uti "github.com/craterdog/go-missing-utilities/v8"
 	sts "strings"
 )
 
