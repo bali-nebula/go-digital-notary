@@ -42,7 +42,7 @@ func (c *ssmClass_) Ssm(
 	}
 	directory += "ssm/"
 	uti.MakeDirectory(directory)
-	var controller = doc.Controller(c.events_, c.transitions_, c.keyless_)
+	var controller = uti.Controller(c.events_, c.transitions_, c.keyless_)
 	var instance = &ssm_{
 		// Initialize the instance attributes.
 		directory_:  directory,
@@ -189,7 +189,7 @@ func (v *ssm_) createConfiguration() {
 	v.publicKey_ = nil
 	v.privateKey_ = nil
 	v.previousKey_ = nil
-	v.controller_ = doc.Controller(
+	v.controller_ = uti.Controller(
 		ssmClass().events_,
 		ssmClass().transitions_,
 		ssmClass().keyless_,
@@ -307,21 +307,21 @@ type ssm_ struct {
 	previousKey_ []byte
 	directory_   string
 	filename_    string
-	controller_  doc.ControllerLike
+	controller_  uti.ControllerLike
 }
 
 // Class Structure
 
 type ssmClass_ struct {
 	// Declare the class constants.
-	keyless_      doc.State
-	loneKey_      doc.State
-	twoKeys_      doc.State
-	generateKeys_ doc.Event
-	signBytes_    doc.Event
-	rotateKeys_   doc.Event
-	events_       []doc.Event
-	transitions_  map[doc.State]doc.Transitions
+	keyless_      uti.State
+	loneKey_      uti.State
+	twoKeys_      uti.State
+	generateKeys_ uti.Event
+	signBytes_    uti.Event
+	rotateKeys_   uti.Event
+	events_       []uti.Event
+	transitions_  map[uti.State]uti.Transitions
 }
 
 // Class Reference
@@ -338,10 +338,10 @@ var ssmClassReference_ = &ssmClass_{
 	generateKeys_: "$GenerateKeys",
 	signBytes_:    "$SignBytes",
 	rotateKeys_:   "$RotateKeys",
-	events_:       []doc.Event{"$GenerateKeys", "$SignBytes", "$RotateKeys"},
-	transitions_: map[doc.State]doc.Transitions{
-		"$Keyless": doc.Transitions{"$LoneKey", "$Invalid", "$Invalid"},
-		"$LoneKey": doc.Transitions{"$Invalid", "$LoneKey", "$TwoKeys"},
-		"$TwoKeys": doc.Transitions{"$Invalid", "$LoneKey", "$Invalid"},
+	events_:       []uti.Event{"$GenerateKeys", "$SignBytes", "$RotateKeys"},
+	transitions_: map[uti.State]uti.Transitions{
+		"$Keyless": uti.Transitions{"$LoneKey", "$Invalid", "$Invalid"},
+		"$LoneKey": uti.Transitions{"$Invalid", "$LoneKey", "$TwoKeys"},
+		"$TwoKeys": uti.Transitions{"$Invalid", "$LoneKey", "$Invalid"},
 	},
 }
