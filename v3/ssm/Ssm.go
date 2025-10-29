@@ -17,7 +17,7 @@ import (
 	dig "crypto/sha512"
 	fmt "fmt"
 	doc "github.com/bali-nebula/go-bali-documents/v3"
-	uti "github.com/craterdog/go-missing-utilities/v8"
+	uti "github.com/craterdog/go-essential-utilities/v8"
 	sts "strings"
 )
 
@@ -307,7 +307,7 @@ type ssm_ struct {
 	previousKey_ []byte
 	directory_   string
 	filename_    string
-	controller_  uti.ControllerLike
+	controller_  uti.Stateful
 }
 
 // Class Structure

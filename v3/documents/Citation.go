@@ -14,7 +14,7 @@ package documents
 
 import (
 	doc "github.com/bali-nebula/go-bali-documents/v3"
-	uti "github.com/craterdog/go-missing-utilities/v8"
+	uti "github.com/craterdog/go-essential-utilities/v8"
 	sts "strings"
 )
 

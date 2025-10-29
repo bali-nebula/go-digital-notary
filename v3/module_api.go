@@ -36,7 +36,7 @@ import (
 	doc "github.com/bali-nebula/go-digital-notary/v3/documents"
 	not "github.com/bali-nebula/go-digital-notary/v3/notary"
 	ssm "github.com/bali-nebula/go-digital-notary/v3/ssm"
-	uti "github.com/craterdog/go-missing-utilities/v8"
+	uti "github.com/craterdog/go-essential-utilities/v8"
 )
 
 // TYPE ALIASES
