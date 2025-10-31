@@ -77,18 +77,18 @@ func TestParsingCertificates(t *tes.T) {
 	ass.Equal(t, source, formatted)
 }
 
-func TestParsingContents(t *tes.T) {
-	var filename = directory + "documents/Content.bali"
+func TestParsingDrafts(t *tes.T) {
+	var filename = directory + "documents/Draft.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var content = not.Content(source)
-	var entity = content.GetEntity()
-	var type_ = content.GetType()
-	var tag = content.GetTag()
-	var version = content.GetVersion()
-	var optionalPrevious = content.GetOptionalPrevious()
-	var permissions = content.GetPermissions()
-	content = not.Content(
+	var draft = not.Draft(source)
+	var entity = draft.GetEntity()
+	var type_ = draft.GetType()
+	var tag = draft.GetTag()
+	var version = draft.GetVersion()
+	var optionalPrevious = draft.GetOptionalPrevious()
+	var permissions = draft.GetPermissions()
+	draft = not.Draft(
 		entity,
 		type_,
 		tag,
@@ -96,7 +96,7 @@ func TestParsingContents(t *tes.T) {
 		permissions,
 		optionalPrevious,
 	)
-	var formatted = content.AsSource()
+	var formatted = draft.AsSource()
 	ass.Equal(t, source, formatted)
 }
 
@@ -191,7 +191,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 
 	// Create and cite a new transaction document.
 	var timestamp = doc.Moment().AsSource()
-	var transaction = not.Content(
+	var transaction = not.Draft(
 		`[
     $timestamp: ` + timestamp + `
     $consumer: "Derk Norton"
@@ -205,7 +205,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	$previous: none
 )`,
 	)
-	filename = "./test/notary/Content.bali"
+	filename = "./test/notary/Draft.bali"
 	source = transaction.AsSource()
 	uti.WriteFile(filename, source)
 

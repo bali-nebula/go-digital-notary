@@ -21,20 +21,20 @@ import (
 
 // Access Function
 
-func ContentClass() ContentClassLike {
-	return contentClass()
+func DraftClass() DraftClassLike {
+	return draftClass()
 }
 
 // Constructor Methods
 
-func (c *contentClass_) Content(
+func (c *draftClass_) Draft(
 	entity any,
 	type_ doc.NameLike,
 	tag doc.TagLike,
 	version doc.VersionLike,
 	permissions doc.NameLike,
 	optionalPrevious doc.ResourceLike,
-) ContentLike {
+) DraftLike {
 	if uti.IsUndefined(entity) {
 		panic("The \"entity\" attribute is required by this class.")
 	}
@@ -62,14 +62,14 @@ func (c *contentClass_) Content(
     $permissions: ` + permissions.AsSource() + `
     $previous: ` + previous + `
 )`
-	return c.ContentFromSource(source)
+	return c.DraftFromSource(source)
 }
 
-func (c *contentClass_) ContentFromSource(
+func (c *draftClass_) DraftFromSource(
 	source string,
-) ContentLike {
+) DraftLike {
 	var component = doc.ParseComponent(source)
-	var instance = &content_{
+	var instance = &draft_{
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
@@ -86,11 +86,11 @@ func (c *contentClass_) ContentFromSource(
 
 // Principal Methods
 
-func (v *content_) GetClass() ContentClassLike {
-	return contentClass()
+func (v *draft_) GetClass() DraftClassLike {
+	return draftClass()
 }
 
-func (v *content_) AsIntrinsic() doc.ComponentLike {
+func (v *draft_) AsIntrinsic() doc.ComponentLike {
 	return v.ComponentLike
 }
 
@@ -98,31 +98,31 @@ func (v *content_) AsIntrinsic() doc.ComponentLike {
 
 // Parameterized Methods
 
-func (v *content_) AsSource() string {
+func (v *draft_) AsSource() string {
 	return doc.FormatComponent(v.ComponentLike) + "\n"
 }
 
-func (v *content_) GetType() doc.NameLike {
+func (v *draft_) GetType() doc.NameLike {
 	var component = v.GetParameter(doc.Symbol("$type"))
 	return doc.Name(doc.FormatComponent(component))
 }
 
-func (v *content_) GetTag() doc.TagLike {
+func (v *draft_) GetTag() doc.TagLike {
 	var component = v.GetParameter(doc.Symbol("$tag"))
 	return doc.Tag(doc.FormatComponent(component))
 }
 
-func (v *content_) GetVersion() doc.VersionLike {
+func (v *draft_) GetVersion() doc.VersionLike {
 	var component = v.GetParameter(doc.Symbol("$version"))
 	return doc.Version(doc.FormatComponent(component))
 }
 
-func (v *content_) GetPermissions() doc.NameLike {
+func (v *draft_) GetPermissions() doc.NameLike {
 	var component = v.GetParameter(doc.Symbol("$permissions"))
 	return doc.Name(doc.FormatComponent(component))
 }
 
-func (v *content_) GetOptionalPrevious() doc.ResourceLike {
+func (v *draft_) GetOptionalPrevious() doc.ResourceLike {
 	var previous doc.ResourceLike
 	var component = v.GetParameter(doc.Symbol("$previous"))
 	if uti.IsDefined(component) {
@@ -140,7 +140,7 @@ func (v *content_) GetOptionalPrevious() doc.ResourceLike {
 
 // Instance Structure
 
-type content_ struct {
+type draft_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
@@ -149,16 +149,16 @@ type content_ struct {
 
 // Class Structure
 
-type contentClass_ struct {
+type draftClass_ struct {
 	// Declare the class constants.
 }
 
 // Class Reference
 
-func contentClass() *contentClass_ {
-	return contentClassReference_
+func draftClass() *draftClass_ {
+	return draftClassReference_
 }
 
-var contentClassReference_ = &contentClass_{
+var draftClassReference_ = &draftClass_{
 	// Initialize the class constants.
 }

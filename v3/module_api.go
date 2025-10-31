@@ -46,18 +46,18 @@ import (
 type (
 	CertificateClassLike = doc.CertificateClassLike
 	CitationClassLike    = doc.CitationClassLike
-	ContentClassLike     = doc.ContentClassLike
 	CredentialClassLike  = doc.CredentialClassLike
 	DocumentClassLike    = doc.DocumentClassLike
+	DraftClassLike       = doc.DraftClassLike
 	SealClassLike        = doc.SealClassLike
 )
 
 type (
 	CertificateLike = doc.CertificateLike
 	CitationLike    = doc.CitationLike
-	ContentLike     = doc.ContentLike
 	CredentialLike  = doc.CredentialLike
 	DocumentLike    = doc.DocumentLike
+	DraftLike       = doc.DraftLike
 	SealLike        = doc.SealLike
 )
 
@@ -102,16 +102,16 @@ func CitationClass() CitationClassLike {
 	return doc.CitationClass()
 }
 
-func ContentClass() ContentClassLike {
-	return doc.ContentClass()
-}
-
 func CredentialClass() CredentialClassLike {
 	return doc.CredentialClass()
 }
 
 func DocumentClass() DocumentClassLike {
 	return doc.DocumentClass()
+}
+
+func DraftClass() DraftClassLike {
+	return doc.DraftClass()
 }
 
 func SealClass() SealClassLike {
@@ -194,32 +194,6 @@ func Citation(
 	return CitationClass().Citation(tag, version, algorithm, digest)
 }
 
-func Content(
-	value ...any,
-) ContentLike {
-	if len(value) == 1 {
-		var source = value[0].(string)
-		return doc.ContentClass().ContentFromSource(source)
-	}
-	var entity = value[0]
-	var type_ = value[1].(bal.NameLike)
-	var tag = value[2].(bal.TagLike)
-	var version = value[3].(bal.VersionLike)
-	var permissions = value[4].(bal.NameLike)
-	var optionalPrevious bal.ResourceLike
-	if uti.IsDefined(value[5]) {
-		optionalPrevious = value[5].(bal.ResourceLike)
-	}
-	return ContentClass().Content(
-		entity,
-		type_,
-		tag,
-		version,
-		permissions,
-		optionalPrevious,
-	)
-}
-
 func Credential(
 	value ...any,
 ) CredentialLike {
@@ -255,6 +229,32 @@ func Document(
 		)
 		panic(message)
 	}
+}
+
+func Draft(
+	value ...any,
+) DraftLike {
+	if len(value) == 1 {
+		var source = value[0].(string)
+		return doc.DraftClass().DraftFromSource(source)
+	}
+	var entity = value[0]
+	var type_ = value[1].(bal.NameLike)
+	var tag = value[2].(bal.TagLike)
+	var version = value[3].(bal.VersionLike)
+	var permissions = value[4].(bal.NameLike)
+	var optionalPrevious bal.ResourceLike
+	if uti.IsDefined(value[5]) {
+		optionalPrevious = value[5].(bal.ResourceLike)
+	}
+	return DraftClass().Draft(
+		entity,
+		type_,
+		tag,
+		version,
+		permissions,
+		optionalPrevious,
+	)
 }
 
 func Seal(

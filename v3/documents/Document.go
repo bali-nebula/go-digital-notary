@@ -76,8 +76,8 @@ func (v *document_) AsSource() string {
 // Attribute Methods
 
 func (v *document_) GetContent() Parameterized {
-	var composite = v.GetSubcomponent(doc.Symbol("$content"))
-	return ContentClass().ContentFromSource(doc.FormatComponent(composite))
+	var content = v.GetSubcomponent(doc.Symbol("$content"))
+	return DraftClass().DraftFromSource(doc.FormatComponent(content))
 }
 
 func (v *document_) GetTimestamp() doc.MomentLike {
