@@ -115,26 +115,38 @@ func TestParsingDocuments(t *tes.T) {
 }
 
 // Create the security module and digital notary.
-var module = not.Ssm(directory)
-var notary = not.DigitalNotary(directory, module, module)
+var ssm = not.SsmP1()
+var hsm = not.TsmP1(directory)
+var notary = not.DigitalNotary(directory, ssm, hsm)
 
 func TestSSM(t *tes.T) {
 	var bytes = []byte{0x0, 0x1, 0x2, 0x3, 0x4}
-	ass.Equal(t, "SHA512", module.GetDigestAlgorithm())
-	ass.Equal(t, "ED25519", module.GetSignatureAlgorithm())
-	ass.Equal(t, 64, len(module.DigestBytes(bytes)))
+	var digest = ssm.DigestBytes(bytes)
+	ass.Equal(t, "SHA512", ssm.GetDigestAlgorithm())
+	ass.Equal(t, 64, len(digest))
+	ass.Equal(t, []byte{
+		0xb7, 0xb7, 0xa, 0xb, 0x14, 0xd7, 0xfa, 0x21,
+		0x3c, 0x6c, 0xcd, 0x3c, 0xbf, 0xfc, 0x8b, 0xb8,
+		0xf8, 0xe1, 0x1a, 0x85, 0xf1, 0x11, 0x3b, 0xe,
+		0xb2, 0x6a, 0x0, 0x20, 0x8f, 0x2b, 0x9b, 0x3a,
+		0x1d, 0xd4, 0xaa, 0xf3, 0x99, 0x62, 0x86, 0x1e,
+		0x16, 0xab, 0x6, 0x22, 0x74, 0x34, 0x2a, 0x1c,
+		0xe1, 0xf9, 0xdb, 0xa3, 0x65, 0x4f, 0x36, 0xfc,
+		0x33, 0x82, 0x45, 0x58, 0x9f, 0x29, 0x6c, 0x28,
+	}, digest)
+}
 
-	module.EraseKeys()
-	var publicKey = module.GenerateKeys()
-
-	var seal = module.SignBytes(bytes)
-	ass.True(t, module.IsValid(publicKey, seal, bytes))
-
-	var newPublicKey = module.RotateKeys()
-	seal = module.SignBytes(newPublicKey)
-	ass.True(t, module.IsValid(publicKey, seal, newPublicKey))
-
-	module.EraseKeys()
+func TestHSM(t *tes.T) {
+	var bytes = []byte{0x0, 0x1, 0x2, 0x3, 0x4}
+	ass.Equal(t, "ED25519", hsm.GetSignatureAlgorithm())
+	hsm.EraseKeys()
+	var publicKey = hsm.GenerateKeys()
+	var signature = hsm.SignBytes(bytes)
+	ass.True(t, hsm.IsValid(publicKey, bytes, signature))
+	var newPublicKey = hsm.RotateKeys()
+	signature = hsm.SignBytes(newPublicKey)
+	ass.True(t, hsm.IsValid(publicKey, newPublicKey, signature))
+	hsm.EraseKeys()
 }
 
 func TestDigitalNotaryInitialization(t *tes.T) {
@@ -164,7 +176,7 @@ func TestDigitalNotaryGenerateKey(t *tes.T) {
 			var message = e.(string)
 			ass.Equal(
 				t,
-				"DigitalNotary: An error occurred while attempting to generate a new key pair:\n    Ssm: An error occurred while attempting to generate new keys:\n        Attempted to transition from state \"$LoneKey\" to an invalid state on event \"$GenerateKeys\".",
+				"DigitalNotary: An error occurred while attempting to generate a new key pair:\n    TsmP1: An error occurred while attempting to generate new keys:\n        Attempted to transition from state \"$LoneKey\" to an invalid state on event \"$GenerateKeys\".",
 				message,
 			)
 		} else {
@@ -227,8 +239,9 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	uti.WriteFile(filename, source)
 
 	// Pickup where we left off with a new security module and digital notary.
-	module = not.Ssm(directory)
-	notary = not.DigitalNotary(directory, module, module)
+	ssm = not.SsmP1()
+	hsm = not.TsmP1(directory)
+	notary = not.DigitalNotary(directory, ssm, hsm)
 
 	// Refresh and validate the public-private key pair.
 	var certificateV2 = notary.RefreshKey()

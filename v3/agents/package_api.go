@@ -11,8 +11,9 @@
 */
 
 /*
-Package "notary" provides an implementation of a digital notary that can be used
-to digitally notarize Bali documents.
+Package "agents" provides an implementation of a digital notary that can be used
+to digitally notarize Bali documents.  The digital notary delegates the actual
+security sensitive operations to one or more versions of a security module.
 
 For detailed documentation on this package refer to the wiki:
   - https://github.com/bali-nebula/go-digital-notary/wiki
@@ -26,7 +27,7 @@ be developed and used seamlessly since the interface declarations only depend on
 other interfaces and intrinsic types—and the class implementations only depend
 on interfaces, not on each other.
 */
-package notary
+package agents
 
 import (
 	not "github.com/bali-nebula/go-digital-notary/v3/documents"
@@ -54,6 +55,44 @@ type DigitalNotaryClassLike interface {
 		ssm Trusted,
 		hsm Hardened,
 	) DigitalNotaryLike
+}
+
+/*
+SsmP1ClassLike is a class interface that declares the complete set of class
+constructors, constants and functions that must be supported by each concrete
+software-security-module-p1-like class.
+*/
+type SsmP1ClassLike interface {
+	// Constructor Methods
+	SsmP1() SsmP1Like
+}
+
+/*
+HsmP1ClassLike is a class interface that declares the complete set of class
+constructors, constants and functions that must be supported by each concrete
+hardward-security-module-p1-like class.
+*/
+type HsmP1ClassLike interface {
+	// Constructor Methods
+	HsmP1(
+		device string,
+	) HsmP1Like
+}
+
+/*
+TsmP1ClassLike is a class interface that declares the complete set of class
+constructors, constants and functions that must be supported by each concrete
+test-security-module-p1-like class.
+
+A test security module (TSM) should only be used in place of an actual hardware
+security module (HSM) for testing purposes only, or in a physically secure
+environment like the cloud.
+*/
+type TsmP1ClassLike interface {
+	// Constructor Methods
+	TsmP1(
+		directory string,
+	) TsmP1Like
 }
 
 // INSTANCE DECLARATIONS
@@ -92,6 +131,45 @@ type DigitalNotaryLike interface {
 	) bool
 }
 
+/*
+SsmP1Like is an instance interface that declares the complete set of principal,
+attribute and aspect methods that must be supported by each instance of a
+concrete software-security-module-p1-like class.
+*/
+type SsmP1Like interface {
+	// Principal Methods
+	GetClass() SsmP1ClassLike
+
+	// Aspect Interfaces
+	Trusted
+}
+
+/*
+HsmP1Like is an instance interface that declares the complete set of principal,
+attribute and aspect methods that must be supported by each instance of a
+concrete hardware-security-module-p1-like class.
+*/
+type HsmP1Like interface {
+	// Principal Methods
+	GetClass() HsmP1ClassLike
+
+	// Aspect Interfaces
+	Hardened
+}
+
+/*
+TsmP1Like is an instance interface that declares the complete set of principal,
+attribute and aspect methods that must be supported by each instance of a
+concrete test-security-module-p1-like class.
+*/
+type TsmP1Like interface {
+	// Principal Methods
+	GetClass() TsmP1ClassLike
+
+	// Aspect Interfaces
+	Hardened
+}
+
 // ASPECT DECLARATIONS
 
 /*
@@ -103,11 +181,6 @@ type Trusted interface {
 	DigestBytes(
 		bytes []byte,
 	) []byte
-	IsValid(
-		key []byte,
-		seal []byte,
-		bytes []byte,
-	) bool
 }
 
 /*
@@ -121,6 +194,11 @@ type Hardened interface {
 	SignBytes(
 		bytes []byte,
 	) []byte
+	IsValid(
+		key []byte,
+		bytes []byte,
+		signature []byte,
+	) bool
 	RotateKeys() []byte
 	EraseKeys()
 }

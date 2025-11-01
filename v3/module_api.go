@@ -33,9 +33,8 @@ package module
 import (
 	fmt "fmt"
 	bal "github.com/bali-nebula/go-bali-documents/v3"
+	age "github.com/bali-nebula/go-digital-notary/v3/agents"
 	doc "github.com/bali-nebula/go-digital-notary/v3/documents"
-	not "github.com/bali-nebula/go-digital-notary/v3/notary"
-	ssm "github.com/bali-nebula/go-digital-notary/v3/ssm"
 	uti "github.com/craterdog/go-essential-utilities/v8"
 )
 
@@ -65,29 +64,43 @@ type (
 	Parameterized = doc.Parameterized
 )
 
-// Notary
+// Agents
 
 type (
-	DigitalNotaryClassLike = not.DigitalNotaryClassLike
+	DigitalNotaryClassLike = age.DigitalNotaryClassLike
 )
 
 type (
-	DigitalNotaryLike = not.DigitalNotaryLike
+	DigitalNotaryLike = age.DigitalNotaryLike
 )
 
 type (
-	Trusted  = not.Trusted
-	Hardened = not.Hardened
-)
-
-// Ssm
-
-type (
-	SsmClassLike = ssm.SsmClassLike
+	Trusted  = age.Trusted
+	Hardened = age.Hardened
 )
 
 type (
-	SsmLike = ssm.SsmLike
+	SsmP1ClassLike = age.SsmP1ClassLike
+)
+
+type (
+	SsmP1Like = age.SsmP1Like
+)
+
+type (
+	TsmP1ClassLike = age.TsmP1ClassLike
+)
+
+type (
+	TsmP1Like = age.TsmP1Like
+)
+
+type (
+	HsmP1ClassLike = age.HsmP1ClassLike
+)
+
+type (
+	HsmP1Like = age.HsmP1Like
 )
 
 // CLASS ACCESSORS
@@ -118,16 +131,16 @@ func SealClass() SealClassLike {
 	return doc.SealClass()
 }
 
-// Notary
+// Agents
 
 func DigitalNotaryClass() DigitalNotaryClassLike {
-	return not.DigitalNotaryClass()
+	return age.DigitalNotaryClass()
 }
 
 func DigitalNotary(
 	directory string,
-	ssm not.Trusted,
-	hsm not.Hardened,
+	ssm age.Trusted,
+	hsm age.Hardened,
 ) DigitalNotaryLike {
 	return DigitalNotaryClass().DigitalNotary(
 		directory,
@@ -136,17 +149,35 @@ func DigitalNotary(
 	)
 }
 
-// Ssm
-
-func SsmClass() SsmClassLike {
-	return ssm.SsmClass()
+func SsmP1Class() SsmP1ClassLike {
+	return age.SsmP1Class()
 }
 
-func Ssm(
+func SsmP1() SsmP1Like {
+	return SsmP1Class().SsmP1()
+}
+
+func TsmP1Class() TsmP1ClassLike {
+	return age.TsmP1Class()
+}
+
+func TsmP1(
 	directory string,
-) SsmLike {
-	return SsmClass().Ssm(
+) TsmP1Like {
+	return TsmP1Class().TsmP1(
 		directory,
+	)
+}
+
+func HsmP1Class() HsmP1ClassLike {
+	return age.HsmP1Class()
+}
+
+func HsmP1(
+	device string,
+) HsmP1Like {
+	return HsmP1Class().HsmP1(
+		device,
 	)
 }
 

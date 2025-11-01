@@ -10,11 +10,10 @@
 ................................................................................
 */
 
-package ssm
+package agents
 
 import (
 	sig "crypto/ed25519"
-	dig "crypto/sha512"
 	fmt "fmt"
 	doc "github.com/bali-nebula/go-bali-documents/v3"
 	uti "github.com/craterdog/go-essential-utilities/v8"
@@ -25,25 +24,25 @@ import (
 
 // Access Function
 
-func SsmClass() SsmClassLike {
-	return ssmClass()
+func TsmP1Class() TsmP1ClassLike {
+	return tsmP1Class()
 }
 
 // Constructor Methods
 
-func (c *ssmClass_) Ssm(
+func (c *tsmP1Class_) TsmP1(
 	directory string,
-) SsmLike {
+) TsmP1Like {
 	if uti.IsUndefined(directory) {
 		panic("The \"directory\" attribute is required by this class.")
 	}
 	if !sts.HasSuffix(directory, "/") {
 		directory += "/"
 	}
-	directory += "ssm/"
+	directory += "tsmP1/"
 	uti.MakeDirectory(directory)
 	var controller = uti.Controller(c.events_, c.transitions_, c.keyless_)
-	var instance = &ssm_{
+	var instance = &tsmP1_{
 		// Initialize the instance attributes.
 		directory_:  directory,
 		filename_:   "Configuration.bali",
@@ -66,23 +65,23 @@ func (c *ssmClass_) Ssm(
 
 // Principal Methods
 
-func (v *ssm_) GetClass() SsmClassLike {
-	return ssmClass()
+func (v *tsmP1_) GetClass() TsmP1ClassLike {
+	return tsmP1Class()
 }
 
 // Attribute Methods
 
 // Hardened Methods
 
-func (v *ssm_) GetTag() string {
+func (v *tsmP1_) GetTag() string {
 	return v.tag_
 }
 
-func (v *ssm_) GetSignatureAlgorithm() string {
-	return "ED25519"
+func (v *tsmP1_) GetSignatureAlgorithm() string {
+	return tsmP1Class().algorithm_
 }
 
-func (v *ssm_) GenerateKeys() []byte {
+func (v *tsmP1_) GenerateKeys() []byte {
 	// Check for any errors at the end.
 	defer v.errorCheck(
 		"An error occurred while attempting to generate new keys",
@@ -90,7 +89,7 @@ func (v *ssm_) GenerateKeys() []byte {
 
 	fmt.Println("WARNING: Using a SOFTWARE security module to generate keys.")
 	var err error
-	v.controller_.ProcessEvent(ssmClass().generateKeys_)
+	v.controller_.ProcessEvent(tsmP1Class().generateKeys_)
 	v.publicKey_, v.privateKey_, err = sig.GenerateKey(nil)
 	if err != nil {
 		panic(err)
@@ -99,7 +98,7 @@ func (v *ssm_) GenerateKeys() []byte {
 	return v.publicKey_
 }
 
-func (v *ssm_) SignBytes(
+func (v *tsmP1_) SignBytes(
 	bytes []byte,
 ) []byte {
 	// Check for any errors at the end.
@@ -108,7 +107,7 @@ func (v *ssm_) SignBytes(
 	)
 
 	fmt.Println("WARNING: Using a SOFTWARE security module to sign bytes.")
-	v.controller_.ProcessEvent(ssmClass().signBytes_)
+	v.controller_.ProcessEvent(tsmP1Class().signBytes_)
 	var privateKey = v.privateKey_
 	if v.previousKey_ != nil {
 		// Use the old key one more time to sign the new one.
@@ -120,7 +119,21 @@ func (v *ssm_) SignBytes(
 	return signature
 }
 
-func (v *ssm_) RotateKeys() []byte {
+func (v *tsmP1_) IsValid(
+	key []byte,
+	bytes []byte,
+	signature []byte,
+) bool {
+	// Check for any errors at the end.
+	defer v.errorCheck(
+		"An error occurred while attempting to verify bytes signature",
+	)
+
+	fmt.Println("WARNING: Using a SOFTWARE security module to verify signature.")
+	return sig.Verify(sig.PublicKey(key), bytes, signature)
+}
+
+func (v *tsmP1_) RotateKeys() []byte {
 	// Check for any errors at the end.
 	defer v.errorCheck(
 		"An error occurred while attempting to rotate keys",
@@ -128,7 +141,7 @@ func (v *ssm_) RotateKeys() []byte {
 
 	var err error
 	fmt.Println("WARNING: Using a SOFTWARE security module to rotate keys.")
-	v.controller_.ProcessEvent(ssmClass().rotateKeys_)
+	v.controller_.ProcessEvent(tsmP1Class().rotateKeys_)
 	v.previousKey_ = v.privateKey_
 	v.publicKey_, v.privateKey_, err = sig.GenerateKey(nil)
 	if err != nil {
@@ -138,7 +151,7 @@ func (v *ssm_) RotateKeys() []byte {
 	return v.publicKey_
 }
 
-func (v *ssm_) EraseKeys() {
+func (v *tsmP1_) EraseKeys() {
 	// Check for any errors at the end.
 	defer v.errorCheck(
 		"An error occurred while attempting to erase the keys",
@@ -148,61 +161,29 @@ func (v *ssm_) EraseKeys() {
 	v.createConfiguration()
 }
 
-// Trusted Methods
-
-func (v *ssm_) GetDigestAlgorithm() string {
-	return "SHA512"
-}
-
-func (v *ssm_) DigestBytes(
-	bytes []byte,
-) []byte {
-	// Check for any errors at the end.
-	defer v.errorCheck(
-		"An error occurred while attempting to digest bytes",
-	)
-
-	var array = dig.Sum512(bytes)
-	var digest = array[:] // Convert the [64]byte array to a slice.
-	return digest
-}
-
-func (v *ssm_) IsValid(
-	key []byte,
-	signature []byte,
-	bytes []byte,
-) bool {
-	// Check for any errors at the end.
-	defer v.errorCheck(
-		"An error occurred while attempting to verify bytes signature",
-	)
-
-	return sig.Verify(sig.PublicKey(key), bytes, signature)
-}
-
 // PROTECTED INTERFACE
 
 // Private Methods
 
-func (v *ssm_) createConfiguration() {
+func (v *tsmP1_) createConfiguration() {
 	v.tag_ = doc.Tag().AsSource() // Results in a 32 character tag.
 	v.publicKey_ = nil
 	v.privateKey_ = nil
 	v.previousKey_ = nil
 	v.controller_ = uti.Controller(
-		ssmClass().events_,
-		ssmClass().transitions_,
-		ssmClass().keyless_,
+		tsmP1Class().events_,
+		tsmP1Class().transitions_,
+		tsmP1Class().keyless_,
 	)
 	v.writeConfiguration()
 }
 
-func (v *ssm_) errorCheck(
+func (v *tsmP1_) errorCheck(
 	message string,
 ) {
 	if e := recover(); e != nil {
 		message = fmt.Sprintf(
-			"Ssm: %s:\n        %v",
+			"TsmP1: %s:\n        %v",
 			message,
 			e,
 		)
@@ -210,7 +191,7 @@ func (v *ssm_) errorCheck(
 	}
 }
 
-func (v *ssm_) readConfiguration() {
+func (v *tsmP1_) readConfiguration() {
 	var filename = v.directory_ + v.filename_
 	var source = uti.ReadFile(filename)
 	var component = doc.ParseComponent(source)
@@ -246,26 +227,26 @@ func (v *ssm_) readConfiguration() {
 	)
 	switch state {
 	case "$Keyless":
-		v.controller_.SetState(ssmClass().keyless_)
+		v.controller_.SetState(tsmP1Class().keyless_)
 	case "$LoneKey":
-		v.controller_.SetState(ssmClass().loneKey_)
+		v.controller_.SetState(tsmP1Class().loneKey_)
 	case "$TwoKeys":
-		v.controller_.SetState(ssmClass().twoKeys_)
+		v.controller_.SetState(tsmP1Class().twoKeys_)
 	default:
 		panic("Invalid State")
 	}
 }
 
-func (v *ssm_) writeConfiguration() {
+func (v *tsmP1_) writeConfiguration() {
 	var tag = v.tag_
 
 	var state string
 	switch v.controller_.GetState() {
-	case ssmClass().keyless_:
+	case tsmP1Class().keyless_:
 		state = "$Keyless"
-	case ssmClass().loneKey_:
+	case tsmP1Class().loneKey_:
 		state = "$LoneKey"
-	case ssmClass().twoKeys_:
+	case tsmP1Class().twoKeys_:
 		state = "$TwoKeys"
 	default:
 		panic("Invalid State")
@@ -292,14 +273,14 @@ func (v *ssm_) writeConfiguration() {
     $publicKey: ` + publicKey + `
     $privateKey: ` + privateKey + `
     $previousKey: ` + previousKey + `
-]($type: <bali:/types/notary/Ssm@v3>)`
+]($type: <bali:/types/notary/TsmP1@v3>)`
 	var filename = v.directory_ + v.filename_
 	uti.WriteFile(filename, source)
 }
 
 // Instance Structure
 
-type ssm_ struct {
+type tsmP1_ struct {
 	// Declare the instance attributes.
 	tag_         string
 	publicKey_   []byte
@@ -312,8 +293,9 @@ type ssm_ struct {
 
 // Class Structure
 
-type ssmClass_ struct {
+type tsmP1Class_ struct {
 	// Declare the class constants.
+	algorithm_    string
 	keyless_      uti.State
 	loneKey_      uti.State
 	twoKeys_      uti.State
@@ -326,12 +308,13 @@ type ssmClass_ struct {
 
 // Class Reference
 
-func ssmClass() *ssmClass_ {
-	return ssmClassReference_
+func tsmP1Class() *tsmP1Class_ {
+	return tsmP1ClassReference_
 }
 
-var ssmClassReference_ = &ssmClass_{
+var tsmP1ClassReference_ = &tsmP1Class_{
 	// Initialize the class constants.
+	algorithm_:    "ED25519",
 	keyless_:      "$Keyless",
 	loneKey_:      "$LoneKey",
 	twoKeys_:      "$TwoKeys",

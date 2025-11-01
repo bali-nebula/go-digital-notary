@@ -10,7 +10,7 @@
 ................................................................................
 */
 
-package notary
+package agents
 
 import (
 	byt "bytes"
@@ -388,9 +388,9 @@ func (v *digitalNotary_) SealMatches(
 	var source = document.AsSource()
 	var sourceBytes = []byte(source)
 	document.SetSeal(seal)
-	var certificateBytes = publicKey.AsIntrinsic()
-	var sealBytes = seal.GetSignature().AsIntrinsic()
-	return v.ssm_.IsValid(certificateBytes, sealBytes, sourceBytes)
+	var keyBytes = publicKey.AsIntrinsic()
+	var signatureBytes = seal.GetSignature().AsIntrinsic()
+	return v.hsm_.IsValid(keyBytes, sourceBytes, signatureBytes)
 }
 
 // Attribute Methods
