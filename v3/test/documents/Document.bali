@@ -13,7 +13,7 @@
         $permissions: /bali/permissions/Public/v3
         $previous: none
     )
-    $account: #8MNP5WY9SV2TG1GCL0GPR2L96X8754MZ
+    $owner: #8MNP5WY9SV2TG1GCL0GPR2L96X8754MZ
     $timestamp: <2025-10-11T21:00:56.807>
     $notary: [
         $tag: #BDBK83JS4YDAZJKAT9D646Z3PAXY4SXJ

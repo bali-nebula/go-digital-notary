@@ -89,21 +89,21 @@ func (v *document_) GetTimestamp() doc.MomentLike {
 	return timestamp
 }
 
-func (v *document_) GetAccount() doc.TagLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$account"))
-	var account doc.TagLike
+func (v *document_) GetOwner() doc.TagLike {
+	var composite = v.GetSubcomponent(doc.Symbol("$owner"))
+	var owner doc.TagLike
 	if uti.IsDefined(composite) {
-		account = doc.Tag(doc.FormatComponent(composite))
+		owner = doc.Tag(doc.FormatComponent(composite))
 	}
-	return account
+	return owner
 }
 
 func (v *document_) SetNotary(
-	account doc.TagLike,
+	owner doc.TagLike,
 	notary CitationLike,
 ) {
-	var component = doc.ParseComponent(account.AsSource())
-	v.SetSubcomponent(component, doc.Symbol("$account"))
+	var component = doc.ParseComponent(owner.AsSource())
+	v.SetSubcomponent(component, doc.Symbol("$owner"))
 	component = doc.ParseComponent(doc.Moment().AsSource())
 	v.SetSubcomponent(component, doc.Symbol("$timestamp"))
 	component = doc.ParseComponent("none")

@@ -74,10 +74,12 @@ func (v *tsmP1_) GetClass() TsmP1ClassLike {
 // Hardened Methods
 
 func (v *tsmP1_) GetTag() string {
+	fmt.Println("WARNING: Using a SOFTWARE security module to retrieve the tag.")
 	return v.tag_
 }
 
 func (v *tsmP1_) GetSignatureAlgorithm() string {
+	fmt.Println("WARNING: Using a SOFTWARE security module to retrieve the signature algorithm.")
 	return tsmP1Class().algorithm_
 }
 
@@ -273,7 +275,8 @@ func (v *tsmP1_) writeConfiguration() {
     $publicKey: ` + publicKey + `
     $privateKey: ` + privateKey + `
     $previousKey: ` + previousKey + `
-]($type: <bali:/types/notary/TsmP1@v3>)`
+]($type: <bali:/types/notary/TsmP1@v3>)
+`
 	var filename = v.directory_ + v.filename_
 	uti.WriteFile(filename, source)
 }

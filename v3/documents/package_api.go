@@ -208,10 +208,10 @@ type DocumentLike interface {
 	AsIntrinsic() doc.ComponentLike
 	AsSource() string
 	GetContent() Parameterized
-	GetAccount() doc.TagLike
+	GetOwner() doc.TagLike
 	GetTimestamp() doc.MomentLike
 	SetNotary(
-		account doc.TagLike,
+		owner doc.TagLike,
 		notary CitationLike,
 	)
 	GetNotary() CitationLike

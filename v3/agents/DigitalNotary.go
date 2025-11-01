@@ -53,7 +53,7 @@ func (c *digitalNotaryClass_) DigitalNotary(
 	directory += "notary/"
 	uti.MakeDirectory(directory)
 	var filename = directory + "Citation.bali"
-	var account = doc.Tag(hsm.GetTag())
+	var owner = doc.Tag(hsm.GetTag())
 	if !uti.PathExists(filename) {
 		// There is no way to retrieve a citation to the certificate.
 		hsm.EraseKeys()
@@ -62,11 +62,10 @@ func (c *digitalNotaryClass_) DigitalNotary(
 	// Create the new digital notary.
 	var instance = &digitalNotary_{
 		// Initialize the instance attributes.
-		directory_: directory,
-		filename_:  filename,
-		account_:   account,
-		ssm_:       ssm,
-		hsm_:       hsm,
+		filename_: filename,
+		owner_:    owner,
+		ssm_:      ssm,
+		hsm_:      hsm,
 	}
 	return instance
 }
@@ -158,9 +157,9 @@ func (v *digitalNotary_) GenerateKey() not.DocumentLike {
 	var document = not.DocumentClass().Document(certificate)
 
 	// Notarize the document using its own key.
-	var account = v.account_
+	var owner = v.owner_
 	var notary not.CitationLike
-	document.SetNotary(account, notary)
+	document.SetNotary(owner, notary)
 	var source = document.AsSource()
 	bytes = v.hsm_.SignBytes([]byte(source))
 	var signature = doc.Binary(bytes)
@@ -214,8 +213,8 @@ func (v *digitalNotary_) RefreshKey() not.DocumentLike {
 	var document = not.DocumentClass().Document(certificate)
 
 	// Notarize the document using the previous key.
-	var account = v.account_
-	document.SetNotary(account, previous)
+	var owner = v.owner_
+	document.SetNotary(owner, previous)
 	var source = document.AsSource()
 	bytes = v.hsm_.SignBytes([]byte(source))
 	var signature = doc.Binary(bytes)
@@ -277,9 +276,9 @@ func (v *digitalNotary_) GenerateCredential(
 	var document = not.DocumentClass().Document(
 		credential,
 	)
-	var account = v.account_
+	var owner = v.owner_
 	var notary = v.getCitation()
-	document.SetNotary(account, notary)
+	document.SetNotary(owner, notary)
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var source = document.AsSource()
 	var bytes = v.hsm_.SignBytes([]byte(source))
@@ -319,9 +318,9 @@ func (v *digitalNotary_) RefreshCredential(
 	var document = not.DocumentClass().Document(
 		content,
 	)
-	var account = v.account_
+	var owner = v.owner_
 	var notary = v.getCitation()
-	document.SetNotary(account, notary)
+	document.SetNotary(owner, notary)
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var source = document.AsSource()
 	var bytes = v.hsm_.SignBytes([]byte(source))
@@ -344,9 +343,9 @@ func (v *digitalNotary_) NotarizeDocument(
 	)
 
 	// Notarize the document.
-	var account = v.account_
+	var owner = v.owner_
 	var notary = v.getCitation()
-	document.SetNotary(account, notary)
+	document.SetNotary(owner, notary)
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var source = document.AsSource()
 	var bytes = v.hsm_.SignBytes([]byte(source))
@@ -425,11 +424,10 @@ func (v *digitalNotary_) errorCheck(
 
 type digitalNotary_ struct {
 	// Declare the instance attributes.
-	directory_ string
-	filename_  string
-	account_   doc.TagLike
-	ssm_       Trusted
-	hsm_       Hardened
+	filename_ string
+	owner_    doc.TagLike
+	ssm_      Trusted
+	hsm_      Hardened
 }
 
 // Class Structure

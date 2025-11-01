@@ -66,7 +66,12 @@ func (v *hsmP1_) GetTag() string {
 }
 
 func (v *hsmP1_) GetSignatureAlgorithm() string {
-	return hsmP1Class().algorithm_
+	// Check for any errors at the end.
+	defer v.errorCheck(
+		"An error occurred while attempting to retrieve the signature algorithm",
+	)
+
+	panic("This module has not yet been implemented.")
 }
 
 func (v *hsmP1_) GenerateKeys() []byte {
@@ -148,7 +153,6 @@ type hsmP1_ struct {
 
 type hsmP1Class_ struct {
 	// Declare the class constants.
-	algorithm_ string
 }
 
 // Class Reference
@@ -159,5 +163,4 @@ func hsmP1Class() *hsmP1Class_ {
 
 var hsmP1ClassReference_ = &hsmP1Class_{
 	// Initialize the class constants.
-	algorithm_: "ED25519",
 }
