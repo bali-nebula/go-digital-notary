@@ -255,9 +255,7 @@ func (v *digitalNotary_) GenerateCredential(
 	)
 
 	// Notarized the credential.
-	var document = com.DocumentClass().Document(
-		credential,
-	)
+	var document = com.DocumentClass().Document(credential)
 	var owner = v.owner_
 	var notary = v.getCertificate()
 	document.SetNotary(owner, notary)
@@ -275,8 +273,8 @@ func (v *digitalNotary_) GenerateCredential(
 }
 
 func (v *digitalNotary_) RefreshCredential(
-	credential com.DocumentLike,
 	context any,
+	document com.DocumentLike,
 ) com.DocumentLike {
 	// Check for any errors at the end.
 	defer v.errorCheck(
@@ -284,12 +282,12 @@ func (v *digitalNotary_) RefreshCredential(
 	)
 
 	// Create the next version of the credential.
-	var previous = v.CiteDocument(credential).AsResource()
-	var content = credential.GetContent()
+	var previous = v.CiteDocument(document).AsResource()
+	var content = document.GetContent()
 	var tag = content.GetTag()
 	var current = content.GetVersion()
 	var version = doc.VersionClass().GetNextVersion(current, 0)
-	content = com.CredentialClass().Credential(
+	var credential = com.CredentialClass().Credential(
 		context,
 		tag,
 		version,
@@ -297,9 +295,7 @@ func (v *digitalNotary_) RefreshCredential(
 	)
 
 	// Notarized the credential.
-	var document = com.DocumentClass().Document(
-		content,
-	)
+	document = com.DocumentClass().Document(credential)
 	var owner = v.owner_
 	var notary = v.getCertificate()
 	document.SetNotary(owner, notary)
@@ -341,7 +337,7 @@ func (v *digitalNotary_) NotarizeDocument(
 
 func (v *digitalNotary_) SealMatches(
 	document com.DocumentLike,
-	certificate com.DocumentLike,
+	certificate com.CertificateLike,
 ) bool {
 	// Check for any errors at the end.
 	defer v.errorCheck(
@@ -349,10 +345,7 @@ func (v *digitalNotary_) SealMatches(
 	)
 
 	// Compare the signature algorithms for the public certificate and SSM.
-	var content = com.CertificateClass().CertificateFromSource(
-		certificate.GetContent().AsSource(),
-	)
-	var certificateAlgorithm = string(content.GetAlgorithm().AsIntrinsic())
+	var certificateAlgorithm = string(certificate.GetAlgorithm().AsIntrinsic())
 	var hsmAlgorithm = v.hsm_.GetSignatureAlgorithm()
 	if certificateAlgorithm != hsmAlgorithm {
 		var message = fmt.Sprintf(
@@ -364,7 +357,7 @@ func (v *digitalNotary_) SealMatches(
 	}
 
 	// Validate the seal on the notarized document.
-	var publicKey = content.GetKey()
+	var publicKey = certificate.GetKey()
 	var seal = document.RemoveSeal()
 	var source = document.AsSource()
 	var sourceBytes = []byte(source)

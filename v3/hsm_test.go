@@ -75,12 +75,10 @@ func (v *hsmEd25519_) GetClass() not.HsmEd25519ClassLike {
 // Hardened Methods
 
 func (v *hsmEd25519_) GetTag() string {
-	fmt.Println("WARNING: Using a SOFTWARE security module to retrieve the tag.")
 	return v.tag_
 }
 
 func (v *hsmEd25519_) GetSignatureAlgorithm() string {
-	fmt.Println("WARNING: Using a SOFTWARE security module to retrieve the signature algorithm.")
 	return hsmEd25519Class().algorithm_
 }
 
@@ -90,7 +88,6 @@ func (v *hsmEd25519_) GenerateKeys() []byte {
 		"An error occurred while attempting to generate new keys",
 	)
 
-	fmt.Println("WARNING: Using a SOFTWARE security module to generate keys.")
 	var err error
 	v.controller_.ProcessEvent(hsmEd25519Class().generateKeys_)
 	v.publicKey_, v.privateKey_, err = sig.GenerateKey(nil)
@@ -109,7 +106,6 @@ func (v *hsmEd25519_) SignBytes(
 		"An error occurred while attempting to sign bytes",
 	)
 
-	fmt.Println("WARNING: Using a SOFTWARE security module to sign bytes.")
 	v.controller_.ProcessEvent(hsmEd25519Class().signBytes_)
 	var privateKey = v.privateKey_
 	if v.previousKey_ != nil {
@@ -132,7 +128,6 @@ func (v *hsmEd25519_) IsValid(
 		"An error occurred while attempting to verify bytes signature",
 	)
 
-	fmt.Println("WARNING: Using a SOFTWARE security module to verify signature.")
 	return sig.Verify(sig.PublicKey(key), bytes, signature)
 }
 
@@ -143,7 +138,6 @@ func (v *hsmEd25519_) RotateKeys() []byte {
 	)
 
 	var err error
-	fmt.Println("WARNING: Using a SOFTWARE security module to rotate keys.")
 	v.controller_.ProcessEvent(hsmEd25519Class().rotateKeys_)
 	v.previousKey_ = v.privateKey_
 	v.publicKey_, v.privateKey_, err = sig.GenerateKey(nil)
@@ -160,7 +154,6 @@ func (v *hsmEd25519_) EraseKeys() {
 		"An error occurred while attempting to erase the keys",
 	)
 
-	fmt.Println("WARNING: Using a SOFTWARE security module to erase keys.")
 	v.createConfiguration()
 }
 

@@ -105,15 +105,15 @@ type DigitalNotaryLike interface {
 		context any,
 	) com.DocumentLike
 	RefreshCredential(
-		credential com.DocumentLike,
 		context any,
+		document com.DocumentLike,
 	) com.DocumentLike
 	NotarizeDocument(
 		document com.DocumentLike,
 	)
 	SealMatches(
 		document com.DocumentLike,
-		certificate com.DocumentLike,
+		certificate com.CertificateLike,
 	) bool
 }
 

@@ -79,6 +79,26 @@ type CitationClassLike interface {
 }
 
 /*
+ContentClassLike is a class interface that declares the complete set of
+class constructors, constants and functions that must be supported by each
+concrete content-like class.
+*/
+type ContentClassLike interface {
+	// Constructor Methods
+	Content(
+		entity any,
+		type_ doc.NameLike,
+		tag doc.TagLike,
+		version doc.VersionLike,
+		permissions doc.NameLike,
+		optionalPrevious doc.ResourceLike,
+	) ContentLike
+	ContentFromSource(
+		source string,
+	) ContentLike
+}
+
+/*
 CredentialClassLike is a class interface that declares the complete set of
 class constructors, constants and functions that must be supported by each
 concrete credential-like class.
@@ -109,26 +129,6 @@ type DocumentClassLike interface {
 	DocumentFromSource(
 		source string,
 	) DocumentLike
-}
-
-/*
-DraftClassLike is a class interface that declares the complete set of
-class constructors, constants and functions that must be supported by each
-concrete draft-like class.
-*/
-type DraftClassLike interface {
-	// Constructor Methods
-	Draft(
-		entity any,
-		type_ doc.NameLike,
-		tag doc.TagLike,
-		version doc.VersionLike,
-		permissions doc.NameLike,
-		optionalPrevious doc.ResourceLike,
-	) DraftLike
-	DraftFromSource(
-		source string,
-	) DraftLike
 }
 
 /*
@@ -183,6 +183,20 @@ type CitationLike interface {
 }
 
 /*
+ContentLike is an instance interface that declares the complete set of
+principal, attribute and aspect methods that must be supported by each instance
+of a concrete content-like class.
+*/
+type ContentLike interface {
+	// Principal Methods
+	GetClass() ContentClassLike
+	AsIntrinsic() doc.ComponentLike
+
+	// Aspect Interfaces
+	Parameterized
+}
+
+/*
 CredentialLike is an instance interface that declares the complete set of
 principal, attribute and aspect methods that must be supported by each instance
 of a concrete credential-like class.
@@ -220,20 +234,6 @@ type DocumentLike interface {
 	)
 	HasSeal() bool
 	RemoveSeal() SealLike
-}
-
-/*
-DraftLike is an instance interface that declares the complete set of
-principal, attribute and aspect methods that must be supported by each instance
-of a concrete draft-like class.
-*/
-type DraftLike interface {
-	// Principal Methods
-	GetClass() DraftClassLike
-	AsIntrinsic() doc.ComponentLike
-
-	// Aspect Interfaces
-	Parameterized
 }
 
 /*

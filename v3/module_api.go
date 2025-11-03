@@ -45,18 +45,18 @@ import (
 type (
 	CertificateClassLike = com.CertificateClassLike
 	CitationClassLike    = com.CitationClassLike
+	ContentClassLike     = com.ContentClassLike
 	CredentialClassLike  = com.CredentialClassLike
 	DocumentClassLike    = com.DocumentClassLike
-	DraftClassLike       = com.DraftClassLike
 	SealClassLike        = com.SealClassLike
 )
 
 type (
 	CertificateLike = com.CertificateLike
 	CitationLike    = com.CitationLike
+	ContentLike     = com.ContentLike
 	CredentialLike  = com.CredentialLike
 	DocumentLike    = com.DocumentLike
-	DraftLike       = com.DraftLike
 	SealLike        = com.SealLike
 )
 
@@ -107,16 +107,16 @@ func CitationClass() CitationClassLike {
 	return com.CitationClass()
 }
 
+func ContentClass() ContentClassLike {
+	return com.ContentClass()
+}
+
 func CredentialClass() CredentialClassLike {
 	return com.CredentialClass()
 }
 
 func DocumentClass() DocumentClassLike {
 	return com.DocumentClass()
-}
-
-func DraftClass() DraftClassLike {
-	return com.DraftClass()
 }
 
 func SealClass() SealClassLike {
@@ -171,7 +171,13 @@ func Certificate(
 	value ...any,
 ) CertificateLike {
 	if len(value) == 1 {
-		var source = value[0].(string)
+		var source string
+		switch actual := value[0].(type) {
+		case string:
+			source = actual
+		case com.Parameterized:
+			source = actual.AsSource()
+		}
 		return com.CertificateClass().CertificateFromSource(source)
 	}
 	var algorithm = value[0].(doc.QuoteLike)
@@ -207,11 +213,43 @@ func Citation(
 	return CitationClass().Citation(tag, version, algorithm, digest)
 }
 
+func Content(
+	value ...any,
+) ContentLike {
+	if len(value) == 1 {
+		var source = value[0].(string)
+		return com.ContentClass().ContentFromSource(source)
+	}
+	var entity = value[0]
+	var type_ = value[1].(doc.NameLike)
+	var tag = value[2].(doc.TagLike)
+	var version = value[3].(doc.VersionLike)
+	var permissions = value[4].(doc.NameLike)
+	var optionalPrevious doc.ResourceLike
+	if uti.IsDefined(value[5]) {
+		optionalPrevious = value[5].(doc.ResourceLike)
+	}
+	return ContentClass().Content(
+		entity,
+		type_,
+		tag,
+		version,
+		permissions,
+		optionalPrevious,
+	)
+}
+
 func Credential(
 	value ...any,
 ) CredentialLike {
 	if len(value) == 1 {
-		var source = value[0].(string)
+		var source string
+		switch actual := value[0].(type) {
+		case string:
+			source = actual
+		case com.Parameterized:
+			source = actual.AsSource()
+		}
 		return com.CredentialClass().CredentialFromSource(source)
 	}
 	var context = value[0]
@@ -242,32 +280,6 @@ func Document(
 		)
 		panic(message)
 	}
-}
-
-func Draft(
-	value ...any,
-) DraftLike {
-	if len(value) == 1 {
-		var source = value[0].(string)
-		return com.DraftClass().DraftFromSource(source)
-	}
-	var entity = value[0]
-	var type_ = value[1].(doc.NameLike)
-	var tag = value[2].(doc.TagLike)
-	var version = value[3].(doc.VersionLike)
-	var permissions = value[4].(doc.NameLike)
-	var optionalPrevious doc.ResourceLike
-	if uti.IsDefined(value[5]) {
-		optionalPrevious = value[5].(doc.ResourceLike)
-	}
-	return DraftClass().Draft(
-		entity,
-		type_,
-		tag,
-		version,
-		permissions,
-		optionalPrevious,
-	)
 }
 
 func Seal(
