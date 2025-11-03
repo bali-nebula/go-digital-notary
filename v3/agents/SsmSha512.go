@@ -21,14 +21,14 @@ import (
 
 // Access Function
 
-func SsmP1Class() SsmP1ClassLike {
-	return ssmP1Class()
+func SsmSha512Class() SsmSha512ClassLike {
+	return ssmSha512Class()
 }
 
 // Constructor Methods
 
-func (c *ssmP1Class_) SsmP1() SsmP1Like {
-	var instance = &ssmP1_{
+func (c *ssmSha512Class_) SsmSha512() SsmSha512Like {
+	var instance = &ssmSha512_{
 		// Initialize the instance attributes.
 	}
 	return instance
@@ -42,19 +42,19 @@ func (c *ssmP1Class_) SsmP1() SsmP1Like {
 
 // Principal Methods
 
-func (v *ssmP1_) GetClass() SsmP1ClassLike {
-	return ssmP1Class()
+func (v *ssmSha512_) GetClass() SsmSha512ClassLike {
+	return ssmSha512Class()
 }
 
 // Attribute Methods
 
 // Trusted Methods
 
-func (v *ssmP1_) GetDigestAlgorithm() string {
-	return ssmP1Class().algorithm_
+func (v *ssmSha512_) GetDigestAlgorithm() string {
+	return ssmSha512Class().algorithm_
 }
 
-func (v *ssmP1_) DigestBytes(
+func (v *ssmSha512_) DigestBytes(
 	bytes []byte,
 ) []byte {
 	// Check for any errors at the end.
@@ -71,12 +71,12 @@ func (v *ssmP1_) DigestBytes(
 
 // Private Methods
 
-func (v *ssmP1_) errorCheck(
+func (v *ssmSha512_) errorCheck(
 	message string,
 ) {
 	if e := recover(); e != nil {
 		message = fmt.Sprintf(
-			"SsmP1: %s:\n        %v",
+			"SsmSha512: %s:\n        %v",
 			message,
 			e,
 		)
@@ -86,24 +86,24 @@ func (v *ssmP1_) errorCheck(
 
 // Instance Structure
 
-type ssmP1_ struct {
+type ssmSha512_ struct {
 	// Declare the instance attributes.
 }
 
 // Class Structure
 
-type ssmP1Class_ struct {
+type ssmSha512Class_ struct {
 	// Declare the class constants.
 	algorithm_ string
 }
 
 // Class Reference
 
-func ssmP1Class() *ssmP1Class_ {
-	return ssmP1ClassReference_
+func ssmSha512Class() *ssmSha512Class_ {
+	return ssmSha512ClassReference_
 }
 
-var ssmP1ClassReference_ = &ssmP1Class_{
+var ssmSha512ClassReference_ = &ssmSha512Class_{
 	// Initialize the class constants.
 	algorithm_: "SHA512",
 }

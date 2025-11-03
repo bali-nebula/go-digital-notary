@@ -67,10 +67,10 @@ func TestParsingCertificates(t *tes.T) {
 	var key = certificate.GetKey()
 	var previous = certificate.GetOptionalPrevious()
 	certificate = not.Certificate(
-		tag,
-		version,
 		algorithm,
 		key,
+		tag,
+		version,
 		previous,
 	)
 	var formatted = certificate.AsSource()
@@ -115,9 +115,11 @@ func TestParsingDocuments(t *tes.T) {
 }
 
 // Create the security module and digital notary.
-var ssm = not.SsmP1()
-var hsm = not.TsmP1(directory)
-var notary = not.DigitalNotary(directory, ssm, hsm)
+var owner = doc.Tag()
+var ssm = not.SsmSha512()
+var hsm = HsmEd25519TestClass().HsmEd25519(directory)
+var citation not.CitationLike
+var notary = not.DigitalNotary(owner, ssm, hsm, citation)
 
 func TestSSM(t *tes.T) {
 	var bytes = []byte{0x0, 0x1, 0x2, 0x3, 0x4}
@@ -176,7 +178,7 @@ func TestDigitalNotaryGenerateKey(t *tes.T) {
 			var message = e.(string)
 			ass.Equal(
 				t,
-				"DigitalNotary: An error occurred while attempting to generate a new key pair:\n    TsmP1: An error occurred while attempting to generate new keys:\n        Attempted to transition from state \"$LoneKey\" to an invalid state on event \"$GenerateKeys\".",
+				"DigitalNotary: An error occurred while attempting to generate a new key pair:\n    HsmEd25519: An error occurred while attempting to generate new keys:\n        Attempted to transition from state \"$LoneKey\" to an invalid state on event \"$GenerateKeys\".",
 				message,
 			)
 		} else {
@@ -201,6 +203,13 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	var source = certificateV1.AsSource()
 	uti.WriteFile(filename, source)
 
+	// Generate and validate a new citation to the certificate.
+	var citation = notary.CiteDocument(certificateV1)
+	ass.True(t, notary.CitationMatches(citation, certificateV1))
+	filename = "./test/notary/Citation.bali"
+	source = citation.AsSource()
+	uti.WriteFile(filename, source)
+
 	// Create and cite a new transaction document.
 	var timestamp = doc.Moment().AsSource()
 	var transaction = not.Draft(
@@ -222,8 +231,6 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	uti.WriteFile(filename, source)
 
 	var document = not.Document(transaction)
-	var citation = notary.CiteDocument(document)
-	ass.True(t, notary.CitationMatches(citation, document))
 
 	// Notarize the transaction document to create a notarized document.
 	notary.NotarizeDocument(document)
@@ -239,9 +246,9 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	uti.WriteFile(filename, source)
 
 	// Pickup where we left off with a new security module and digital notary.
-	ssm = not.SsmP1()
-	hsm = not.TsmP1(directory)
-	notary = not.DigitalNotary(directory, ssm, hsm)
+	ssm = not.SsmSha512()
+	hsm = HsmEd25519TestClass().HsmEd25519(directory)
+	notary = not.DigitalNotary(owner, ssm, hsm, citation)
 
 	// Refresh and validate the public-private key pair.
 	var certificateV2 = notary.RefreshKey()

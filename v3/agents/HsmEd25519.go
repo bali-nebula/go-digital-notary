@@ -21,19 +21,19 @@ import (
 
 // Access Function
 
-func HsmP1Class() HsmP1ClassLike {
-	return hsmP1Class()
+func HsmEd25519Class() HsmEd25519ClassLike {
+	return hsmEd25519Class()
 }
 
 // Constructor Methods
 
-func (c *hsmP1Class_) HsmP1(
+func (c *hsmEd25519Class_) HsmEd25519(
 	device string,
-) HsmP1Like {
+) HsmEd25519Like {
 	if uti.IsUndefined(device) {
 		panic("The \"device\" attribute is required by this class.")
 	}
-	var instance = &hsmP1_{
+	var instance = &hsmEd25519_{
 		// Initialize the instance attributes.
 		device_: device,
 	}
@@ -48,15 +48,15 @@ func (c *hsmP1Class_) HsmP1(
 
 // Principal Methods
 
-func (v *hsmP1_) GetClass() HsmP1ClassLike {
-	return hsmP1Class()
+func (v *hsmEd25519_) GetClass() HsmEd25519ClassLike {
+	return hsmEd25519Class()
 }
 
 // Attribute Methods
 
 // Hardened Methods
 
-func (v *hsmP1_) GetTag() string {
+func (v *hsmEd25519_) GetTag() string {
 	// Check for any errors at the end.
 	defer v.errorCheck(
 		"An error occurred while attempting to retrieve the unique tag",
@@ -65,7 +65,7 @@ func (v *hsmP1_) GetTag() string {
 	panic("This module has not yet been implemented.")
 }
 
-func (v *hsmP1_) GetSignatureAlgorithm() string {
+func (v *hsmEd25519_) GetSignatureAlgorithm() string {
 	// Check for any errors at the end.
 	defer v.errorCheck(
 		"An error occurred while attempting to retrieve the signature algorithm",
@@ -74,7 +74,7 @@ func (v *hsmP1_) GetSignatureAlgorithm() string {
 	panic("This module has not yet been implemented.")
 }
 
-func (v *hsmP1_) GenerateKeys() []byte {
+func (v *hsmEd25519_) GenerateKeys() []byte {
 	// Check for any errors at the end.
 	defer v.errorCheck(
 		"An error occurred while attempting to generate new keys",
@@ -83,7 +83,7 @@ func (v *hsmP1_) GenerateKeys() []byte {
 	panic("This module has not yet been implemented.")
 }
 
-func (v *hsmP1_) SignBytes(
+func (v *hsmEd25519_) SignBytes(
 	bytes []byte,
 ) []byte {
 	// Check for any errors at the end.
@@ -94,7 +94,7 @@ func (v *hsmP1_) SignBytes(
 	panic("This module has not yet been implemented.")
 }
 
-func (v *hsmP1_) IsValid(
+func (v *hsmEd25519_) IsValid(
 	key []byte,
 	bytes []byte,
 	signature []byte,
@@ -107,7 +107,7 @@ func (v *hsmP1_) IsValid(
 	panic("This module has not yet been implemented.")
 }
 
-func (v *hsmP1_) RotateKeys() []byte {
+func (v *hsmEd25519_) RotateKeys() []byte {
 	// Check for any errors at the end.
 	defer v.errorCheck(
 		"An error occurred while attempting to rotate keys",
@@ -116,7 +116,7 @@ func (v *hsmP1_) RotateKeys() []byte {
 	panic("This module has not yet been implemented.")
 }
 
-func (v *hsmP1_) EraseKeys() {
+func (v *hsmEd25519_) EraseKeys() {
 	// Check for any errors at the end.
 	defer v.errorCheck(
 		"An error occurred while attempting to erase the keys",
@@ -129,12 +129,12 @@ func (v *hsmP1_) EraseKeys() {
 
 // Private Methods
 
-func (v *hsmP1_) errorCheck(
+func (v *hsmEd25519_) errorCheck(
 	message string,
 ) {
 	if e := recover(); e != nil {
 		message = fmt.Sprintf(
-			"HsmP1: %s:\n        %v",
+			"HsmEd25519: %s:\n        %v",
 			message,
 			e,
 		)
@@ -144,23 +144,23 @@ func (v *hsmP1_) errorCheck(
 
 // Instance Structure
 
-type hsmP1_ struct {
+type hsmEd25519_ struct {
 	// Declare the instance attributes.
 	device_ string
 }
 
 // Class Structure
 
-type hsmP1Class_ struct {
+type hsmEd25519Class_ struct {
 	// Declare the class constants.
 }
 
 // Class Reference
 
-func hsmP1Class() *hsmP1Class_ {
-	return hsmP1ClassReference_
+func hsmEd25519Class() *hsmEd25519Class_ {
+	return hsmEd25519ClassReference_
 }
 
-var hsmP1ClassReference_ = &hsmP1Class_{
+var hsmEd25519ClassReference_ = &hsmEd25519Class_{
 	// Initialize the class constants.
 }

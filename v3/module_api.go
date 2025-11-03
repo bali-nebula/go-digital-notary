@@ -32,9 +32,9 @@ package module
 
 import (
 	fmt "fmt"
-	bal "github.com/bali-nebula/go-bali-documents/v3"
+	doc "github.com/bali-nebula/go-bali-documents/v3"
 	age "github.com/bali-nebula/go-digital-notary/v3/agents"
-	doc "github.com/bali-nebula/go-digital-notary/v3/documents"
+	com "github.com/bali-nebula/go-digital-notary/v3/components"
 	uti "github.com/craterdog/go-essential-utilities/v8"
 )
 
@@ -43,25 +43,25 @@ import (
 // Documents
 
 type (
-	CertificateClassLike = doc.CertificateClassLike
-	CitationClassLike    = doc.CitationClassLike
-	CredentialClassLike  = doc.CredentialClassLike
-	DocumentClassLike    = doc.DocumentClassLike
-	DraftClassLike       = doc.DraftClassLike
-	SealClassLike        = doc.SealClassLike
+	CertificateClassLike = com.CertificateClassLike
+	CitationClassLike    = com.CitationClassLike
+	CredentialClassLike  = com.CredentialClassLike
+	DocumentClassLike    = com.DocumentClassLike
+	DraftClassLike       = com.DraftClassLike
+	SealClassLike        = com.SealClassLike
 )
 
 type (
-	CertificateLike = doc.CertificateLike
-	CitationLike    = doc.CitationLike
-	CredentialLike  = doc.CredentialLike
-	DocumentLike    = doc.DocumentLike
-	DraftLike       = doc.DraftLike
-	SealLike        = doc.SealLike
+	CertificateLike = com.CertificateLike
+	CitationLike    = com.CitationLike
+	CredentialLike  = com.CredentialLike
+	DocumentLike    = com.DocumentLike
+	DraftLike       = com.DraftLike
+	SealLike        = com.SealLike
 )
 
 type (
-	Parameterized = doc.Parameterized
+	Parameterized = com.Parameterized
 )
 
 // Agents
@@ -80,27 +80,19 @@ type (
 )
 
 type (
-	SsmP1ClassLike = age.SsmP1ClassLike
+	HsmEd25519ClassLike = age.HsmEd25519ClassLike
 )
 
 type (
-	SsmP1Like = age.SsmP1Like
+	HsmEd25519Like = age.HsmEd25519Like
 )
 
 type (
-	TsmP1ClassLike = age.TsmP1ClassLike
+	SsmSha512ClassLike = age.SsmSha512ClassLike
 )
 
 type (
-	TsmP1Like = age.TsmP1Like
-)
-
-type (
-	HsmP1ClassLike = age.HsmP1ClassLike
-)
-
-type (
-	HsmP1Like = age.HsmP1Like
+	SsmSha512Like = age.SsmSha512Like
 )
 
 // CLASS ACCESSORS
@@ -108,27 +100,27 @@ type (
 // Documents
 
 func CertificateClass() CertificateClassLike {
-	return doc.CertificateClass()
+	return com.CertificateClass()
 }
 
 func CitationClass() CitationClassLike {
-	return doc.CitationClass()
+	return com.CitationClass()
 }
 
 func CredentialClass() CredentialClassLike {
-	return doc.CredentialClass()
+	return com.CredentialClass()
 }
 
 func DocumentClass() DocumentClassLike {
-	return doc.DocumentClass()
+	return com.DocumentClass()
 }
 
 func DraftClass() DraftClassLike {
-	return doc.DraftClass()
+	return com.DraftClass()
 }
 
 func SealClass() SealClassLike {
-	return doc.SealClass()
+	return com.SealClass()
 }
 
 // Agents
@@ -138,47 +130,37 @@ func DigitalNotaryClass() DigitalNotaryClassLike {
 }
 
 func DigitalNotary(
-	directory string,
+	owner doc.TagLike,
 	ssm age.Trusted,
 	hsm age.Hardened,
+	certificate com.CitationLike,
 ) DigitalNotaryLike {
 	return DigitalNotaryClass().DigitalNotary(
-		directory,
+		owner,
 		ssm,
 		hsm,
+		certificate,
 	)
 }
 
-func SsmP1Class() SsmP1ClassLike {
-	return age.SsmP1Class()
+func HsmEd25519Class() HsmEd25519ClassLike {
+	return age.HsmEd25519Class()
 }
 
-func SsmP1() SsmP1Like {
-	return SsmP1Class().SsmP1()
-}
-
-func TsmP1Class() TsmP1ClassLike {
-	return age.TsmP1Class()
-}
-
-func TsmP1(
-	directory string,
-) TsmP1Like {
-	return TsmP1Class().TsmP1(
-		directory,
-	)
-}
-
-func HsmP1Class() HsmP1ClassLike {
-	return age.HsmP1Class()
-}
-
-func HsmP1(
+func HsmEd25519(
 	device string,
-) HsmP1Like {
-	return HsmP1Class().HsmP1(
+) HsmEd25519Like {
+	return HsmEd25519Class().HsmEd25519(
 		device,
 	)
+}
+
+func SsmSha512Class() SsmSha512ClassLike {
+	return age.SsmSha512Class()
+}
+
+func SsmSha512() SsmSha512Like {
+	return SsmSha512Class().SsmSha512()
 }
 
 // GLOBAL FUNCTIONS
@@ -190,14 +172,14 @@ func Certificate(
 ) CertificateLike {
 	if len(value) == 1 {
 		var source = value[0].(string)
-		return doc.CertificateClass().CertificateFromSource(source)
+		return com.CertificateClass().CertificateFromSource(source)
 	}
-	var tag = value[0].(bal.TagLike)
-	var version = value[1].(bal.VersionLike)
-	var algorithm = value[2].(bal.QuoteLike)
-	var key = value[3].(bal.BinaryLike)
-	var previous = value[4].(bal.ResourceLike)
-	return CertificateClass().Certificate(tag, version, algorithm, key, previous)
+	var algorithm = value[0].(doc.QuoteLike)
+	var key = value[1].(doc.BinaryLike)
+	var tag = value[2].(doc.TagLike)
+	var version = value[3].(doc.VersionLike)
+	var previous = value[4].(doc.ResourceLike)
+	return CertificateClass().Certificate(algorithm, key, tag, version, previous)
 }
 
 func Citation(
@@ -206,9 +188,9 @@ func Citation(
 	if len(value) == 1 {
 		switch actual := value[0].(type) {
 		case string:
-			return doc.CitationClass().CitationFromSource(actual)
-		case bal.ResourceLike:
-			return doc.CitationClass().CitationFromResource(actual)
+			return com.CitationClass().CitationFromSource(actual)
+		case doc.ResourceLike:
+			return com.CitationClass().CitationFromResource(actual)
 		default:
 			var message = fmt.Sprintf(
 				"An invalid argument type was passed into the Citation contructor: %v(%T)",
@@ -218,10 +200,10 @@ func Citation(
 			panic(message)
 		}
 	}
-	var tag = value[0].(bal.TagLike)
-	var version = value[1].(bal.VersionLike)
-	var algorithm = value[2].(bal.QuoteLike)
-	var digest = value[3].(bal.BinaryLike)
+	var tag = value[0].(doc.TagLike)
+	var version = value[1].(doc.VersionLike)
+	var algorithm = value[2].(doc.QuoteLike)
+	var digest = value[3].(doc.BinaryLike)
 	return CitationClass().Citation(tag, version, algorithm, digest)
 }
 
@@ -230,12 +212,12 @@ func Credential(
 ) CredentialLike {
 	if len(value) == 1 {
 		var source = value[0].(string)
-		return doc.CredentialClass().CredentialFromSource(source)
+		return com.CredentialClass().CredentialFromSource(source)
 	}
 	var context = value[0]
-	var tag = value[1].(bal.TagLike)
-	var version = value[2].(bal.VersionLike)
-	var previous = value[3].(bal.ResourceLike)
+	var tag = value[1].(doc.TagLike)
+	var version = value[2].(doc.VersionLike)
+	var previous = value[3].(doc.ResourceLike)
 	return CredentialClass().Credential(
 		context,
 		tag,
@@ -250,7 +232,7 @@ func Document(
 	switch actual := value.(type) {
 	case string:
 		return DocumentClass().DocumentFromSource(actual)
-	case doc.Parameterized:
+	case com.Parameterized:
 		return DocumentClass().Document(actual)
 	default:
 		var message = fmt.Sprintf(
@@ -267,16 +249,16 @@ func Draft(
 ) DraftLike {
 	if len(value) == 1 {
 		var source = value[0].(string)
-		return doc.DraftClass().DraftFromSource(source)
+		return com.DraftClass().DraftFromSource(source)
 	}
 	var entity = value[0]
-	var type_ = value[1].(bal.NameLike)
-	var tag = value[2].(bal.TagLike)
-	var version = value[3].(bal.VersionLike)
-	var permissions = value[4].(bal.NameLike)
-	var optionalPrevious bal.ResourceLike
+	var type_ = value[1].(doc.NameLike)
+	var tag = value[2].(doc.TagLike)
+	var version = value[3].(doc.VersionLike)
+	var permissions = value[4].(doc.NameLike)
+	var optionalPrevious doc.ResourceLike
 	if uti.IsDefined(value[5]) {
-		optionalPrevious = value[5].(bal.ResourceLike)
+		optionalPrevious = value[5].(doc.ResourceLike)
 	}
 	return DraftClass().Draft(
 		entity,
@@ -293,9 +275,9 @@ func Seal(
 ) SealLike {
 	if len(value) == 1 {
 		var source = value[0].(string)
-		return doc.SealClass().SealFromSource(source)
+		return com.SealClass().SealFromSource(source)
 	}
-	var algorithm = value[0].(bal.QuoteLike)
-	var signature = value[1].(bal.BinaryLike)
+	var algorithm = value[0].(doc.QuoteLike)
+	var signature = value[1].(doc.BinaryLike)
 	return SealClass().Seal(algorithm, signature)
 }

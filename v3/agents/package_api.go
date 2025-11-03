@@ -30,7 +30,8 @@ on interfaces, not on each other.
 package agents
 
 import (
-	not "github.com/bali-nebula/go-digital-notary/v3/documents"
+	doc "github.com/bali-nebula/go-bali-documents/v3"
+	com "github.com/bali-nebula/go-digital-notary/v3/components"
 )
 
 // TYPE DECLARATIONS
@@ -51,48 +52,33 @@ document that was notarized using this or any other digital notary.
 type DigitalNotaryClassLike interface {
 	// Constructor Methods
 	DigitalNotary(
-		directory string,
+		owner doc.TagLike,
 		ssm Trusted,
 		hsm Hardened,
+		certificate com.CitationLike,
 	) DigitalNotaryLike
 }
 
 /*
-SsmP1ClassLike is a class interface that declares the complete set of class
+SsmSha512ClassLike is a class interface that declares the complete set of class
 constructors, constants and functions that must be supported by each concrete
 software-security-module-p1-like class.
 */
-type SsmP1ClassLike interface {
+type SsmSha512ClassLike interface {
 	// Constructor Methods
-	SsmP1() SsmP1Like
+	SsmSha512() SsmSha512Like
 }
 
 /*
-HsmP1ClassLike is a class interface that declares the complete set of class
+HsmEd25519ClassLike is a class interface that declares the complete set of class
 constructors, constants and functions that must be supported by each concrete
 hardward-security-module-p1-like class.
 */
-type HsmP1ClassLike interface {
+type HsmEd25519ClassLike interface {
 	// Constructor Methods
-	HsmP1(
+	HsmEd25519(
 		device string,
-	) HsmP1Like
-}
-
-/*
-TsmP1ClassLike is a class interface that declares the complete set of class
-constructors, constants and functions that must be supported by each concrete
-test-security-module-p1-like class.
-
-A test security module (TSM) should only be used in place of an actual hardware
-security module (HSM) for testing purposes only, or in a physically secure
-environment like the cloud.
-*/
-type TsmP1ClassLike interface {
-	// Constructor Methods
-	TsmP1(
-		directory string,
-	) TsmP1Like
+	) HsmEd25519Like
 }
 
 // INSTANCE DECLARATIONS
@@ -106,65 +92,52 @@ type DigitalNotaryLike interface {
 	// Principal Methods
 	GetClass() DigitalNotaryClassLike
 	CiteDocument(
-		document not.DocumentLike,
-	) not.CitationLike
+		document com.DocumentLike,
+	) com.CitationLike
 	CitationMatches(
-		citation not.CitationLike,
-		document not.DocumentLike,
+		citation com.CitationLike,
+		document com.DocumentLike,
 	) bool
-	GenerateKey() not.DocumentLike
-	RefreshKey() not.DocumentLike
+	GenerateKey() com.DocumentLike
+	RefreshKey() com.DocumentLike
 	ForgetKey()
 	GenerateCredential(
 		context any,
-	) not.DocumentLike
+	) com.DocumentLike
 	RefreshCredential(
-		credential not.DocumentLike,
+		credential com.DocumentLike,
 		context any,
-	) not.DocumentLike
+	) com.DocumentLike
 	NotarizeDocument(
-		document not.DocumentLike,
+		document com.DocumentLike,
 	)
 	SealMatches(
-		document not.DocumentLike,
-		certificate not.DocumentLike,
+		document com.DocumentLike,
+		certificate com.DocumentLike,
 	) bool
 }
 
 /*
-SsmP1Like is an instance interface that declares the complete set of principal,
+SsmSha512Like is an instance interface that declares the complete set of principal,
 attribute and aspect methods that must be supported by each instance of a
 concrete software-security-module-p1-like class.
 */
-type SsmP1Like interface {
+type SsmSha512Like interface {
 	// Principal Methods
-	GetClass() SsmP1ClassLike
+	GetClass() SsmSha512ClassLike
 
 	// Aspect Interfaces
 	Trusted
 }
 
 /*
-HsmP1Like is an instance interface that declares the complete set of principal,
+HsmEd25519Like is an instance interface that declares the complete set of principal,
 attribute and aspect methods that must be supported by each instance of a
 concrete hardware-security-module-p1-like class.
 */
-type HsmP1Like interface {
+type HsmEd25519Like interface {
 	// Principal Methods
-	GetClass() HsmP1ClassLike
-
-	// Aspect Interfaces
-	Hardened
-}
-
-/*
-TsmP1Like is an instance interface that declares the complete set of principal,
-attribute and aspect methods that must be supported by each instance of a
-concrete test-security-module-p1-like class.
-*/
-type TsmP1Like interface {
-	// Principal Methods
-	GetClass() TsmP1ClassLike
+	GetClass() HsmEd25519ClassLike
 
 	// Aspect Interfaces
 	Hardened

@@ -10,7 +10,7 @@
 ................................................................................
 */
 
-package documents
+package components
 
 import (
 	doc "github.com/bali-nebula/go-bali-documents/v3"

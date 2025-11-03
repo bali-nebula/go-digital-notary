@@ -11,8 +11,8 @@
 */
 
 /*
-Package "documents" provides an implementation of wrappers for various types of
-Bali Document Notation™ documents that are required by digital notarization.
+Package "components" provides an implementation of wrappers for various types of
+Bali Document Notation™ components that are required by digital notarization.
 
 For detailed documentation on this package refer to the wiki:
   - https://github.com/bali-nebula/go-digital-notary/wiki
@@ -26,7 +26,7 @@ be developed and used seamlessly since the interface declarations only depend on
 other interfaces and intrinsic types—and the class implementations only depend
 on interfaces, not on each other.
 */
-package documents
+package components
 
 import (
 	doc "github.com/bali-nebula/go-bali-documents/v3"
@@ -46,10 +46,10 @@ concrete certificate-like class.
 type CertificateClassLike interface {
 	// Constructor Methods
 	Certificate(
-		tag doc.TagLike,
-		version doc.VersionLike,
 		algorithm doc.QuoteLike,
 		key doc.BinaryLike,
+		tag doc.TagLike,
+		version doc.VersionLike,
 		optionalPrevious doc.ResourceLike,
 	) CertificateLike
 	CertificateFromSource(

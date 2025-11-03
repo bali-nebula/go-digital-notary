@@ -10,7 +10,7 @@
 ................................................................................
 */
 
-package documents
+package components
 
 import (
 	doc "github.com/bali-nebula/go-bali-documents/v3"
@@ -28,23 +28,23 @@ func CertificateClass() CertificateClassLike {
 // Constructor Methods
 
 func (c *certificateClass_) Certificate(
-	tag doc.TagLike,
-	version doc.VersionLike,
 	algorithm doc.QuoteLike,
 	key doc.BinaryLike,
+	tag doc.TagLike,
+	version doc.VersionLike,
 	optionalPrevious doc.ResourceLike,
 ) CertificateLike {
-	if uti.IsUndefined(tag) {
-		panic("The \"tag\" attribute is required by this class.")
-	}
-	if uti.IsUndefined(version) {
-		panic("The \"version\" attribute is required by this class.")
-	}
 	if uti.IsUndefined(algorithm) {
 		panic("The \"algorithm\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(key) {
 		panic("The \"key\" attribute is required by this class.")
+	}
+	if uti.IsUndefined(tag) {
+		panic("The \"tag\" attribute is required by this class.")
+	}
+	if uti.IsUndefined(version) {
+		panic("The \"version\" attribute is required by this class.")
 	}
 
 	var previous = "none"
