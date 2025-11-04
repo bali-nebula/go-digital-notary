@@ -48,6 +48,7 @@ type (
 	ContentClassLike     = com.ContentClassLike
 	CredentialClassLike  = com.CredentialClassLike
 	DocumentClassLike    = com.DocumentClassLike
+	IdentityClassLike    = com.IdentityClassLike
 	SealClassLike        = com.SealClassLike
 )
 
@@ -57,6 +58,7 @@ type (
 	ContentLike     = com.ContentLike
 	CredentialLike  = com.CredentialLike
 	DocumentLike    = com.DocumentLike
+	IdentityLike    = com.IdentityLike
 	SealLike        = com.SealLike
 )
 
@@ -117,6 +119,10 @@ func CredentialClass() CredentialClassLike {
 
 func DocumentClass() DocumentClassLike {
 	return com.DocumentClass()
+}
+
+func IdentityClass() IdentityClassLike {
+	return com.IdentityClass()
 }
 
 func SealClass() SealClassLike {
@@ -280,6 +286,49 @@ func Document(
 		)
 		panic(message)
 	}
+}
+
+func Identity(
+	value ...any,
+) IdentityLike {
+	if len(value) == 1 {
+		var source string
+		switch actual := value[0].(type) {
+		case string:
+			source = actual
+		case com.Parameterized:
+			source = actual.AsSource()
+		}
+		return com.IdentityClass().IdentityFromSource(source)
+	}
+	var name = value[0].(doc.QuoteLike)
+	var surname = value[1].(doc.QuoteLike)
+	var birthdate = value[2].(doc.MomentLike)
+	var birthplace = value[3].(doc.QuoteLike)
+	var sex = value[4].(doc.SymbolLike)
+	var nationality = value[5].(doc.QuoteLike)
+	var address = value[6].(doc.NarrativeLike)
+	var mobile = value[7].(doc.QuoteLike)
+	var email = value[8].(doc.QuoteLike)
+	var face = value[9].(doc.BinaryLike)
+	var tag = value[10].(doc.TagLike)
+	var version = value[11].(doc.VersionLike)
+	var previous = value[12].(doc.ResourceLike)
+	return IdentityClass().Identity(
+		name,
+		surname,
+		birthdate,
+		birthplace,
+		sex,
+		nationality,
+		address,
+		mobile,
+		email,
+		face,
+		tag,
+		version,
+		previous,
+	)
 }
 
 func Seal(

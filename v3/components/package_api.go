@@ -132,6 +132,33 @@ type DocumentClassLike interface {
 }
 
 /*
+IdentityClassLike is a class interface that declares the complete set of
+class constructors, constants and functions that must be supported by each
+concrete identity-like class.
+*/
+type IdentityClassLike interface {
+	// Constructor Methods
+	Identity(
+		name doc.QuoteLike,
+		surname doc.QuoteLike,
+		birthdate doc.MomentLike,
+		birthplace doc.QuoteLike,
+		sex doc.SymbolLike,
+		nationality doc.QuoteLike,
+		address doc.NarrativeLike,
+		mobile doc.QuoteLike,
+		email doc.QuoteLike,
+		face doc.BinaryLike,
+		tag doc.TagLike,
+		version doc.VersionLike,
+		optionalPrevious doc.ResourceLike,
+	) IdentityLike
+	IdentityFromSource(
+		source string,
+	) IdentityLike
+}
+
+/*
 SealClassLike is a class interface that declares the complete set of
 class constructors, constants and functions that must be supported by each
 concrete seal-like class.
@@ -234,6 +261,30 @@ type DocumentLike interface {
 	)
 	HasSeal() bool
 	RemoveSeal() SealLike
+}
+
+/*
+IdentityLike is an instance interface that declares the complete set of
+principal, attribute and aspect methods that must be supported by each instance
+of a concrete identity-like class.
+*/
+type IdentityLike interface {
+	// Principal Methods
+	GetClass() IdentityClassLike
+	AsIntrinsic() doc.ComponentLike
+	GetName() doc.QuoteLike
+	GetSurname() doc.QuoteLike
+	GetBirthdate() doc.MomentLike
+	GetBirthplace() doc.QuoteLike
+	GetSex() doc.SymbolLike
+	GetNationality() doc.QuoteLike
+	GetAddress() doc.NarrativeLike
+	GetMobile() doc.QuoteLike
+	GetEmail() doc.QuoteLike
+	GetFace() doc.BinaryLike
+
+	// Aspect Interfaces
+	Parameterized
 }
 
 /*

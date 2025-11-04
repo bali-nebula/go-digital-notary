@@ -114,6 +114,25 @@ func TestParsingDocuments(t *tes.T) {
 	ass.Equal(t, source, formatted)
 }
 
+func TestParsingIdentities(t *tes.T) {
+	var filename = directory + "components/Identity.bali"
+	fmt.Println(filename)
+	var source = uti.ReadFile(filename)
+	var identity = not.Identity(source)
+	identity.GetName()
+	identity.GetSurname()
+	identity.GetBirthdate()
+	identity.GetBirthplace()
+	identity.GetSex()
+	identity.GetNationality()
+	identity.GetAddress()
+	identity.GetMobile()
+	identity.GetEmail()
+	identity.GetFace()
+	var formatted = identity.AsSource()
+	ass.Equal(t, source, formatted)
+}
+
 // Create the security module and digital notary.
 var owner = doc.Tag()
 var ssm = not.SsmSha512()

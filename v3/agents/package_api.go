@@ -62,7 +62,7 @@ type DigitalNotaryClassLike interface {
 /*
 SsmSha512ClassLike is a class interface that declares the complete set of class
 constructors, constants and functions that must be supported by each concrete
-software-security-module-p1-like class.
+software-security-module-sha512-like class.
 */
 type SsmSha512ClassLike interface {
 	// Constructor Methods
@@ -72,7 +72,7 @@ type SsmSha512ClassLike interface {
 /*
 HsmEd25519ClassLike is a class interface that declares the complete set of class
 constructors, constants and functions that must be supported by each concrete
-hardward-security-module-p1-like class.
+hardward-security-module-ed25519-like class.
 */
 type HsmEd25519ClassLike interface {
 	// Constructor Methods
@@ -120,7 +120,7 @@ type DigitalNotaryLike interface {
 /*
 SsmSha512Like is an instance interface that declares the complete set of principal,
 attribute and aspect methods that must be supported by each instance of a
-concrete software-security-module-p1-like class.
+concrete software-security-module-sha512-like class.
 */
 type SsmSha512Like interface {
 	// Principal Methods
@@ -133,7 +133,7 @@ type SsmSha512Like interface {
 /*
 HsmEd25519Like is an instance interface that declares the complete set of principal,
 attribute and aspect methods that must be supported by each instance of a
-concrete hardware-security-module-p1-like class.
+concrete hardware-security-module-ed25519-like class.
 */
 type HsmEd25519Like interface {
 	// Principal Methods
