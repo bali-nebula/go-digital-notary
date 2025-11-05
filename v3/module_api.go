@@ -136,16 +136,14 @@ func DigitalNotaryClass() DigitalNotaryClassLike {
 }
 
 func DigitalNotary(
-	owner doc.TagLike,
+	authority com.DocumentLike,
 	ssm age.Trusted,
 	hsm age.Hardened,
-	certificate com.CitationLike,
 ) DigitalNotaryLike {
 	return DigitalNotaryClass().DigitalNotary(
-		owner,
+		authority,
 		ssm,
 		hsm,
-		certificate,
 	)
 }
 
@@ -301,30 +299,30 @@ func Identity(
 		}
 		return com.IdentityClass().IdentityFromSource(source)
 	}
-	var name = value[0].(doc.QuoteLike)
-	var surname = value[1].(doc.QuoteLike)
+	var surname = value[0].(doc.QuoteLike)
+	var birthname = value[1].(doc.QuoteLike)
 	var birthdate = value[2].(doc.MomentLike)
 	var birthplace = value[3].(doc.QuoteLike)
-	var sex = value[4].(doc.SymbolLike)
+	var birthsex = value[4].(doc.SymbolLike)
 	var nationality = value[5].(doc.QuoteLike)
 	var address = value[6].(doc.NarrativeLike)
 	var mobile = value[7].(doc.QuoteLike)
 	var email = value[8].(doc.QuoteLike)
-	var face = value[9].(doc.BinaryLike)
+	var mugshot = value[9].(doc.BinaryLike)
 	var tag = value[10].(doc.TagLike)
 	var version = value[11].(doc.VersionLike)
 	var previous = value[12].(doc.ResourceLike)
 	return IdentityClass().Identity(
-		name,
 		surname,
+		birthname,
 		birthdate,
 		birthplace,
-		sex,
+		birthsex,
 		nationality,
 		address,
 		mobile,
 		email,
-		face,
+		mugshot,
 		tag,
 		version,
 		previous,

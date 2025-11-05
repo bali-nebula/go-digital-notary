@@ -64,7 +64,7 @@ func (c *citationClass_) CitationFromSource(
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
-		ComponentLike: component,
+		Compound: component,
 	}
 	return instance
 }
@@ -111,12 +111,12 @@ func (v *citation_) GetClass() CitationClassLike {
 	return citationClass()
 }
 
-func (v *citation_) AsIntrinsic() doc.ComponentLike {
-	return v.ComponentLike
+func (v *citation_) AsIntrinsic() doc.Compound {
+	return v.Compound
 }
 
 func (v *citation_) AsSource() string {
-	return doc.FormatComponent(v.ComponentLike) + "\n"
+	return doc.FormatComponent(v.Compound) + "\n"
 }
 
 func (v *citation_) AsResource() doc.ResourceLike {
@@ -169,7 +169,7 @@ type citation_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
-	doc.ComponentLike
+	doc.Compound
 }
 
 // Class Structure

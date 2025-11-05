@@ -1,9 +1,9 @@
 [
-    $name: "Derk David"
     $surname: "Norton"
+    $birthname: "Derk David"
     $birthdate: <1966-04-04>
     $birthplace: "Boulder, Colorado, USA"
-    $sex: $male
+    $birthsex: $male
     $nationality: "USA"
     $address: ">
         123 Main Street
@@ -11,7 +11,7 @@
     <"
     $mobile: "303-555-1212"
     $email: "craterdog@gmail.com"
-    $face: '>
+    $mugshot: '>
         oVVGU2Wa/n+kdOHtZ8Zidq5jD9UZ3G60QOXMdAh6cqg
     <'
 ](

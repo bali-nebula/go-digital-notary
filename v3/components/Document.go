@@ -48,7 +48,7 @@ func (c *documentClass_) DocumentFromSource(
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
-		ComponentLike: component,
+		Compound: component,
 	}
 	return instance
 }
@@ -65,12 +65,12 @@ func (v *document_) GetClass() DocumentClassLike {
 	return documentClass()
 }
 
-func (v *document_) AsIntrinsic() doc.ComponentLike {
-	return v.ComponentLike
+func (v *document_) AsIntrinsic() doc.Compound {
+	return v.Compound
 }
 
 func (v *document_) AsSource() string {
-	return doc.FormatComponent(v.ComponentLike) + "\n"
+	return doc.FormatComponent(v.Compound) + "\n"
 }
 
 // Attribute Methods
@@ -156,7 +156,7 @@ type document_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
-	doc.ComponentLike
+	doc.Compound
 }
 
 // Class Structure

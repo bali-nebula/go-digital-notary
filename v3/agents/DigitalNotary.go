@@ -31,13 +31,12 @@ func DigitalNotaryClass() DigitalNotaryClassLike {
 // Constructor Methods
 
 func (c *digitalNotaryClass_) DigitalNotary(
-	owner doc.TagLike,
+	authority com.DocumentLike,
 	ssm Trusted,
 	hsm Hardened,
-	certificate com.CitationLike,
 ) DigitalNotaryLike {
-	if uti.IsUndefined(owner) {
-		panic("The \"owner\" attribute is required by this class.")
+	if uti.IsUndefined(authority) {
+		panic("The \"authority\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(ssm) {
 		panic("The \"ssm\" attribute is required by this class.")
@@ -45,17 +44,21 @@ func (c *digitalNotaryClass_) DigitalNotary(
 	if uti.IsUndefined(hsm) {
 		panic("The \"hsm\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(certificate) {
+	if !authority.HasSeal() {
 		hsm.EraseKeys()
 	}
 
 	// Create the new digital notary.
+	var identity = com.IdentityClass().IdentityFromSource(
+		authority.GetContent().AsSource(),
+	)
+	var owner = identity.GetTag()
 	var instance = &digitalNotary_{
 		// Initialize the instance attributes.
-		owner_:       owner,
-		ssm_:         ssm,
-		hsm_:         hsm,
-		certificate_: certificate,
+		authority_: authority,
+		owner_:     owner,
+		ssm_:       ssm,
+		hsm_:       hsm,
 	}
 	return instance
 }
@@ -137,38 +140,22 @@ func (v *digitalNotary_) GenerateKey() com.DocumentLike {
 	var version = doc.Version() // v1
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var previous doc.ResourceLike
-	var certificate = com.CertificateClass().Certificate(
-		algorithm,
-		key,
-		tag,
-		version,
-		previous,
+	var document = com.DocumentClass().Document(
+		com.CertificateClass().Certificate(
+			algorithm,
+			key,
+			tag,
+			version,
+			previous,
+		),
 	)
-	var document = com.DocumentClass().Document(certificate)
 
 	// Notarize the document using its own key.
-	var owner = v.owner_
-	var notary com.CitationLike
-	document.SetNotary(owner, notary)
-	var source = document.AsSource()
-	bytes = v.hsm_.SignBytes([]byte(source))
-	var signature = doc.Binary(bytes)
-	var seal = com.SealClass().Seal(
-		algorithm,
-		signature,
-	)
-	document.SetSeal(seal)
-
-	// Create a citation to the new certificate.
-	algorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
-	bytes = []byte(document.AsSource())
-	var digest = doc.Binary(v.ssm_.DigestBytes(bytes))
-	v.certificate_ = com.CitationClass().Citation(
-		tag,
-		version,
-		algorithm,
-		digest,
-	)
+	var citation = v.CiteDocument(document)
+	v.notarizeDocument(document, citation)
+	var certificate = citation.AsResource()
+	v.setCertificate(certificate)
+	v.notarizeDocument(v.authority_, citation)
 
 	return document
 }
@@ -186,40 +173,26 @@ func (v *digitalNotary_) RefreshKey() com.DocumentLike {
 	// Create the new certificate.
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var previous = v.getCertificate()
-	var tag = previous.GetTag()
-	var current = previous.GetVersion()
+	var citation = com.CitationClass().CitationFromResource(previous)
+	var tag = citation.GetTag()
+	var current = citation.GetVersion()
 	var version = doc.VersionClass().GetNextVersion(current, 0)
-	var certificate = com.CertificateClass().Certificate(
-		algorithm,
-		key,
-		tag,
-		version,
-		previous.AsResource(),
+	var document = com.DocumentClass().Document(
+		com.CertificateClass().Certificate(
+			algorithm,
+			key,
+			tag,
+			version,
+			previous,
+		),
 	)
-	var document = com.DocumentClass().Document(certificate)
 
 	// Notarize the document using the previous key.
-	var owner = v.owner_
-	document.SetNotary(owner, previous)
-	var source = document.AsSource()
-	bytes = v.hsm_.SignBytes([]byte(source))
-	var signature = doc.Binary(bytes)
-	var seal = com.SealClass().Seal(
-		algorithm,
-		signature,
-	)
-	document.SetSeal(seal)
-
-	// Create a citation to the new certificate.
-	algorithm = doc.Quote(`"` + v.ssm_.GetDigestAlgorithm() + `"`)
-	bytes = []byte(document.AsSource())
-	var digest = doc.Binary(v.ssm_.DigestBytes(bytes))
-	v.certificate_ = com.CitationClass().Citation(
-		tag,
-		version,
-		algorithm,
-		digest,
-	)
+	v.notarizeDocument(document, citation)
+	citation = v.CiteDocument(document) // Cite the new certificate.
+	var certificate = citation.AsResource()
+	v.setCertificate(certificate)
+	v.notarizeDocument(v.authority_, citation)
 
 	return document
 }
@@ -232,7 +205,6 @@ func (v *digitalNotary_) ForgetKey() {
 
 	// Erase the stored keys and certificate citation.
 	v.hsm_.EraseKeys()
-	v.certificate_ = nil
 }
 
 func (v *digitalNotary_) GenerateCredential(
@@ -257,8 +229,9 @@ func (v *digitalNotary_) GenerateCredential(
 	// Notarized the credential.
 	var document = com.DocumentClass().Document(credential)
 	var owner = v.owner_
-	var notary = v.getCertificate()
-	document.SetNotary(owner, notary)
+	var resource = v.getCertificate()
+	var citation = com.CitationClass().CitationFromResource(resource)
+	document.SetNotary(owner, citation)
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var source = document.AsSource()
 	var bytes = v.hsm_.SignBytes([]byte(source))
@@ -297,8 +270,9 @@ func (v *digitalNotary_) RefreshCredential(
 	// Notarized the credential.
 	document = com.DocumentClass().Document(credential)
 	var owner = v.owner_
-	var notary = v.getCertificate()
-	document.SetNotary(owner, notary)
+	var resource = v.getCertificate()
+	var citation = com.CitationClass().CitationFromResource(resource)
+	document.SetNotary(owner, citation)
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
 	var source = document.AsSource()
 	var bytes = v.hsm_.SignBytes([]byte(source))
@@ -321,18 +295,9 @@ func (v *digitalNotary_) NotarizeDocument(
 	)
 
 	// Notarize the document.
-	var owner = v.owner_
-	var notary = v.getCertificate()
-	document.SetNotary(owner, notary)
-	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
-	var source = document.AsSource()
-	var bytes = v.hsm_.SignBytes([]byte(source))
-	var signature = doc.Binary(bytes)
-	var seal = com.SealClass().Seal(
-		algorithm,
-		signature,
-	)
-	document.SetSeal(seal)
+	var resource = v.getCertificate()
+	var citation = com.CitationClass().CitationFromResource(resource)
+	v.notarizeDocument(document, citation)
 }
 
 func (v *digitalNotary_) SealMatches(
@@ -386,21 +351,53 @@ func (v *digitalNotary_) errorCheck(
 	}
 }
 
-func (v *digitalNotary_) getCertificate() com.CitationLike {
-	if uti.IsUndefined(v.certificate_) {
+func (v *digitalNotary_) setCertificate(certificate doc.ResourceLike) {
+	v.authority_.SetSubcomponent(
+		certificate,
+		doc.Symbol("$content"),
+		doc.Symbol("$certificate"),
+	)
+}
+
+func (v *digitalNotary_) getCertificate() doc.ResourceLike {
+	var subcomponent = v.authority_.GetSubcomponent(
+		doc.Symbol("$content"),
+		doc.Symbol("$certificate"),
+	)
+	if uti.IsUndefined(subcomponent) {
 		panic("The digital notary has not yet been initialized.")
 	}
-	return v.certificate_
+	var certificate = doc.Resource(
+		doc.FormatComponent(subcomponent.GetComponent()),
+	)
+	return certificate
+}
+
+func (v *digitalNotary_) notarizeDocument(
+	document com.DocumentLike,
+	citation com.CitationLike,
+) {
+	var owner = v.owner_
+	document.SetNotary(owner, citation)
+	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
+	var source = document.AsSource()
+	var bytes = v.hsm_.SignBytes([]byte(source))
+	var signature = doc.Binary(bytes)
+	var seal = com.SealClass().Seal(
+		algorithm,
+		signature,
+	)
+	document.SetSeal(seal)
 }
 
 // Instance Structure
 
 type digitalNotary_ struct {
 	// Declare the instance attributes.
-	owner_       doc.TagLike
-	ssm_         Trusted
-	hsm_         Hardened
-	certificate_ com.CitationLike
+	authority_ com.DocumentLike
+	owner_     doc.TagLike
+	ssm_       Trusted
+	hsm_       Hardened
 }
 
 // Class Structure

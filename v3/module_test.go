@@ -114,31 +114,30 @@ func TestParsingDocuments(t *tes.T) {
 	ass.Equal(t, source, formatted)
 }
 
+var identity not.IdentityLike
+
 func TestParsingIdentities(t *tes.T) {
 	var filename = directory + "components/Identity.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
-	var identity = not.Identity(source)
-	identity.GetName()
+	identity = not.Identity(source)
 	identity.GetSurname()
+	identity.GetBirthname()
 	identity.GetBirthdate()
 	identity.GetBirthplace()
-	identity.GetSex()
+	identity.GetBirthsex()
 	identity.GetNationality()
 	identity.GetAddress()
 	identity.GetMobile()
 	identity.GetEmail()
-	identity.GetFace()
+	identity.GetMugshot()
 	var formatted = identity.AsSource()
 	ass.Equal(t, source, formatted)
 }
 
 // Create the security module and digital notary.
-var owner = doc.Tag()
 var ssm = not.SsmSha512()
 var hsm = HsmEd25519TestClass().HsmEd25519(directory)
-var citation not.CitationLike
-var notary = not.DigitalNotary(owner, ssm, hsm, citation)
 
 func TestSSM(t *tes.T) {
 	var bytes = []byte{0x0, 0x1, 0x2, 0x3, 0x4}
@@ -170,6 +169,9 @@ func TestHSM(t *tes.T) {
 	hsm.EraseKeys()
 }
 
+var authority not.DocumentLike
+var notary not.DigitalNotaryLike
+
 func TestDigitalNotaryInitialization(t *tes.T) {
 	// Should not be able to retrieve the certificate citation without any keys.
 	defer func() {
@@ -179,8 +181,9 @@ func TestDigitalNotaryInitialization(t *tes.T) {
 		} else {
 			ass.Fail(t, "Test should result in recovered panic.")
 		}
-		notary.ForgetKey()
 	}()
+	authority = not.Document(identity)
+	notary = not.DigitalNotary(authority, ssm, hsm)
 	notary.ForgetKey()
 	var context = doc.Moment()
 	notary.GenerateCredential(context)
@@ -268,7 +271,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	// Pickup where we left off with a new security module and digital notary.
 	ssm = not.SsmSha512()
 	hsm = HsmEd25519TestClass().HsmEd25519(directory)
-	notary = not.DigitalNotary(owner, ssm, hsm, citation)
+	notary = not.DigitalNotary(authority, ssm, hsm)
 
 	// Refresh and validate the public-private key pair.
 	document = notary.RefreshKey()

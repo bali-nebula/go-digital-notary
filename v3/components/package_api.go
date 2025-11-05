@@ -139,16 +139,16 @@ concrete identity-like class.
 type IdentityClassLike interface {
 	// Constructor Methods
 	Identity(
-		name doc.QuoteLike,
 		surname doc.QuoteLike,
+		birthname doc.QuoteLike,
 		birthdate doc.MomentLike,
 		birthplace doc.QuoteLike,
-		sex doc.SymbolLike,
+		birthsex doc.SymbolLike,
 		nationality doc.QuoteLike,
 		address doc.NarrativeLike,
 		mobile doc.QuoteLike,
 		email doc.QuoteLike,
-		face doc.BinaryLike,
+		mugshot doc.BinaryLike,
 		tag doc.TagLike,
 		version doc.VersionLike,
 		optionalPrevious doc.ResourceLike,
@@ -184,7 +184,7 @@ of a concrete certificate-like class.
 type CertificateLike interface {
 	// Principal Methods
 	GetClass() CertificateClassLike
-	AsIntrinsic() doc.ComponentLike
+	AsIntrinsic() doc.Compound
 	GetAlgorithm() doc.QuoteLike
 	GetKey() doc.BinaryLike
 
@@ -200,7 +200,7 @@ of a concrete citation-like class.
 type CitationLike interface {
 	// Principal Methods
 	GetClass() CitationClassLike
-	AsIntrinsic() doc.ComponentLike
+	AsIntrinsic() doc.Compound
 	AsSource() string
 	AsResource() doc.ResourceLike
 	GetTag() doc.TagLike
@@ -217,7 +217,7 @@ of a concrete content-like class.
 type ContentLike interface {
 	// Principal Methods
 	GetClass() ContentClassLike
-	AsIntrinsic() doc.ComponentLike
+	AsIntrinsic() doc.Compound
 
 	// Aspect Interfaces
 	Parameterized
@@ -231,7 +231,7 @@ of a concrete credential-like class.
 type CredentialLike interface {
 	// Principal Methods
 	GetClass() CredentialClassLike
-	AsIntrinsic() doc.ComponentLike
+	AsIntrinsic() doc.Compound
 	GetContext() any
 
 	// Aspect Interfaces
@@ -246,7 +246,7 @@ of a concrete document-like class.
 type DocumentLike interface {
 	// Principal Methods
 	GetClass() DocumentClassLike
-	AsIntrinsic() doc.ComponentLike
+	AsIntrinsic() doc.Compound
 	AsSource() string
 	GetContent() Parameterized
 	GetOwner() doc.TagLike
@@ -261,6 +261,9 @@ type DocumentLike interface {
 	)
 	HasSeal() bool
 	RemoveSeal() SealLike
+
+	// Aspect Interfaces
+	doc.Compound
 }
 
 /*
@@ -271,17 +274,21 @@ of a concrete identity-like class.
 type IdentityLike interface {
 	// Principal Methods
 	GetClass() IdentityClassLike
-	AsIntrinsic() doc.ComponentLike
-	GetName() doc.QuoteLike
+	AsIntrinsic() doc.Compound
 	GetSurname() doc.QuoteLike
+	GetBirthname() doc.QuoteLike
 	GetBirthdate() doc.MomentLike
 	GetBirthplace() doc.QuoteLike
-	GetSex() doc.SymbolLike
+	GetBirthsex() doc.SymbolLike
 	GetNationality() doc.QuoteLike
 	GetAddress() doc.NarrativeLike
 	GetMobile() doc.QuoteLike
 	GetEmail() doc.QuoteLike
-	GetFace() doc.BinaryLike
+	GetMugshot() doc.BinaryLike
+	SetCertificate(
+		certificate doc.ResourceLike,
+	)
+	GetCertificate() doc.ResourceLike
 
 	// Aspect Interfaces
 	Parameterized
@@ -295,7 +302,7 @@ of a concrete seal-like class.
 type SealLike interface {
 	// Principal Methods
 	GetClass() SealClassLike
-	AsIntrinsic() doc.ComponentLike
+	AsIntrinsic() doc.Compound
 	AsSource() string
 	GetAlgorithm() doc.QuoteLike
 	GetSignature() doc.BinaryLike

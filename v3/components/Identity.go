@@ -28,25 +28,25 @@ func IdentityClass() IdentityClassLike {
 // Constructor Methods
 
 func (c *identityClass_) Identity(
-	name doc.QuoteLike,
 	surname doc.QuoteLike,
+	birthname doc.QuoteLike,
 	birthdate doc.MomentLike,
 	birthplace doc.QuoteLike,
-	sex doc.SymbolLike,
+	birthsex doc.SymbolLike,
 	nationality doc.QuoteLike,
 	address doc.NarrativeLike,
 	mobile doc.QuoteLike,
 	email doc.QuoteLike,
-	face doc.BinaryLike,
+	mugshot doc.BinaryLike,
 	tag doc.TagLike,
 	version doc.VersionLike,
 	optionalPrevious doc.ResourceLike,
 ) IdentityLike {
-	if uti.IsUndefined(name) {
-		panic("The \"name\" attribute is required by this class.")
-	}
 	if uti.IsUndefined(surname) {
 		panic("The \"surname\" attribute is required by this class.")
+	}
+	if uti.IsUndefined(birthname) {
+		panic("The \"birthname\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(birthdate) {
 		panic("The \"birthdate\" attribute is required by this class.")
@@ -54,8 +54,8 @@ func (c *identityClass_) Identity(
 	if uti.IsUndefined(birthplace) {
 		panic("The \"birthplace\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(sex) {
-		panic("The \"sex\" attribute is required by this class.")
+	if uti.IsUndefined(birthsex) {
+		panic("The \"birthsex\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(nationality) {
 		panic("The \"nationality\" attribute is required by this class.")
@@ -69,8 +69,8 @@ func (c *identityClass_) Identity(
 	if uti.IsUndefined(email) {
 		panic("The \"email\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(face) {
-		panic("The \"face\" attribute is required by this class.")
+	if uti.IsUndefined(mugshot) {
+		panic("The \"mugshot\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(tag) {
 		panic("The \"tag\" attribute is required by this class.")
@@ -84,16 +84,16 @@ func (c *identityClass_) Identity(
 		previous = optionalPrevious.AsSource()
 	}
 	var source = `[
-    $name: ` + name.AsSource() + `
     $surname: ` + surname.AsSource() + `
+    $birthname: ` + birthname.AsSource() + `
     $birthdate: ` + birthdate.AsSource() + `
     $birthplace: ` + birthplace.AsSource() + `
-    $sex: ` + sex.AsSource() + `
+    $birthsex: ` + birthsex.AsSource() + `
     $nationality: ` + nationality.AsSource() + `
     $address: ` + address.AsSource() + `
     $mobile: ` + mobile.AsSource() + `
     $email: ` + email.AsSource() + `
-    $face: ` + face.AsSource() + `
+    $mugshot: ` + mugshot.AsSource() + `
 ](
 	$type: /bali/types/notary/Identity/v3
     $tag: ` + tag.AsSource() + `
@@ -112,7 +112,7 @@ func (c *identityClass_) IdentityFromSource(
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
-		ComponentLike: component,
+		Compound: component,
 	}
 	return instance
 }
@@ -129,23 +129,23 @@ func (v *identity_) GetClass() IdentityClassLike {
 	return identityClass()
 }
 
-func (v *identity_) AsIntrinsic() doc.ComponentLike {
-	return v.ComponentLike
+func (v *identity_) AsIntrinsic() doc.Compound {
+	return v.Compound
 }
 
 func (v *identity_) AsSource() string {
-	return doc.FormatComponent(v.ComponentLike) + "\n"
+	return doc.FormatComponent(v.Compound) + "\n"
 }
 
 // Attribute Methods
 
-func (v *identity_) GetName() doc.QuoteLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$name"))
+func (v *identity_) GetSurname() doc.QuoteLike {
+	var composite = v.GetSubcomponent(doc.Symbol("$surname"))
 	return doc.Quote(doc.FormatComponent(composite))
 }
 
-func (v *identity_) GetSurname() doc.QuoteLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$surname"))
+func (v *identity_) GetBirthname() doc.QuoteLike {
+	var composite = v.GetSubcomponent(doc.Symbol("$birthname"))
 	return doc.Quote(doc.FormatComponent(composite))
 }
 
@@ -159,8 +159,8 @@ func (v *identity_) GetBirthplace() doc.QuoteLike {
 	return doc.Quote(doc.FormatComponent(composite))
 }
 
-func (v *identity_) GetSex() doc.SymbolLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$sex"))
+func (v *identity_) GetBirthsex() doc.SymbolLike {
+	var composite = v.GetSubcomponent(doc.Symbol("$birthsex"))
 	return doc.Symbol(doc.FormatComponent(composite))
 }
 
@@ -184,9 +184,24 @@ func (v *identity_) GetEmail() doc.QuoteLike {
 	return doc.Quote(doc.FormatComponent(composite))
 }
 
-func (v *identity_) GetFace() doc.BinaryLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$face"))
+func (v *identity_) GetMugshot() doc.BinaryLike {
+	var composite = v.GetSubcomponent(doc.Symbol("$mugshot"))
 	return doc.Binary(doc.FormatComponent(composite))
+}
+
+func (v *identity_) SetCertificate(
+	certificate doc.ResourceLike,
+) {
+	v.SetSubcomponent(doc.Symbol("$certificate"), certificate)
+}
+
+func (v *identity_) GetCertificate() doc.ResourceLike {
+	var composite = v.GetSubcomponent(doc.Symbol("$certificate"))
+	var certificate doc.ResourceLike
+	if uti.IsDefined(composite) && doc.FormatComponent(composite) != "none" {
+		certificate = doc.Resource(doc.FormatComponent(composite))
+	}
+	return certificate
 }
 
 // Parameterized Methods
@@ -231,7 +246,7 @@ type identity_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
-	doc.ComponentLike
+	doc.Compound
 }
 
 // Class Structure

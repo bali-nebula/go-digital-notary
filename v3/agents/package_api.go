@@ -30,7 +30,6 @@ on interfaces, not on each other.
 package agents
 
 import (
-	doc "github.com/bali-nebula/go-bali-documents/v3"
 	com "github.com/bali-nebula/go-digital-notary/v3/components"
 )
 
@@ -52,10 +51,9 @@ document that was notarized using this or any other digital notary.
 type DigitalNotaryClassLike interface {
 	// Constructor Methods
 	DigitalNotary(
-		owner doc.TagLike,
+		authority com.DocumentLike,
 		ssm Trusted,
 		hsm Hardened,
-		certificate com.CitationLike,
 	) DigitalNotaryLike
 }
 

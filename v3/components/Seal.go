@@ -53,7 +53,7 @@ func (c *sealClass_) SealFromSource(
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
-		ComponentLike: component,
+		Compound: component,
 	}
 	return instance
 }
@@ -70,12 +70,12 @@ func (v *seal_) GetClass() SealClassLike {
 	return sealClass()
 }
 
-func (v *seal_) AsIntrinsic() doc.ComponentLike {
-	return v.ComponentLike
+func (v *seal_) AsIntrinsic() doc.Compound {
+	return v.Compound
 }
 
 func (v *seal_) AsSource() string {
-	return doc.FormatComponent(v.ComponentLike) + "\n"
+	return doc.FormatComponent(v.Compound) + "\n"
 }
 
 func (v *seal_) GetAlgorithm() doc.QuoteLike {
@@ -100,7 +100,7 @@ type seal_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
-	doc.ComponentLike
+	doc.Compound
 }
 
 // Class Structure

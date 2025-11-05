@@ -73,7 +73,7 @@ func (c *contentClass_) ContentFromSource(
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
-		ComponentLike: component,
+		Compound: component,
 	}
 	return instance
 }
@@ -90,8 +90,8 @@ func (v *content_) GetClass() ContentClassLike {
 	return contentClass()
 }
 
-func (v *content_) AsIntrinsic() doc.ComponentLike {
-	return v.ComponentLike
+func (v *content_) AsIntrinsic() doc.Compound {
+	return v.Compound
 }
 
 // Attribute Methods
@@ -99,7 +99,7 @@ func (v *content_) AsIntrinsic() doc.ComponentLike {
 // Parameterized Methods
 
 func (v *content_) AsSource() string {
-	return doc.FormatComponent(v.ComponentLike) + "\n"
+	return doc.FormatComponent(v.Compound) + "\n"
 }
 
 func (v *content_) GetType() doc.NameLike {
@@ -144,7 +144,7 @@ type content_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
-	doc.ComponentLike
+	doc.Compound
 }
 
 // Class Structure
