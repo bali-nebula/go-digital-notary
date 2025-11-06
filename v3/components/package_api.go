@@ -159,6 +159,22 @@ type IdentityClassLike interface {
 }
 
 /*
+NotaryClassLike is a class interface that declares the complete set of
+class constructors, constants and functions that must be supported by each
+concrete notary-like class.
+*/
+type NotaryClassLike interface {
+	// Constructor Methods
+	Notary(
+		owner doc.TagLike,
+		optionalCertificate CitationLike,
+	) NotaryLike
+	NotaryFromSource(
+		source string,
+	) NotaryLike
+}
+
+/*
 SealClassLike is a class interface that declares the complete set of
 class constructors, constants and functions that must be supported by each
 concrete seal-like class.
@@ -184,7 +200,9 @@ of a concrete certificate-like class.
 type CertificateLike interface {
 	// Principal Methods
 	GetClass() CertificateClassLike
-	AsIntrinsic() doc.Compound
+	AsIntrinsic() doc.Composite
+
+	// Attribute Methods
 	GetAlgorithm() doc.QuoteLike
 	GetKey() doc.BinaryLike
 
@@ -200,9 +218,11 @@ of a concrete citation-like class.
 type CitationLike interface {
 	// Principal Methods
 	GetClass() CitationClassLike
-	AsIntrinsic() doc.Compound
+	AsIntrinsic() doc.Composite
 	AsSource() string
 	AsResource() doc.ResourceLike
+
+	// Attribute Methods
 	GetTag() doc.TagLike
 	GetVersion() doc.VersionLike
 	GetAlgorithm() doc.QuoteLike
@@ -217,7 +237,7 @@ of a concrete content-like class.
 type ContentLike interface {
 	// Principal Methods
 	GetClass() ContentClassLike
-	AsIntrinsic() doc.Compound
+	AsIntrinsic() doc.Composite
 
 	// Aspect Interfaces
 	Parameterized
@@ -231,7 +251,9 @@ of a concrete credential-like class.
 type CredentialLike interface {
 	// Principal Methods
 	GetClass() CredentialClassLike
-	AsIntrinsic() doc.Compound
+	AsIntrinsic() doc.Composite
+
+	// Attribute Methods
 	GetContext() any
 
 	// Aspect Interfaces
@@ -246,24 +268,22 @@ of a concrete document-like class.
 type DocumentLike interface {
 	// Principal Methods
 	GetClass() DocumentClassLike
-	AsIntrinsic() doc.Compound
+	AsIntrinsic() doc.Composite
 	AsSource() string
+
+	// Attribute Methods
 	GetContent() Parameterized
-	GetOwner() doc.TagLike
-	GetTimestamp() doc.MomentLike
-	SetNotary(
-		owner doc.TagLike,
-		notary CitationLike,
+	SetOptionalNotary(
+		notary NotaryLike,
 	)
-	GetNotary() CitationLike
-	SetSeal(
+	GetOptionalNotary() NotaryLike
+	SetNotarySeal(
 		seal SealLike,
 	)
-	HasSeal() bool
-	RemoveSeal() SealLike
+	RemoveNotarySeal() SealLike
 
 	// Aspect Interfaces
-	doc.Compound
+	doc.Composite
 }
 
 /*
@@ -274,7 +294,9 @@ of a concrete identity-like class.
 type IdentityLike interface {
 	// Principal Methods
 	GetClass() IdentityClassLike
-	AsIntrinsic() doc.Compound
+	AsIntrinsic() doc.Composite
+
+	// Attribute Methods
 	GetSurname() doc.QuoteLike
 	GetBirthname() doc.QuoteLike
 	GetBirthdate() doc.MomentLike
@@ -285,13 +307,31 @@ type IdentityLike interface {
 	GetMobile() doc.QuoteLike
 	GetEmail() doc.QuoteLike
 	GetMugshot() doc.BinaryLike
-	SetCertificate(
+	SetOptionalCertificate(
 		certificate doc.ResourceLike,
 	)
-	GetCertificate() doc.ResourceLike
+	GetOptionalCertificate() doc.ResourceLike
 
 	// Aspect Interfaces
 	Parameterized
+}
+
+/*
+NotaryLike is an instance interface that declares the complete set of
+principal, attribute and aspect methods that must be supported by each instance
+of a concrete notary-like class.
+*/
+type NotaryLike interface {
+	// Principal Methods
+	GetClass() NotaryClassLike
+	AsIntrinsic() doc.Composite
+	AsSource() string
+
+	// Attribute Methods
+	GetOwner() doc.TagLike
+	GetTimestamp() doc.MomentLike
+	GetOptionalCertificate() CitationLike
+	GetSeal() SealLike
 }
 
 /*
@@ -302,8 +342,10 @@ of a concrete seal-like class.
 type SealLike interface {
 	// Principal Methods
 	GetClass() SealClassLike
-	AsIntrinsic() doc.Compound
+	AsIntrinsic() doc.Composite
 	AsSource() string
+
+	// Attribute Methods
 	GetAlgorithm() doc.QuoteLike
 	GetSignature() doc.BinaryLike
 }

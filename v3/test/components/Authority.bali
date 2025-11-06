@@ -1,0 +1,54 @@
+[
+    $content: [
+        $surname: "Norton"
+        $birthname: "Derk David"
+        $birthdate: <1966-04-04>
+        $birthplace: "Boulder, Colorado, USA"
+        $birthsex: $male
+        $nationality: "USA"
+        $address: ">
+            123 Main Street
+            Louisville, Colorado, 80027
+        <"
+        $mobile: "303-555-1212"
+        $email: "craterdog@gmail.com"
+        $mugshot: '>
+            oVVGU2Wa/n+kdOHtZ8Zidq5jD9UZ3G60QOXMdAh6cqg
+        <'
+        $certificate: <nebula:/FYQG6XQRQ4TRZ835SJHFHRDGN0F38F37:v1?SHA512=UX12ElQfN9Un0Pz9YNDwAZHsPRZK8h0Inhfzhp6LTa8ACMjoiE00NWtqeUkGdtHgHKdFCqDA6mmEa_wdP-brcQ>
+    ](
+        $type: /bali/types/notary/Identity/v3
+        $tag: #BDBK83JS4YDAZJKAT9D646Z3PAXY4SXJ
+        $version: v1
+        $permissions: /bali/permissions/Public/v3
+        $previous: none
+    )
+    $notary: [
+        $owner: #BDBK83JS4YDAZJKAT9D646Z3PAXY4SXJ
+        $timestamp: <2025-11-06T21:31:51.956>
+        $certificate: [
+            $tag: #FYQG6XQRQ4TRZ835SJHFHRDGN0F38F37
+            $version: v1
+            $algorithm: "SHA512"
+            $digest: '>
+                UX12ElQfN9Un0Pz9YNDwAZHsPRZK8h0Inhfzhp6LTa8ACMjoiE00NWtqeUkG
+                dtHgHKdFCqDA6mmEa/wdP+brcQ
+            <'
+        ](
+            $type: /bali/types/notary/Citation/v3
+        )
+        $seal: [
+            $algorithm: "ED25519"
+            $signature: '>
+                YybroR4k2MIOEsTG2mbjAeHdRm+4gVrGzclMEYO8L6EFRtdfESstSl+eI9aE
+                L5Wz97o8X0hLigrgXLTBi2KpDg
+            <'
+        ](
+            $type: /bali/types/notary/Seal/v3
+        )
+    ](
+        $type: /bali/types/notary/Notary/v3
+    )
+](
+    $type: /bali/types/notary/Document/v3
+)

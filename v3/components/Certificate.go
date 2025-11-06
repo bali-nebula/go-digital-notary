@@ -72,7 +72,7 @@ func (c *certificateClass_) CertificateFromSource(
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
-		Compound: component,
+		Composite: component,
 	}
 	return instance
 }
@@ -89,24 +89,24 @@ func (v *certificate_) GetClass() CertificateClassLike {
 	return certificateClass()
 }
 
-func (v *certificate_) AsIntrinsic() doc.Compound {
-	return v.Compound
+func (v *certificate_) AsIntrinsic() doc.Composite {
+	return v.Composite
 }
 
 func (v *certificate_) AsSource() string {
-	return doc.FormatComponent(v.Compound) + "\n"
+	return doc.FormatComponent(v.Composite) + "\n"
 }
 
 // Attribute Methods
 
 func (v *certificate_) GetAlgorithm() doc.QuoteLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$algorithm"))
-	return doc.Quote(doc.FormatComponent(composite))
+	var component = v.GetSubcomponent(doc.Symbol("$algorithm"))
+	return doc.Quote(doc.FormatComponent(component))
 }
 
 func (v *certificate_) GetKey() doc.BinaryLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$key"))
-	return doc.Binary(doc.FormatComponent(composite))
+	var component = v.GetSubcomponent(doc.Symbol("$key"))
+	return doc.Binary(doc.FormatComponent(component))
 }
 
 // Parameterized Methods
@@ -151,7 +151,7 @@ type certificate_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
-	doc.Compound
+	doc.Composite
 }
 
 // Class Structure

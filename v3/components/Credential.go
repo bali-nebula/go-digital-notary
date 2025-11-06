@@ -66,7 +66,7 @@ func (c *credentialClass_) CredentialFromSource(
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
-		Compound: component,
+		Composite: component,
 	}
 	return instance
 }
@@ -83,12 +83,12 @@ func (v *credential_) GetClass() CredentialClassLike {
 	return credentialClass()
 }
 
-func (v *credential_) AsIntrinsic() doc.Compound {
-	return v.Compound
+func (v *credential_) AsIntrinsic() doc.Composite {
+	return v.Composite
 }
 
 func (v *credential_) AsSource() string {
-	return doc.FormatComponent(v.Compound) + "\n"
+	return doc.FormatComponent(v.Composite) + "\n"
 }
 
 // Attribute Methods
@@ -140,7 +140,7 @@ type credential_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
-	doc.Compound
+	doc.Composite
 }
 
 // Class Structure

@@ -64,7 +64,7 @@ func (c *citationClass_) CitationFromSource(
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
-		Compound: component,
+		Composite: component,
 	}
 	return instance
 }
@@ -111,12 +111,12 @@ func (v *citation_) GetClass() CitationClassLike {
 	return citationClass()
 }
 
-func (v *citation_) AsIntrinsic() doc.Compound {
-	return v.Compound
+func (v *citation_) AsIntrinsic() doc.Composite {
+	return v.Composite
 }
 
 func (v *citation_) AsSource() string {
-	return doc.FormatComponent(v.Compound) + "\n"
+	return doc.FormatComponent(v.Composite) + "\n"
 }
 
 func (v *citation_) AsResource() doc.ResourceLike {
@@ -149,13 +149,13 @@ func (v *citation_) GetVersion() doc.VersionLike {
 }
 
 func (v *citation_) GetAlgorithm() doc.QuoteLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$algorithm"))
-	return doc.Quote(doc.FormatComponent(composite))
+	var component = v.GetSubcomponent(doc.Symbol("$algorithm"))
+	return doc.Quote(doc.FormatComponent(component))
 }
 
 func (v *citation_) GetDigest() doc.BinaryLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$digest"))
-	var source = doc.FormatComponent(composite)
+	var component = v.GetSubcomponent(doc.Symbol("$digest"))
+	var source = doc.FormatComponent(component)
 	return doc.Binary(source)
 }
 
@@ -169,7 +169,7 @@ type citation_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
-	doc.Compound
+	doc.Composite
 }
 
 // Class Structure

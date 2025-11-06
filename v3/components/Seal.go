@@ -53,7 +53,7 @@ func (c *sealClass_) SealFromSource(
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
-		Compound: component,
+		Composite: component,
 	}
 	return instance
 }
@@ -70,25 +70,25 @@ func (v *seal_) GetClass() SealClassLike {
 	return sealClass()
 }
 
-func (v *seal_) AsIntrinsic() doc.Compound {
-	return v.Compound
+func (v *seal_) AsIntrinsic() doc.Composite {
+	return v.Composite
 }
 
 func (v *seal_) AsSource() string {
-	return doc.FormatComponent(v.Compound) + "\n"
-}
-
-func (v *seal_) GetAlgorithm() doc.QuoteLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$algorithm"))
-	return doc.Quote(doc.FormatComponent(composite))
-}
-
-func (v *seal_) GetSignature() doc.BinaryLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$signature"))
-	return doc.Binary(doc.FormatComponent(composite))
+	return doc.FormatComponent(v.Composite) + "\n"
 }
 
 // Attribute Methods
+
+func (v *seal_) GetAlgorithm() doc.QuoteLike {
+	var component = v.GetSubcomponent(doc.Symbol("$algorithm"))
+	return doc.Quote(doc.FormatComponent(component))
+}
+
+func (v *seal_) GetSignature() doc.BinaryLike {
+	var component = v.GetSubcomponent(doc.Symbol("$signature"))
+	return doc.Binary(doc.FormatComponent(component))
+}
 
 // PROTECTED INTERFACE
 
@@ -100,7 +100,7 @@ type seal_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
-	doc.Compound
+	doc.Composite
 }
 
 // Class Structure

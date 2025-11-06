@@ -94,6 +94,7 @@ func (c *identityClass_) Identity(
     $mobile: ` + mobile.AsSource() + `
     $email: ` + email.AsSource() + `
     $mugshot: ` + mugshot.AsSource() + `
+	$certificate: none
 ](
 	$type: /bali/types/notary/Identity/v3
     $tag: ` + tag.AsSource() + `
@@ -112,7 +113,7 @@ func (c *identityClass_) IdentityFromSource(
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
-		Compound: component,
+		Composite: component,
 	}
 	return instance
 }
@@ -129,77 +130,78 @@ func (v *identity_) GetClass() IdentityClassLike {
 	return identityClass()
 }
 
-func (v *identity_) AsIntrinsic() doc.Compound {
-	return v.Compound
+func (v *identity_) AsIntrinsic() doc.Composite {
+	return v.Composite
 }
 
 func (v *identity_) AsSource() string {
-	return doc.FormatComponent(v.Compound) + "\n"
+	return doc.FormatComponent(v.Composite) + "\n"
 }
 
 // Attribute Methods
 
 func (v *identity_) GetSurname() doc.QuoteLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$surname"))
-	return doc.Quote(doc.FormatComponent(composite))
+	var component = v.GetSubcomponent(doc.Symbol("$surname"))
+	return doc.Quote(doc.FormatComponent(component))
 }
 
 func (v *identity_) GetBirthname() doc.QuoteLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$birthname"))
-	return doc.Quote(doc.FormatComponent(composite))
+	var component = v.GetSubcomponent(doc.Symbol("$birthname"))
+	return doc.Quote(doc.FormatComponent(component))
 }
 
 func (v *identity_) GetBirthdate() doc.MomentLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$birthdate"))
-	return doc.Moment(doc.FormatComponent(composite))
+	var component = v.GetSubcomponent(doc.Symbol("$birthdate"))
+	return doc.Moment(doc.FormatComponent(component))
 }
 
 func (v *identity_) GetBirthplace() doc.QuoteLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$birthplace"))
-	return doc.Quote(doc.FormatComponent(composite))
+	var component = v.GetSubcomponent(doc.Symbol("$birthplace"))
+	return doc.Quote(doc.FormatComponent(component))
 }
 
 func (v *identity_) GetBirthsex() doc.SymbolLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$birthsex"))
-	return doc.Symbol(doc.FormatComponent(composite))
+	var component = v.GetSubcomponent(doc.Symbol("$birthsex"))
+	return doc.Symbol(doc.FormatComponent(component))
 }
 
 func (v *identity_) GetNationality() doc.QuoteLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$nationality"))
-	return doc.Quote(doc.FormatComponent(composite))
+	var component = v.GetSubcomponent(doc.Symbol("$nationality"))
+	return doc.Quote(doc.FormatComponent(component))
 }
 
 func (v *identity_) GetAddress() doc.NarrativeLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$address"))
-	return doc.Narrative(doc.FormatComponent(composite))
+	var component = v.GetSubcomponent(doc.Symbol("$address"))
+	return doc.Narrative(doc.FormatComponent(component))
 }
 
 func (v *identity_) GetMobile() doc.QuoteLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$mobile"))
-	return doc.Quote(doc.FormatComponent(composite))
+	var component = v.GetSubcomponent(doc.Symbol("$mobile"))
+	return doc.Quote(doc.FormatComponent(component))
 }
 
 func (v *identity_) GetEmail() doc.QuoteLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$email"))
-	return doc.Quote(doc.FormatComponent(composite))
+	var component = v.GetSubcomponent(doc.Symbol("$email"))
+	return doc.Quote(doc.FormatComponent(component))
 }
 
 func (v *identity_) GetMugshot() doc.BinaryLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$mugshot"))
-	return doc.Binary(doc.FormatComponent(composite))
+	var component = v.GetSubcomponent(doc.Symbol("$mugshot"))
+	return doc.Binary(doc.FormatComponent(component))
 }
 
-func (v *identity_) SetCertificate(
+func (v *identity_) SetOptionalCertificate(
 	certificate doc.ResourceLike,
 ) {
-	v.SetSubcomponent(doc.Symbol("$certificate"), certificate)
+	v.SetSubcomponent(certificate, doc.Symbol("$certificate"))
 }
 
-func (v *identity_) GetCertificate() doc.ResourceLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$certificate"))
+func (v *identity_) GetOptionalCertificate() doc.ResourceLike {
 	var certificate doc.ResourceLike
-	if uti.IsDefined(composite) && doc.FormatComponent(composite) != "none" {
-		certificate = doc.Resource(doc.FormatComponent(composite))
+	var component = v.GetSubcomponent(doc.Symbol("$certificate"))
+	var source = doc.FormatComponent(component)
+	if source != "none" {
+		certificate = doc.Resource(source)
 	}
 	return certificate
 }
@@ -246,7 +248,7 @@ type identity_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
-	doc.Compound
+	doc.Composite
 }
 
 // Class Structure

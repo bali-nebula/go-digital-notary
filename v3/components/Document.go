@@ -48,7 +48,7 @@ func (c *documentClass_) DocumentFromSource(
 		// Initialize the instance attributes.
 
 		// Initialize the inherited aspects.
-		Compound: component,
+		Composite: component,
 	}
 	return instance
 }
@@ -65,12 +65,12 @@ func (v *document_) GetClass() DocumentClassLike {
 	return documentClass()
 }
 
-func (v *document_) AsIntrinsic() doc.Compound {
-	return v.Compound
+func (v *document_) AsIntrinsic() doc.Composite {
+	return v.Composite
 }
 
 func (v *document_) AsSource() string {
-	return doc.FormatComponent(v.Compound) + "\n"
+	return doc.FormatComponent(v.Composite) + "\n"
 }
 
 // Attribute Methods
@@ -80,68 +80,43 @@ func (v *document_) GetContent() Parameterized {
 	return ContentClass().ContentFromSource(doc.FormatComponent(content))
 }
 
-func (v *document_) GetTimestamp() doc.MomentLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$timestamp"))
-	var timestamp doc.MomentLike
-	if uti.IsDefined(composite) {
-		timestamp = doc.Moment(doc.FormatComponent(composite))
-	}
-	return timestamp
-}
-
-func (v *document_) GetOwner() doc.TagLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$owner"))
-	var owner doc.TagLike
-	if uti.IsDefined(composite) {
-		owner = doc.Tag(doc.FormatComponent(composite))
-	}
-	return owner
-}
-
-func (v *document_) SetNotary(
-	owner doc.TagLike,
-	notary CitationLike,
+func (v *document_) SetOptionalNotary(
+	notary NotaryLike,
 ) {
-	var component = doc.ParseComponent(owner.AsSource())
-	v.SetSubcomponent(component, doc.Symbol("$owner"))
-	component = doc.ParseComponent(doc.Moment().AsSource())
-	v.SetSubcomponent(component, doc.Symbol("$timestamp"))
-	component = doc.ParseComponent("none")
-	if uti.IsDefined(notary) {
-		component = doc.ParseComponent(notary.AsSource())
-	}
-	v.SetSubcomponent(component, doc.Symbol("$notary"))
+	v.SetSubcomponent(
+		notary,
+		doc.Symbol("$notary"),
+	)
 }
 
-func (v *document_) GetNotary() CitationLike {
-	var composite = v.GetSubcomponent(doc.Symbol("$notary"))
-	var notary CitationLike
-	if uti.IsDefined(composite) && doc.FormatComponent(composite) != "none" {
-		notary = CitationClass().CitationFromSource(doc.FormatComponent(composite))
+func (v *document_) GetOptionalNotary() NotaryLike {
+	var notary NotaryLike
+	var component = v.GetSubcomponent(doc.Symbol("$notary"))
+	if uti.IsDefined(component) {
+		var source = doc.FormatComponent(component)
+		notary = NotaryClass().NotaryFromSource(source)
 	}
 	return notary
 }
 
-func (v *document_) SetSeal(
+func (v *document_) SetNotarySeal(
 	seal SealLike,
 ) {
-	var component = doc.ParseComponent(seal.AsSource())
-	v.SetSubcomponent(component, doc.Symbol("$seal"))
+	v.SetSubcomponent(
+		seal,
+		doc.Symbol("$notary"),
+		doc.Symbol("$seal"),
+	)
 }
 
-func (v *document_) HasSeal() bool {
-	var symbol = doc.Symbol("$seal")
-	var composite = v.GetSubcomponent(symbol)
-	return uti.IsDefined(composite)
-}
-
-func (v *document_) RemoveSeal() SealLike {
+func (v *document_) RemoveNotarySeal() SealLike {
 	var seal SealLike
-	var symbol = doc.Symbol("$seal")
-	var composite = v.GetSubcomponent(symbol)
-	if uti.IsDefined(composite) {
-		v.RemoveSubcomponent(symbol)
-		seal = SealClass().SealFromSource(doc.FormatComponent(composite))
+	var component = v.RemoveSubcomponent(
+		doc.Symbol("$notary"),
+		doc.Symbol("$seal"),
+	)
+	if uti.IsDefined(component) {
+		seal = SealClass().SealFromSource(doc.FormatComponent(component))
 	}
 	return seal
 }
@@ -156,7 +131,7 @@ type document_ struct {
 	// Declare the instance attributes.
 
 	// Declare the inherited aspects.
-	doc.Compound
+	doc.Composite
 }
 
 // Class Structure

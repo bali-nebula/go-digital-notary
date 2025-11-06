@@ -106,10 +106,9 @@ func TestParsingDocuments(t *tes.T) {
 	var source = uti.ReadFile(filename)
 	var document = not.Document(source)
 	document.GetContent()
-	document.GetTimestamp()
-	document.GetNotary()
-	var seal = document.RemoveSeal()
-	document.SetSeal(seal)
+	document.GetOptionalNotary()
+	var seal = document.RemoveNotarySeal()
+	document.SetNotarySeal(seal)
 	var formatted = document.AsSource()
 	ass.Equal(t, source, formatted)
 }
@@ -215,13 +214,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	notary.ForgetKey()
 	var document = notary.GenerateKey()
 	var certificateV1 = not.Certificate(document.GetContent())
-	ass.True(
-		t,
-		notary.SealMatches(
-			document,
-			certificateV1,
-		),
-	)
+	ass.True(t, notary.SealMatches(document, certificateV1))
 	var filename = "./test/agents/CertificateV1.bali"
 	var source = document.AsSource()
 	uti.WriteFile(filename, source)
@@ -257,13 +250,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 
 	// Notarize the transaction document to create a notarized document.
 	notary.NotarizeDocument(document)
-	ass.True(
-		t,
-		notary.SealMatches(
-			document,
-			certificateV1,
-		),
-	)
+	ass.True(t, notary.SealMatches(document, certificateV1))
 	filename = "./test/agents/Document.bali"
 	source = document.AsSource()
 	uti.WriteFile(filename, source)
@@ -272,17 +259,15 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	ssm = not.SsmSha512()
 	hsm = HsmEd25519TestClass().HsmEd25519(directory)
 	notary = not.DigitalNotary(authority, ssm, hsm)
+	ass.True(t, notary.SealMatches(authority, certificateV1))
+	filename = "./test/agents/Authority.bali"
+	source = authority.AsSource()
+	uti.WriteFile(filename, source)
 
 	// Refresh and validate the public-private key pair.
 	document = notary.RefreshKey()
 	var certificateV2 = not.Certificate(document.GetContent())
-	ass.True(
-		t,
-		notary.SealMatches(
-			document,
-			certificateV1,
-		),
-	)
+	ass.True(t, notary.SealMatches(document, certificateV1))
 	filename = "./test/agents/CertificateV2.bali"
 	source = document.AsSource()
 	uti.WriteFile(filename, source)
@@ -293,21 +278,9 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
     $sessionId: "ABC123456789"
 ]`).GetEntity()
 	document = notary.GenerateCredential(context)
-	ass.True(
-		t,
-		notary.SealMatches(
-			document,
-			certificateV2,
-		),
-	)
+	ass.True(t, notary.SealMatches(document, certificateV2))
 	document = notary.RefreshCredential(context, document)
-	ass.True(
-		t,
-		notary.SealMatches(
-			document,
-			certificateV2,
-		),
-	)
+	ass.True(t, notary.SealMatches(document, certificateV2))
 	filename = "./test/agents/Credential.bali"
 	source = document.AsSource()
 	uti.WriteFile(filename, source)
