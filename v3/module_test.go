@@ -106,7 +106,6 @@ func TestParsingDocuments(t *tes.T) {
 	var source = uti.ReadFile(filename)
 	var document = not.Document(source)
 	document.GetContent()
-	document.GetOptionalNotary()
 	var seal = document.RemoveNotarySeal()
 	document.SetNotarySeal(seal)
 	var formatted = document.AsSource()

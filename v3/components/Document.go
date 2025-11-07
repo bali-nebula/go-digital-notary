@@ -36,6 +36,7 @@ func (c *documentClass_) Document(
 
 	var source = `[
     $content: ` + content.AsSource() + `
+    $notaries: [ ]
 ]($type: /bali/types/notary/Document/v3)`
 	return c.DocumentFromSource(source)
 }
@@ -80,21 +81,32 @@ func (v *document_) GetContent() Parameterized {
 	return ContentClass().ContentFromSource(doc.FormatComponent(content))
 }
 
-func (v *document_) SetOptionalNotary(
+func (v *document_) IsNotarized() bool {
+	var content = v.GetSubcomponent(
+		doc.Symbol("$notaries"),
+		-1,
+	)
+	return uti.IsDefined(content)
+}
+
+func (v *document_) AddNotary(
 	notary NotaryLike,
 ) {
 	v.SetSubcomponent(
 		notary,
-		doc.Symbol("$notary"),
+		doc.Symbol("$notaries"),
+		0,
 	)
 }
 
-func (v *document_) GetOptionalNotary() NotaryLike {
+func (v *document_) RemoveNotary() NotaryLike {
 	var notary NotaryLike
-	var component = v.GetSubcomponent(doc.Symbol("$notary"))
-	if uti.IsDefined(component) {
-		var source = doc.FormatComponent(component)
-		notary = NotaryClass().NotaryFromSource(source)
+	var content = v.RemoveSubcomponent(
+		doc.Symbol("$notaries"),
+		-1,
+	)
+	if uti.IsDefined(content) {
+		notary = content.GetComposite().(NotaryLike)
 	}
 	return notary
 }
@@ -104,19 +116,21 @@ func (v *document_) SetNotarySeal(
 ) {
 	v.SetSubcomponent(
 		seal,
-		doc.Symbol("$notary"),
+		doc.Symbol("$notaries"),
+		-1,
 		doc.Symbol("$seal"),
 	)
 }
 
 func (v *document_) RemoveNotarySeal() SealLike {
 	var seal SealLike
-	var component = v.RemoveSubcomponent(
-		doc.Symbol("$notary"),
+	var content = v.RemoveSubcomponent(
+		doc.Symbol("$notaries"),
+		-1,
 		doc.Symbol("$seal"),
 	)
-	if uti.IsDefined(component) {
-		seal = SealClass().SealFromSource(doc.FormatComponent(component))
+	if uti.IsDefined(content) {
+		seal = SealClass().SealFromSource(doc.FormatComponent(content))
 	}
 	return seal
 }

@@ -23,32 +23,34 @@
         $permissions: /bali/permissions/Public/v3
         $previous: none
     )
-    $notary: [
-        $owner: #BDBK83JS4YDAZJKAT9D646Z3PAXY4SXJ
-        $timestamp: <2025-11-06T21:31:51.956>
-        $certificate: [
-            $tag: #FYQG6XQRQ4TRZ835SJHFHRDGN0F38F37
-            $version: v1
-            $algorithm: "SHA512"
-            $digest: '>
-                UX12ElQfN9Un0Pz9YNDwAZHsPRZK8h0Inhfzhp6LTa8ACMjoiE00NWtqeUkG
-                dtHgHKdFCqDA6mmEa/wdP+brcQ
-            <'
+    $notaries: [
+        [
+            $owner: #BDBK83JS4YDAZJKAT9D646Z3PAXY4SXJ
+            $timestamp: <2025-11-06T21:31:51.956>
+            $certificate: [
+                $tag: #FYQG6XQRQ4TRZ835SJHFHRDGN0F38F37
+                $version: v1
+                $algorithm: "SHA512"
+                $digest: '>
+                    UX12ElQfN9Un0Pz9YNDwAZHsPRZK8h0Inhfzhp6LTa8ACMjoiE00NWtqeUkG
+                    dtHgHKdFCqDA6mmEa/wdP+brcQ
+                <'
+            ](
+                $type: /bali/types/notary/Citation/v3
+            )
+            $seal: [
+                $algorithm: "ED25519"
+                $signature: '>
+                    YybroR4k2MIOEsTG2mbjAeHdRm+4gVrGzclMEYO8L6EFRtdfESstSl+eI9aE
+                    L5Wz97o8X0hLigrgXLTBi2KpDg
+                <'
+            ](
+                $type: /bali/types/notary/Seal/v3
+            )
         ](
-            $type: /bali/types/notary/Citation/v3
+            $type: /bali/types/notary/Notary/v3
         )
-        $seal: [
-            $algorithm: "ED25519"
-            $signature: '>
-                YybroR4k2MIOEsTG2mbjAeHdRm+4gVrGzclMEYO8L6EFRtdfESstSl+eI9aE
-                L5Wz97o8X0hLigrgXLTBi2KpDg
-            <'
-        ](
-            $type: /bali/types/notary/Seal/v3
-        )
-    ](
-        $type: /bali/types/notary/Notary/v3
-    )
+    ]
 ](
     $type: /bali/types/notary/Document/v3
 )

@@ -273,10 +273,11 @@ type DocumentLike interface {
 
 	// Attribute Methods
 	GetContent() Parameterized
-	SetOptionalNotary(
+	IsNotarized() bool
+	AddNotary(
 		notary NotaryLike,
 	)
-	GetOptionalNotary() NotaryLike
+	RemoveNotary() NotaryLike
 	SetNotarySeal(
 		seal SealLike,
 	)

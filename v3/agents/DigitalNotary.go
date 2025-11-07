@@ -44,15 +44,12 @@ func (c *digitalNotaryClass_) DigitalNotary(
 	if uti.IsUndefined(hsm) {
 		panic("The \"hsm\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(authority.GetOptionalNotary()) {
+	if !authority.IsNotarized() {
 		hsm.EraseKeys()
 	}
 
 	// Create the new digital notary.
-	var identity = com.IdentityClass().IdentityFromSource(
-		authority.GetContent().AsSource(),
-	)
-	var owner = identity.GetTag()
+	var owner = authority.GetContent().GetTag()
 	var instance = &digitalNotary_{
 		// Initialize the instance attributes.
 		authority_: authority,
@@ -364,7 +361,7 @@ func (v *digitalNotary_) notarizeDocument(
 		owner,
 		citation,
 	)
-	document.SetOptionalNotary(notary)
+	document.AddNotary(notary)
 
 	// Digitally sign the document.
 	var algorithm = doc.Quote(`"` + v.hsm_.GetSignatureAlgorithm() + `"`)
