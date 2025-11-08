@@ -81,6 +81,7 @@ type HsmEd25519ClassLike interface {
 	// Constructor Methods
 	HsmEd25519(
 		device string,
+		tag string,
 	) HsmEd25519Like
 }
 
@@ -101,11 +102,11 @@ type DigitalNotaryLike interface {
 		citation com.CitationLike,
 		document com.DocumentLike,
 	) bool
+	ForgetKey()
 	GenerateKey(
 		attributes doc.Composite,
 	) com.DocumentLike
 	RefreshKey() com.DocumentLike
-	ForgetKey()
 	GenerateCredential(
 		context any,
 	) com.DocumentLike

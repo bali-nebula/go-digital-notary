@@ -107,8 +107,9 @@ func TestParsingIdentities(t *tes.T) {
 
 // Create the security module and digital notary.
 var ssm = not.SsmSha512()
+var device = "dummy"
 var secret = "#ACH22TPZL7QSSFFH6GGG8D21N3S6Y5RQ"
-var hsm = HsmEd25519TestClass().HsmEd25519(secret)
+var hsm = HsmEd25519TestClass().HsmEd25519(device, secret)
 
 func TestSSM(t *tes.T) {
 	var bytes = []byte{0x0, 0x1, 0x2, 0x3, 0x4}
@@ -228,7 +229,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 
 	// Pickup where we left off with a new security module and digital notary.
 	ssm = not.SsmSha512()
-	hsm = HsmEd25519TestClass().HsmEd25519(secret)
+	hsm = HsmEd25519TestClass().HsmEd25519(device, secret)
 	notary = not.DigitalNotaryWithCertificate(ssm, hsm, certificateV1)
 
 	// Refresh and validate the public-private key pair.

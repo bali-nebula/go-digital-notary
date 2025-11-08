@@ -31,6 +31,7 @@ func HsmEd25519TestClass() not.HsmEd25519ClassLike {
 // Constructor Methods
 
 func (c *hsmEd25519Class_) HsmEd25519(
+	device string,
 	tag string,
 ) not.HsmEd25519Like {
 	if uti.IsUndefined(tag) {

@@ -160,6 +160,17 @@ func (v *digitalNotary_) CitationMatches(
 	return true
 }
 
+func (v *digitalNotary_) ForgetKey() {
+	// Check for any errors at the end.
+	defer v.errorCheck(
+		"An error occurred while attempting to forget the private key",
+	)
+
+	// Erase the stored keys and certificate citation.
+	v.certificate_ = nil
+	v.hsm_.EraseKeys()
+}
+
 func (v *digitalNotary_) GenerateKey(
 	attributes doc.Composite,
 ) com.DocumentLike {
@@ -237,17 +248,6 @@ func (v *digitalNotary_) RefreshKey() com.DocumentLike {
 	v.notarizeDocument(document)
 	v.certificate_ = document
 	return document
-}
-
-func (v *digitalNotary_) ForgetKey() {
-	// Check for any errors at the end.
-	defer v.errorCheck(
-		"An error occurred while attempting to forget the private key",
-	)
-
-	// Erase the stored keys and certificate citation.
-	v.certificate_ = nil
-	v.hsm_.EraseKeys()
 }
 
 func (v *digitalNotary_) GenerateCredential(

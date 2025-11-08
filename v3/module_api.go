@@ -43,19 +43,19 @@ import (
 // Documents
 
 type (
-	CitationClassLike   = com.CitationClassLike
-	ContentClassLike    = com.ContentClassLike
-	DocumentClassLike   = com.DocumentClassLike
-	IdentityClassLike   = com.IdentityClassLike
-	SealClassLike       = com.SealClassLike
+	CitationClassLike = com.CitationClassLike
+	ContentClassLike  = com.ContentClassLike
+	DocumentClassLike = com.DocumentClassLike
+	IdentityClassLike = com.IdentityClassLike
+	SealClassLike     = com.SealClassLike
 )
 
 type (
-	CitationLike   = com.CitationLike
-	ContentLike    = com.ContentLike
-	DocumentLike   = com.DocumentLike
-	IdentityLike   = com.IdentityLike
-	SealLike       = com.SealLike
+	CitationLike = com.CitationLike
+	ContentLike  = com.ContentLike
+	DocumentLike = com.DocumentLike
+	IdentityLike = com.IdentityLike
+	SealLike     = com.SealLike
 )
 
 type (
@@ -151,9 +151,11 @@ func HsmEd25519Class() HsmEd25519ClassLike {
 
 func HsmEd25519(
 	device string,
+	tag string,
 ) HsmEd25519Like {
 	return HsmEd25519Class().HsmEd25519(
 		device,
+		tag,
 	)
 }
 

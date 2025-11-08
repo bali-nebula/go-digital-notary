@@ -29,13 +29,16 @@ func HsmEd25519Class() HsmEd25519ClassLike {
 
 func (c *hsmEd25519Class_) HsmEd25519(
 	device string,
+	tag string,
 ) HsmEd25519Like {
 	if uti.IsUndefined(device) {
 		panic("The \"device\" attribute is required by this class.")
 	}
+	if uti.IsUndefined(tag) {
+		panic("The \"tag\" attribute is required by this class.")
+	}
 	var instance = &hsmEd25519_{
 		// Initialize the instance attributes.
-		device_: device,
 	}
 	return instance
 }
@@ -155,7 +158,6 @@ func (v *hsmEd25519_) errorCheck(
 
 type hsmEd25519_ struct {
 	// Declare the instance attributes.
-	device_ string
 }
 
 // Class Structure
