@@ -77,16 +77,16 @@ func (v *document_) AsSource() string {
 // Attribute Methods
 
 func (v *document_) GetContent() Parameterized {
-	var content = v.GetSubcomponent(doc.Symbol("$content"))
-	return ContentClass().ContentFromSource(doc.FormatComponent(content))
+	var component = v.GetSubcomponent(doc.Symbol("$content"))
+	return ContentClass().ContentFromSource(doc.FormatComponent(component))
 }
 
 func (v *document_) IsNotarized() bool {
-	var content = v.GetSubcomponent(
+	var component = v.GetSubcomponent(
 		doc.Symbol("$notaries"),
 		-1,
 	)
-	return uti.IsDefined(content)
+	return uti.IsDefined(component)
 }
 
 func (v *document_) AddNotary(
@@ -101,14 +101,30 @@ func (v *document_) AddNotary(
 
 func (v *document_) RemoveNotary() NotaryLike {
 	var notary NotaryLike
-	var content = v.RemoveSubcomponent(
+	var component = v.RemoveSubcomponent(
 		doc.Symbol("$notaries"),
 		-1,
 	)
-	if uti.IsDefined(content) {
-		notary = content.GetComposite().(NotaryLike)
+	if uti.IsDefined(component) {
+		notary = component.GetComposite().(NotaryLike)
 	}
 	return notary
+}
+
+func (v *document_) GetNotaryCitation() CitationLike {
+	var citation CitationLike
+	var component = v.GetSubcomponent(
+		doc.Symbol("$notaries"),
+		-1,
+		doc.Symbol("$citation"),
+	)
+	if uti.IsDefined(component) {
+		var source = doc.FormatComponent(component)
+		if source != "none" {
+			citation = CitationClass().CitationFromSource(source)
+		}
+	}
+	return citation
 }
 
 func (v *document_) SetNotarySeal(
@@ -124,13 +140,13 @@ func (v *document_) SetNotarySeal(
 
 func (v *document_) RemoveNotarySeal() SealLike {
 	var seal SealLike
-	var content = v.RemoveSubcomponent(
+	var component = v.RemoveSubcomponent(
 		doc.Symbol("$notaries"),
 		-1,
 		doc.Symbol("$seal"),
 	)
-	if uti.IsDefined(content) {
-		seal = SealClass().SealFromSource(doc.FormatComponent(content))
+	if uti.IsDefined(component) {
+		seal = SealClass().SealFromSource(doc.FormatComponent(component))
 	}
 	return seal
 }

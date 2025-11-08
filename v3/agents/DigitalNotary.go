@@ -304,8 +304,7 @@ func (v *digitalNotary_) RefreshCredential(
 	var content = document.GetContent()
 	var type_ = content.GetType()
 	var tag = content.GetTag()
-	var current = content.GetVersion()
-	var version = doc.VersionClass().GetNextVersion(current, 0)
+	var version = doc.VersionClass().GetNextVersion(content.GetVersion(), 0)
 	var permissions = content.GetPermissions()
 	var credential = com.ContentClass().Content(
 		context,

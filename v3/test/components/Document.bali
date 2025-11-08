@@ -17,7 +17,7 @@
         [
             $owner: #BDBK83JS4YDAZJKAT9D646Z3PAXY4SXJ
             $timestamp: <2025-11-06T21:31:51.966>
-            $certificate: [
+            $citation: [
                 $tag: #FYQG6XQRQ4TRZ835SJHFHRDGN0F38F37
                 $version: v1
                 $algorithm: "SHA512"

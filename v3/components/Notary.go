@@ -29,21 +29,21 @@ func NotaryClass() NotaryClassLike {
 
 func (c *notaryClass_) Notary(
 	owner doc.TagLike,
-	optionalCertificate CitationLike,
+	optionalCitation CitationLike,
 ) NotaryLike {
 	if uti.IsUndefined(owner) {
 		panic("The \"owner\" attribute is required by this class.")
 	}
 
 	var timestamp = doc.Moment() // The current date and time.
-	var certificate = "none"     // In case this is a self-signed certificate.
-	if uti.IsDefined(optionalCertificate) {
-		certificate = optionalCertificate.AsSource()
+	var citation = "none"        // In case this is a self-signed citation.
+	if uti.IsDefined(optionalCitation) {
+		citation = optionalCitation.AsSource()
 	}
 	var source = `[
     $owner: ` + owner.AsSource() + `
     $timestamp: ` + timestamp.AsSource() + `
-	$certificate: ` + certificate + `
+	$citation: ` + citation + `
 ]($type: /bali/types/notary/Notary/v3)`
 	return c.NotaryFromSource(source)
 }
@@ -93,21 +93,25 @@ func (v *notary_) GetTimestamp() doc.MomentLike {
 	return doc.Moment(doc.FormatComponent(component))
 }
 
-func (v *notary_) GetOptionalCertificate() CitationLike {
-	var certificate CitationLike
-	var component = v.GetParameter(doc.Symbol("$certificate"))
+func (v *notary_) GetOptionalCitation() CitationLike {
+	var citation CitationLike
+	var component = v.GetParameter(doc.Symbol("$citation"))
 	if uti.IsDefined(component) {
 		var source = doc.FormatComponent(component)
 		if source != "none" {
-			certificate = CitationClass().CitationFromSource(source)
+			citation = CitationClass().CitationFromSource(source)
 		}
 	}
-	return certificate
+	return citation
 }
 
-func (v *notary_) GetSeal() SealLike {
+func (v *notary_) GetOptionalSeal() SealLike {
+	var seal SealLike
 	var component = v.GetSubcomponent(doc.Symbol("$seal"))
-	return SealClass().SealFromSource(doc.FormatComponent(component))
+	if uti.IsDefined(component) {
+		seal = SealClass().SealFromSource(doc.FormatComponent(component))
+	}
+	return seal
 }
 
 // PROTECTED INTERFACE

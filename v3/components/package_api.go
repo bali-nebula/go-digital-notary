@@ -123,7 +123,7 @@ type NotaryClassLike interface {
 	// Constructor Methods
 	Notary(
 		owner doc.TagLike,
-		optionalCertificate CitationLike,
+		optionalCitation CitationLike,
 	) NotaryLike
 	NotaryFromSource(
 		source string,
@@ -199,6 +199,7 @@ type DocumentLike interface {
 		notary NotaryLike,
 	)
 	RemoveNotary() NotaryLike
+	GetNotaryCitation() CitationLike
 	SetNotarySeal(
 		seal SealLike,
 	)
@@ -241,8 +242,8 @@ type NotaryLike interface {
 	// Attribute Methods
 	GetOwner() doc.TagLike
 	GetTimestamp() doc.MomentLike
-	GetOptionalCertificate() CitationLike
-	GetSeal() SealLike
+	GetOptionalCitation() CitationLike
+	GetOptionalSeal() SealLike
 }
 
 /*
