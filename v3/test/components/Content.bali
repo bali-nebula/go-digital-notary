@@ -1,14 +1,10 @@
 [
-    $timestamp: <2025-11-06T21:31:51.962>
-    $consumer: "Derk Norton"
-    $merchant: <https://www.starbucks.com/>
-    $amount: 7.95(
-        $currency: $USD
-    )
+    $website: <https://bali-nebula.com/>
+    $sessionId: "ABC123456789"
 ](
-    $type: /bali/examples/Transaction/v1.2.3
-    $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
-    $version: v1
+    $type: /bali/types/notary/Credential/v3
+    $tag: #D987JADMV56ZMCNVXKLXCKTXTWF8PD9J
+    $version: v2
     $permissions: /bali/permissions/Public/v3
-    $previous: none
+    $previous: <nebula:/D987JADMV56ZMCNVXKLXCKTXTWF8PD9J:v1?SHA512=mGGfwQTOoy4pAAteUC-N1LStfkfOgRBrKijh5f8BXYZIYLEUrd2rqJa0HQD5FPfSQzf9JrV5PKKrm2JAgIYgOg>
 )

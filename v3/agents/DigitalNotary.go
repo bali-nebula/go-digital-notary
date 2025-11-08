@@ -264,13 +264,17 @@ func (v *digitalNotary_) GenerateCredential(
 	}
 
 	// Create the credential document.
+	var type_ = doc.Name("/bali/types/notary/Credential/v3")
 	var tag = doc.Tag()
 	var version = doc.Version()
+	var permissions = doc.Name("/bali/permissions/Public/v3")
 	var previous doc.ResourceLike
-	var credential = com.CredentialClass().Credential(
+	var credential = com.ContentClass().Content(
 		context,
+		type_,
 		tag,
 		version,
+		permissions,
 		previous,
 	)
 	var document = com.DocumentClass().Document(credential)
@@ -298,13 +302,17 @@ func (v *digitalNotary_) RefreshCredential(
 	// Create the next version of the credential document.
 	var previous = v.CiteDocument(document).AsResource()
 	var content = document.GetContent()
+	var type_ = content.GetType()
 	var tag = content.GetTag()
 	var current = content.GetVersion()
 	var version = doc.VersionClass().GetNextVersion(current, 0)
-	var credential = com.CredentialClass().Credential(
+	var permissions = content.GetPermissions()
+	var credential = com.ContentClass().Content(
 		context,
+		type_,
 		tag,
 		version,
+		permissions,
 		previous,
 	)
 	document = com.DocumentClass().Document(credential)

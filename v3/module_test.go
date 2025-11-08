@@ -45,17 +45,6 @@ func TestParsingCitations(t *tes.T) {
 	ass.Equal(t, source, formatted)
 }
 
-func TestParsingCredentials(t *tes.T) {
-	var filename = testDirectory + "components/Credential.bali"
-	fmt.Println(filename)
-	var source = uti.ReadFile(filename)
-	var credential = not.Credential(source)
-	credential.GetTag()
-	credential.GetVersion()
-	var formatted = credential.AsSource()
-	ass.Equal(t, source, formatted)
-}
-
 func TestParsingContents(t *tes.T) {
 	var filename = testDirectory + "components/Content.bali"
 	fmt.Println(filename)

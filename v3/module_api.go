@@ -45,7 +45,6 @@ import (
 type (
 	CitationClassLike   = com.CitationClassLike
 	ContentClassLike    = com.ContentClassLike
-	CredentialClassLike = com.CredentialClassLike
 	DocumentClassLike   = com.DocumentClassLike
 	IdentityClassLike   = com.IdentityClassLike
 	SealClassLike       = com.SealClassLike
@@ -54,7 +53,6 @@ type (
 type (
 	CitationLike   = com.CitationLike
 	ContentLike    = com.ContentLike
-	CredentialLike = com.CredentialLike
 	DocumentLike   = com.DocumentLike
 	IdentityLike   = com.IdentityLike
 	SealLike       = com.SealLike
@@ -105,10 +103,6 @@ func CitationClass() CitationClassLike {
 
 func ContentClass() ContentClassLike {
 	return com.ContentClass()
-}
-
-func CredentialClass() CredentialClassLike {
-	return com.CredentialClass()
 }
 
 func DocumentClass() DocumentClassLike {
@@ -223,34 +217,6 @@ func Content(
 		version,
 		permissions,
 		optionalPrevious,
-	)
-}
-
-func Credential(
-	value ...any,
-) CredentialLike {
-	if len(value) == 1 {
-		var source string
-		switch actual := value[0].(type) {
-		case string:
-			source = actual
-		case com.Parameterized:
-			source = actual.AsSource()
-		}
-		return com.CredentialClass().CredentialFromSource(source)
-	}
-	var context = value[0]
-	var tag = value[1].(doc.TagLike)
-	var version = value[2].(doc.VersionLike)
-	var previous doc.ResourceLike
-	if uti.IsDefined(value[3]) {
-		previous = value[3].(doc.ResourceLike)
-	}
-	return CredentialClass().Credential(
-		context,
-		tag,
-		version,
-		previous,
 	)
 }
 

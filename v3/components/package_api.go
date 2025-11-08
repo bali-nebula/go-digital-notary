@@ -80,24 +80,6 @@ type ContentClassLike interface {
 }
 
 /*
-CredentialClassLike is a class interface that declares the complete set of
-class constructors, constants and functions that must be supported by each
-concrete credential-like class.
-*/
-type CredentialClassLike interface {
-	// Constructor Methods
-	Credential(
-		context any,
-		tag doc.TagLike,
-		version doc.VersionLike,
-		optionalPrevious doc.ResourceLike,
-	) CredentialLike
-	CredentialFromSource(
-		source string,
-	) CredentialLike
-}
-
-/*
 DocumentClassLike is a class interface that declares the complete set of
 class constructors, constants and functions that must be supported by each
 concrete document-like class.
@@ -194,23 +176,6 @@ type ContentLike interface {
 	// Principal Methods
 	GetClass() ContentClassLike
 	AsIntrinsic() doc.Composite
-
-	// Aspect Interfaces
-	Parameterized
-}
-
-/*
-CredentialLike is an instance interface that declares the complete set of
-principal, attribute and aspect methods that must be supported by each instance
-of a concrete credential-like class.
-*/
-type CredentialLike interface {
-	// Principal Methods
-	GetClass() CredentialClassLike
-	AsIntrinsic() doc.Composite
-
-	// Attribute Methods
-	GetContext() any
 
 	// Aspect Interfaces
 	Parameterized
