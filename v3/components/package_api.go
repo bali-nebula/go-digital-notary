@@ -39,25 +39,6 @@ import (
 // CLASS DECLARATIONS
 
 /*
-CertificateClassLike is a class interface that declares the complete set of
-class constructors, constants and functions that must be supported by each
-concrete certificate-like class.
-*/
-type CertificateClassLike interface {
-	// Constructor Methods
-	Certificate(
-		algorithm doc.QuoteLike,
-		key doc.BinaryLike,
-		tag doc.TagLike,
-		version doc.VersionLike,
-		optionalPrevious doc.ResourceLike,
-	) CertificateLike
-	CertificateFromSource(
-		source string,
-	) CertificateLike
-}
-
-/*
 CitationClassLike is a class interface that declares the complete set of
 class constructors, constants and functions that must be supported by each
 concrete citation-like class.
@@ -139,16 +120,9 @@ concrete identity-like class.
 type IdentityClassLike interface {
 	// Constructor Methods
 	Identity(
-		surname doc.QuoteLike,
-		birthname doc.QuoteLike,
-		birthdate doc.MomentLike,
-		birthplace doc.QuoteLike,
-		birthsex doc.SymbolLike,
-		nationality doc.QuoteLike,
-		address doc.NarrativeLike,
-		mobile doc.QuoteLike,
-		email doc.QuoteLike,
-		mugshot doc.BinaryLike,
+		algorithm doc.QuoteLike,
+		key doc.BinaryLike,
+		attributes doc.Composite,
 		tag doc.TagLike,
 		version doc.VersionLike,
 		optionalPrevious doc.ResourceLike,
@@ -191,24 +165,6 @@ type SealClassLike interface {
 }
 
 // INSTANCE DECLARATIONS
-
-/*
-CertificateLike is an instance interface that declares the complete set of
-principal, attribute and aspect methods that must be supported by each instance
-of a concrete certificate-like class.
-*/
-type CertificateLike interface {
-	// Principal Methods
-	GetClass() CertificateClassLike
-	AsIntrinsic() doc.Composite
-
-	// Attribute Methods
-	GetAlgorithm() doc.QuoteLike
-	GetKey() doc.BinaryLike
-
-	// Aspect Interfaces
-	Parameterized
-}
 
 /*
 CitationLike is an instance interface that declares the complete set of
@@ -298,20 +254,9 @@ type IdentityLike interface {
 	AsIntrinsic() doc.Composite
 
 	// Attribute Methods
-	GetSurname() doc.QuoteLike
-	GetBirthname() doc.QuoteLike
-	GetBirthdate() doc.MomentLike
-	GetBirthplace() doc.QuoteLike
-	GetBirthsex() doc.SymbolLike
-	GetNationality() doc.QuoteLike
-	GetAddress() doc.NarrativeLike
-	GetMobile() doc.QuoteLike
-	GetEmail() doc.QuoteLike
-	GetMugshot() doc.BinaryLike
-	SetOptionalCertificate(
-		certificate doc.ResourceLike,
-	)
-	GetOptionalCertificate() doc.ResourceLike
+	GetAlgorithm() doc.QuoteLike
+	GetKey() doc.BinaryLike
+	GetAttributes() doc.Composite
 
 	// Aspect Interfaces
 	Parameterized

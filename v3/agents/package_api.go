@@ -30,6 +30,7 @@ on interfaces, not on each other.
 package agents
 
 import (
+	doc "github.com/bali-nebula/go-bali-documents/v3"
 	com "github.com/bali-nebula/go-digital-notary/v3/components"
 )
 
@@ -51,9 +52,13 @@ document that was notarized using this or any other digital notary.
 type DigitalNotaryClassLike interface {
 	// Constructor Methods
 	DigitalNotary(
-		authority com.DocumentLike,
 		ssm Trusted,
 		hsm Hardened,
+	) DigitalNotaryLike
+	DigitalNotaryWithCertificate(
+		ssm Trusted,
+		hsm Hardened,
+		certificate com.DocumentLike,
 	) DigitalNotaryLike
 }
 
@@ -96,7 +101,9 @@ type DigitalNotaryLike interface {
 		citation com.CitationLike,
 		document com.DocumentLike,
 	) bool
-	GenerateKey() com.DocumentLike
+	GenerateKey(
+		attributes doc.Composite,
+	) com.DocumentLike
 	RefreshKey() com.DocumentLike
 	ForgetKey()
 	GenerateCredential(
@@ -111,7 +118,7 @@ type DigitalNotaryLike interface {
 	)
 	SealMatches(
 		document com.DocumentLike,
-		certificate com.CertificateLike,
+		certificate com.DocumentLike,
 	) bool
 }
 
@@ -161,6 +168,7 @@ hardened security modules.  This interface requires a private key.
 type Hardened interface {
 	GetTag() string
 	GetSignatureAlgorithm() string
+	GetPublicKey() []byte
 	GenerateKeys() []byte
 	SignBytes(
 		bytes []byte,

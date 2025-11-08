@@ -28,49 +28,21 @@ func IdentityClass() IdentityClassLike {
 // Constructor Methods
 
 func (c *identityClass_) Identity(
-	surname doc.QuoteLike,
-	birthname doc.QuoteLike,
-	birthdate doc.MomentLike,
-	birthplace doc.QuoteLike,
-	birthsex doc.SymbolLike,
-	nationality doc.QuoteLike,
-	address doc.NarrativeLike,
-	mobile doc.QuoteLike,
-	email doc.QuoteLike,
-	mugshot doc.BinaryLike,
+	algorithm doc.QuoteLike,
+	key doc.BinaryLike,
+	attributes doc.Composite,
 	tag doc.TagLike,
 	version doc.VersionLike,
 	optionalPrevious doc.ResourceLike,
 ) IdentityLike {
-	if uti.IsUndefined(surname) {
-		panic("The \"surname\" attribute is required by this class.")
+	if uti.IsUndefined(algorithm) {
+		panic("The \"algorithm\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(birthname) {
-		panic("The \"birthname\" attribute is required by this class.")
+	if uti.IsUndefined(key) {
+		panic("The \"key\" attribute is required by this class.")
 	}
-	if uti.IsUndefined(birthdate) {
-		panic("The \"birthdate\" attribute is required by this class.")
-	}
-	if uti.IsUndefined(birthplace) {
-		panic("The \"birthplace\" attribute is required by this class.")
-	}
-	if uti.IsUndefined(birthsex) {
-		panic("The \"birthsex\" attribute is required by this class.")
-	}
-	if uti.IsUndefined(nationality) {
-		panic("The \"nationality\" attribute is required by this class.")
-	}
-	if uti.IsUndefined(address) {
-		panic("The \"address\" attribute is required by this class.")
-	}
-	if uti.IsUndefined(mobile) {
-		panic("The \"mobile\" attribute is required by this class.")
-	}
-	if uti.IsUndefined(email) {
-		panic("The \"email\" attribute is required by this class.")
-	}
-	if uti.IsUndefined(mugshot) {
-		panic("The \"mugshot\" attribute is required by this class.")
+	if uti.IsUndefined(attributes) {
+		panic("The \"attributes\" attribute is required by this class.")
 	}
 	if uti.IsUndefined(tag) {
 		panic("The \"tag\" attribute is required by this class.")
@@ -84,17 +56,9 @@ func (c *identityClass_) Identity(
 		previous = optionalPrevious.AsSource()
 	}
 	var source = `[
-    $surname: ` + surname.AsSource() + `
-    $birthname: ` + birthname.AsSource() + `
-    $birthdate: ` + birthdate.AsSource() + `
-    $birthplace: ` + birthplace.AsSource() + `
-    $birthsex: ` + birthsex.AsSource() + `
-    $nationality: ` + nationality.AsSource() + `
-    $address: ` + address.AsSource() + `
-    $mobile: ` + mobile.AsSource() + `
-    $email: ` + email.AsSource() + `
-    $mugshot: ` + mugshot.AsSource() + `
-	$certificate: none
+    $algorithm: ` + algorithm.AsSource() + `
+    $key: ` + key.AsSource() + `
+    $attributes: ` + doc.FormatComponent(attributes) + `
 ](
 	$type: /bali/types/notary/Identity/v3
     $tag: ` + tag.AsSource() + `
@@ -140,70 +104,19 @@ func (v *identity_) AsSource() string {
 
 // Attribute Methods
 
-func (v *identity_) GetSurname() doc.QuoteLike {
-	var component = v.GetSubcomponent(doc.Symbol("$surname"))
+func (v *identity_) GetAlgorithm() doc.QuoteLike {
+	var component = v.GetSubcomponent(doc.Symbol("$algorithm"))
 	return doc.Quote(doc.FormatComponent(component))
 }
 
-func (v *identity_) GetBirthname() doc.QuoteLike {
-	var component = v.GetSubcomponent(doc.Symbol("$birthname"))
-	return doc.Quote(doc.FormatComponent(component))
-}
-
-func (v *identity_) GetBirthdate() doc.MomentLike {
-	var component = v.GetSubcomponent(doc.Symbol("$birthdate"))
-	return doc.Moment(doc.FormatComponent(component))
-}
-
-func (v *identity_) GetBirthplace() doc.QuoteLike {
-	var component = v.GetSubcomponent(doc.Symbol("$birthplace"))
-	return doc.Quote(doc.FormatComponent(component))
-}
-
-func (v *identity_) GetBirthsex() doc.SymbolLike {
-	var component = v.GetSubcomponent(doc.Symbol("$birthsex"))
-	return doc.Symbol(doc.FormatComponent(component))
-}
-
-func (v *identity_) GetNationality() doc.QuoteLike {
-	var component = v.GetSubcomponent(doc.Symbol("$nationality"))
-	return doc.Quote(doc.FormatComponent(component))
-}
-
-func (v *identity_) GetAddress() doc.NarrativeLike {
-	var component = v.GetSubcomponent(doc.Symbol("$address"))
-	return doc.Narrative(doc.FormatComponent(component))
-}
-
-func (v *identity_) GetMobile() doc.QuoteLike {
-	var component = v.GetSubcomponent(doc.Symbol("$mobile"))
-	return doc.Quote(doc.FormatComponent(component))
-}
-
-func (v *identity_) GetEmail() doc.QuoteLike {
-	var component = v.GetSubcomponent(doc.Symbol("$email"))
-	return doc.Quote(doc.FormatComponent(component))
-}
-
-func (v *identity_) GetMugshot() doc.BinaryLike {
-	var component = v.GetSubcomponent(doc.Symbol("$mugshot"))
+func (v *identity_) GetKey() doc.BinaryLike {
+	var component = v.GetSubcomponent(doc.Symbol("$key"))
 	return doc.Binary(doc.FormatComponent(component))
 }
 
-func (v *identity_) SetOptionalCertificate(
-	certificate doc.ResourceLike,
-) {
-	v.SetSubcomponent(certificate, doc.Symbol("$certificate"))
-}
-
-func (v *identity_) GetOptionalCertificate() doc.ResourceLike {
-	var certificate doc.ResourceLike
-	var component = v.GetSubcomponent(doc.Symbol("$certificate"))
-	var source = doc.FormatComponent(component)
-	if source != "none" {
-		certificate = doc.Resource(source)
-	}
-	return certificate
+func (v *identity_) GetAttributes() doc.Composite {
+	var component = v.GetSubcomponent(doc.Symbol("$attributes"))
+	return component.GetComposite()
 }
 
 // Parameterized Methods

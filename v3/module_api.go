@@ -43,23 +43,21 @@ import (
 // Documents
 
 type (
-	CertificateClassLike = com.CertificateClassLike
-	CitationClassLike    = com.CitationClassLike
-	ContentClassLike     = com.ContentClassLike
-	CredentialClassLike  = com.CredentialClassLike
-	DocumentClassLike    = com.DocumentClassLike
-	IdentityClassLike    = com.IdentityClassLike
-	SealClassLike        = com.SealClassLike
+	CitationClassLike   = com.CitationClassLike
+	ContentClassLike    = com.ContentClassLike
+	CredentialClassLike = com.CredentialClassLike
+	DocumentClassLike   = com.DocumentClassLike
+	IdentityClassLike   = com.IdentityClassLike
+	SealClassLike       = com.SealClassLike
 )
 
 type (
-	CertificateLike = com.CertificateLike
-	CitationLike    = com.CitationLike
-	ContentLike     = com.ContentLike
-	CredentialLike  = com.CredentialLike
-	DocumentLike    = com.DocumentLike
-	IdentityLike    = com.IdentityLike
-	SealLike        = com.SealLike
+	CitationLike   = com.CitationLike
+	ContentLike    = com.ContentLike
+	CredentialLike = com.CredentialLike
+	DocumentLike   = com.DocumentLike
+	IdentityLike   = com.IdentityLike
+	SealLike       = com.SealLike
 )
 
 type (
@@ -101,10 +99,6 @@ type (
 
 // Documents
 
-func CertificateClass() CertificateClassLike {
-	return com.CertificateClass()
-}
-
 func CitationClass() CitationClassLike {
 	return com.CitationClass()
 }
@@ -136,14 +130,24 @@ func DigitalNotaryClass() DigitalNotaryClassLike {
 }
 
 func DigitalNotary(
-	authority com.DocumentLike,
 	ssm age.Trusted,
 	hsm age.Hardened,
 ) DigitalNotaryLike {
 	return DigitalNotaryClass().DigitalNotary(
-		authority,
 		ssm,
 		hsm,
+	)
+}
+
+func DigitalNotaryWithCertificate(
+	ssm age.Trusted,
+	hsm age.Hardened,
+	certificate com.DocumentLike,
+) DigitalNotaryLike {
+	return DigitalNotaryClass().DigitalNotaryWithCertificate(
+		ssm,
+		hsm,
+		certificate,
 	)
 }
 
@@ -170,27 +174,6 @@ func SsmSha512() SsmSha512Like {
 // GLOBAL FUNCTIONS
 
 // Documents
-
-func Certificate(
-	value ...any,
-) CertificateLike {
-	if len(value) == 1 {
-		var source string
-		switch actual := value[0].(type) {
-		case string:
-			source = actual
-		case com.Parameterized:
-			source = actual.AsSource()
-		}
-		return com.CertificateClass().CertificateFromSource(source)
-	}
-	var algorithm = value[0].(doc.QuoteLike)
-	var key = value[1].(doc.BinaryLike)
-	var tag = value[2].(doc.TagLike)
-	var version = value[3].(doc.VersionLike)
-	var previous = value[4].(doc.ResourceLike)
-	return CertificateClass().Certificate(algorithm, key, tag, version, previous)
-}
 
 func Citation(
 	value ...any,
@@ -259,7 +242,10 @@ func Credential(
 	var context = value[0]
 	var tag = value[1].(doc.TagLike)
 	var version = value[2].(doc.VersionLike)
-	var previous = value[3].(doc.ResourceLike)
+	var previous doc.ResourceLike
+	if uti.IsDefined(value[3]) {
+		previous = value[3].(doc.ResourceLike)
+	}
 	return CredentialClass().Credential(
 		context,
 		tag,
@@ -299,30 +285,19 @@ func Identity(
 		}
 		return com.IdentityClass().IdentityFromSource(source)
 	}
-	var surname = value[0].(doc.QuoteLike)
-	var birthname = value[1].(doc.QuoteLike)
-	var birthdate = value[2].(doc.MomentLike)
-	var birthplace = value[3].(doc.QuoteLike)
-	var birthsex = value[4].(doc.SymbolLike)
-	var nationality = value[5].(doc.QuoteLike)
-	var address = value[6].(doc.NarrativeLike)
-	var mobile = value[7].(doc.QuoteLike)
-	var email = value[8].(doc.QuoteLike)
-	var mugshot = value[9].(doc.BinaryLike)
-	var tag = value[10].(doc.TagLike)
-	var version = value[11].(doc.VersionLike)
-	var previous = value[12].(doc.ResourceLike)
+	var algorithm = value[0].(doc.QuoteLike)
+	var key = value[1].(doc.BinaryLike)
+	var attributes = value[2].(doc.Composite)
+	var tag = value[3].(doc.TagLike)
+	var version = value[4].(doc.VersionLike)
+	var previous doc.ResourceLike
+	if uti.IsDefined(value[5]) {
+		previous = value[5].(doc.ResourceLike)
+	}
 	return IdentityClass().Identity(
-		surname,
-		birthname,
-		birthdate,
-		birthplace,
-		birthsex,
-		nationality,
-		address,
-		mobile,
-		email,
-		mugshot,
+		algorithm,
+		key,
+		attributes,
 		tag,
 		version,
 		previous,

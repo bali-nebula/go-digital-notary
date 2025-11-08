@@ -21,10 +21,10 @@ import (
 	tes "testing"
 )
 
-const directory = "./test/"
+const testDirectory = "./test/"
 
 func TestParsingCitations(t *tes.T) {
-	var filename = directory + "components/Citation.bali"
+	var filename = testDirectory + "components/Citation.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var citation = not.Citation(source)
@@ -46,7 +46,7 @@ func TestParsingCitations(t *tes.T) {
 }
 
 func TestParsingCredentials(t *tes.T) {
-	var filename = directory + "components/Credential.bali"
+	var filename = testDirectory + "components/Credential.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var credential = not.Credential(source)
@@ -56,29 +56,8 @@ func TestParsingCredentials(t *tes.T) {
 	ass.Equal(t, source, formatted)
 }
 
-func TestParsingCertificates(t *tes.T) {
-	var filename = directory + "components/Certificate.bali"
-	fmt.Println(filename)
-	var source = uti.ReadFile(filename)
-	var certificate = not.Certificate(source)
-	var tag = certificate.GetTag()
-	var version = certificate.GetVersion()
-	var algorithm = certificate.GetAlgorithm()
-	var key = certificate.GetKey()
-	var previous = certificate.GetOptionalPrevious()
-	certificate = not.Certificate(
-		algorithm,
-		key,
-		tag,
-		version,
-		previous,
-	)
-	var formatted = certificate.AsSource()
-	ass.Equal(t, source, formatted)
-}
-
 func TestParsingContents(t *tes.T) {
-	var filename = directory + "components/Content.bali"
+	var filename = testDirectory + "components/Content.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var content = not.Content(source)
@@ -101,7 +80,7 @@ func TestParsingContents(t *tes.T) {
 }
 
 func TestParsingDocuments(t *tes.T) {
-	var filename = directory + "components/Document.bali"
+	var filename = testDirectory + "components/Document.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var document = not.Document(source)
@@ -115,27 +94,32 @@ func TestParsingDocuments(t *tes.T) {
 var identity not.IdentityLike
 
 func TestParsingIdentities(t *tes.T) {
-	var filename = directory + "components/Identity.bali"
+	var filename = testDirectory + "components/Identity.bali"
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	identity = not.Identity(source)
-	identity.GetSurname()
-	identity.GetBirthname()
-	identity.GetBirthdate()
-	identity.GetBirthplace()
-	identity.GetBirthsex()
-	identity.GetNationality()
-	identity.GetAddress()
-	identity.GetMobile()
-	identity.GetEmail()
-	identity.GetMugshot()
+	var algorithm = identity.GetAlgorithm()
+	var key = identity.GetKey()
+	var attributes = identity.GetAttributes()
+	var tag = identity.GetTag()
+	var version = identity.GetVersion()
+	var previous = identity.GetOptionalPrevious()
+	identity = not.Identity(
+		algorithm,
+		key,
+		attributes,
+		tag,
+		version,
+		previous,
+	)
 	var formatted = identity.AsSource()
 	ass.Equal(t, source, formatted)
 }
 
 // Create the security module and digital notary.
 var ssm = not.SsmSha512()
-var hsm = HsmEd25519TestClass().HsmEd25519(directory)
+var secret = "#ACH22TPZL7QSSFFH6GGG8D21N3S6Y5RQ"
+var hsm = HsmEd25519TestClass().HsmEd25519(secret)
 
 func TestSSM(t *tes.T) {
 	var bytes = []byte{0x0, 0x1, 0x2, 0x3, 0x4}
@@ -167,7 +151,6 @@ func TestHSM(t *tes.T) {
 	hsm.EraseKeys()
 }
 
-var authority not.DocumentLike
 var notary not.DigitalNotaryLike
 
 func TestDigitalNotaryInitialization(t *tes.T) {
@@ -180,17 +163,16 @@ func TestDigitalNotaryInitialization(t *tes.T) {
 			ass.Fail(t, "Test should result in recovered panic.")
 		}
 	}()
-	authority = not.Document(identity)
-	notary = not.DigitalNotary(authority, ssm, hsm)
-	notary.ForgetKey()
+	notary = not.DigitalNotary(ssm, hsm)
 	var context = doc.Moment()
 	notary.GenerateCredential(context)
 }
 
 func TestDigitalNotaryGenerateKey(t *tes.T) {
 	// Generate a new public-private key pair.
+	var attributes = identity.GetAttributes()
 	notary.ForgetKey()
-	notary.GenerateKey()
+	notary.GenerateKey(attributes)
 
 	// Should not be able to do this twice.
 	defer func() {
@@ -198,21 +180,22 @@ func TestDigitalNotaryGenerateKey(t *tes.T) {
 			var message = e.(string)
 			ass.Equal(
 				t,
-				"DigitalNotary: An error occurred while attempting to generate a new key pair:\n    HsmEd25519: An error occurred while attempting to generate new keys:\n        Attempted to transition from state \"$LoneKey\" to an invalid state on event \"$GenerateKeys\".",
+				"DigitalNotary: An error occurred while attempting to generate a new key pair:\n    The digital notary has already been initialized.",
 				message,
 			)
 		} else {
 			ass.Fail(t, "Test should result in recovered panic.")
 		}
 	}()
-	notary.GenerateKey()
+	notary.GenerateKey(attributes)
 }
 
 func TestDigitalNotaryLifecycle(t *tes.T) {
 	// Generate and validate a new public-private key pair.
 	notary.ForgetKey()
-	var document = notary.GenerateKey()
-	var certificateV1 = not.Certificate(document.GetContent())
+	var attributes = identity.GetAttributes()
+	var document = notary.GenerateKey(attributes)
+	var certificateV1 = document
 	ass.True(t, notary.SealMatches(document, certificateV1))
 	var filename = "./test/agents/CertificateV1.bali"
 	var source = document.AsSource()
@@ -256,16 +239,12 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 
 	// Pickup where we left off with a new security module and digital notary.
 	ssm = not.SsmSha512()
-	hsm = HsmEd25519TestClass().HsmEd25519(directory)
-	notary = not.DigitalNotary(authority, ssm, hsm)
-	ass.True(t, notary.SealMatches(authority, certificateV1))
-	filename = "./test/agents/Authority.bali"
-	source = authority.AsSource()
-	uti.WriteFile(filename, source)
+	hsm = HsmEd25519TestClass().HsmEd25519(secret)
+	notary = not.DigitalNotaryWithCertificate(ssm, hsm, certificateV1)
 
 	// Refresh and validate the public-private key pair.
 	document = notary.RefreshKey()
-	var certificateV2 = not.Certificate(document.GetContent())
+	var certificateV2 = document
 	ass.True(t, notary.SealMatches(document, certificateV1))
 	filename = "./test/agents/CertificateV2.bali"
 	source = document.AsSource()

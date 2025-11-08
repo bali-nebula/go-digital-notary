@@ -74,6 +74,15 @@ func (v *hsmEd25519_) GetSignatureAlgorithm() string {
 	panic("This module has not yet been implemented.")
 }
 
+func (v *hsmEd25519_) GetPublicKey() []byte {
+	// Check for any errors at the end.
+	defer v.errorCheck(
+		"An error occurred while attempting to retrieve the public key",
+	)
+
+	panic("This module has not yet been implemented.")
+}
+
 func (v *hsmEd25519_) GenerateKeys() []byte {
 	// Check for any errors at the end.
 	defer v.errorCheck(
