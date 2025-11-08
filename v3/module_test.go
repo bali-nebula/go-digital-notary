@@ -214,9 +214,6 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	$previous: none
 )`,
 	)
-	filename = "./test/agents/Content.bali"
-	source = transaction.AsSource()
-	uti.WriteFile(filename, source)
 
 	document = not.Document(transaction)
 
