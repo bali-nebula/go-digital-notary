@@ -59,15 +59,6 @@ func (v *hsmEd25519_) GetClass() HsmEd25519ClassLike {
 
 // Hardened Methods
 
-func (v *hsmEd25519_) GetTag() string {
-	// Check for any errors at the end.
-	defer v.errorCheck(
-		"An error occurred while attempting to retrieve the unique tag",
-	)
-
-	panic("This module has not yet been implemented.")
-}
-
 func (v *hsmEd25519_) GetSignatureAlgorithm() string {
 	// Check for any errors at the end.
 	defer v.errorCheck(

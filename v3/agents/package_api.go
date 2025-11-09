@@ -167,7 +167,6 @@ Hardened declares the set of method signatures that must be supported by all
 hardened security modules.  This interface requires a private key.
 */
 type Hardened interface {
-	GetTag() string
 	GetSignatureAlgorithm() string
 	GetPublicKey() []byte
 	GenerateKeys() []byte

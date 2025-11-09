@@ -68,10 +68,6 @@ func (v *hsmEd25519_) GetClass() not.HsmEd25519ClassLike {
 
 // Hardened Methods
 
-func (v *hsmEd25519_) GetTag() string {
-	return v.tag_
-}
-
 func (v *hsmEd25519_) GetSignatureAlgorithm() string {
 	return hsmEd25519Class().algorithm_
 }
