@@ -123,28 +123,6 @@ func DigitalNotaryClass() DigitalNotaryClassLike {
 	return age.DigitalNotaryClass()
 }
 
-func DigitalNotary(
-	ssm age.Trusted,
-	hsm age.Hardened,
-) DigitalNotaryLike {
-	return DigitalNotaryClass().DigitalNotary(
-		ssm,
-		hsm,
-	)
-}
-
-func DigitalNotaryWithCertificate(
-	ssm age.Trusted,
-	hsm age.Hardened,
-	certificate com.DocumentLike,
-) DigitalNotaryLike {
-	return DigitalNotaryClass().DigitalNotaryWithCertificate(
-		ssm,
-		hsm,
-		certificate,
-	)
-}
-
 func HsmEd25519Class() HsmEd25519ClassLike {
 	return age.HsmEd25519Class()
 }
@@ -168,6 +146,33 @@ func SsmSha512() SsmSha512Like {
 }
 
 // GLOBAL FUNCTIONS
+
+// Agents
+
+func DigitalNotary(
+	value ...any,
+) DigitalNotaryLike {
+	var ssm = value[0].(SsmSha512Like)
+	var hsm = value[1].(HsmEd25519Like)
+	var notary DigitalNotaryLike
+	switch len(value) {
+	case 2:
+		notary = DigitalNotaryClass().DigitalNotary(
+			ssm,
+			hsm,
+		)
+	case 3:
+		var certificate = value[2].(DocumentLike)
+		notary = DigitalNotaryClass().DigitalNotaryWithCertificate(
+			ssm,
+			hsm,
+			certificate,
+		)
+	default:
+		panic("An invalid number of arguments was passed into the DigitalNotary contructor")
+	}
+	return notary
+}
 
 // Documents
 

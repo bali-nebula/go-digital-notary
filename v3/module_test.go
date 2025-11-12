@@ -227,7 +227,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	// Pickup where we left off with a new security module and digital notary.
 	ssm = not.SsmSha512()
 	hsm = HsmEd25519TestClass().HsmEd25519(device, secret)
-	notary = not.DigitalNotaryWithCertificate(ssm, hsm, certificateV1)
+	notary = not.DigitalNotary(ssm, hsm, certificateV1)
 
 	// Refresh and validate the public-private key pair.
 	document = notary.RefreshKey()
