@@ -50,14 +50,14 @@ func TestParsingContents(t *tes.T) {
 	fmt.Println(filename)
 	var source = uti.ReadFile(filename)
 	var content = not.Content(source)
-	var entity = content.GetEntity()
+	var literal = content.GetLiteral()
 	var type_ = content.GetType()
 	var tag = content.GetTag()
 	var version = content.GetVersion()
 	var optionalPrevious = content.GetOptionalPrevious()
 	var permissions = content.GetPermissions()
 	content = not.Content(
-		entity,
+		literal,
 		type_,
 		tag,
 		version,
@@ -241,7 +241,7 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
 	var context = doc.ParseComponent(`[
     $website: <https://bali-nebula.com/>
     $sessionId: "ABC123456789"
-]`).GetEntity()
+]`).GetLiteral()
 	document = notary.GenerateCredential(context)
 	ass.True(t, notary.SealMatches(document, certificateV2))
 	document = notary.RefreshCredential(context, document)

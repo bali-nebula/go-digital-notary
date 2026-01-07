@@ -116,7 +116,7 @@ func (v *identity_) GetKey() doc.BinaryLike {
 
 func (v *identity_) GetAttributes() doc.Composite {
 	var component = v.GetSubcomponent(doc.Symbol("$attributes"))
-	return component.GetComposite()
+	return component
 }
 
 // Parameterized Methods

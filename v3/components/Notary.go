@@ -109,7 +109,8 @@ func (v *notary_) GetOptionalSeal() SealLike {
 	var seal SealLike
 	var component = v.GetSubcomponent(doc.Symbol("$seal"))
 	if uti.IsDefined(component) {
-		seal = SealClass().SealFromSource(doc.FormatComponent(component))
+		var source = doc.FormatComponent(component)
+		seal = SealClass().SealFromSource(source)
 	}
 	return seal
 }

@@ -270,7 +270,7 @@ all parameterized documents.
 */
 type Parameterized interface {
 	AsSource() string
-	GetEntity() any
+	GetLiteral() any
 	GetType() doc.NameLike
 	GetTag() doc.TagLike
 	GetVersion() doc.VersionLike

@@ -78,13 +78,14 @@ func (v *document_) AsSource() string {
 
 func (v *document_) GetContent() Parameterized {
 	var component = v.GetSubcomponent(doc.Symbol("$content"))
-	return ContentClass().ContentFromSource(doc.FormatComponent(component))
+	var source = doc.FormatComponent(component)
+	return ContentClass().ContentFromSource(source)
 }
 
 func (v *document_) IsNotarized() bool {
 	var component = v.GetSubcomponent(
 		doc.Symbol("$notaries"),
-		-1,
+		-1, // The last notary seal.
 	)
 	return uti.IsDefined(component)
 }
@@ -93,7 +94,7 @@ func (v *document_) AddNotary(
 	notary NotaryLike,
 ) {
 	v.SetSubcomponent(
-		notary,
+		notary.AsIntrinsic(),
 		doc.Symbol("$notaries"),
 		0,
 	)
@@ -103,10 +104,11 @@ func (v *document_) RemoveNotary() NotaryLike {
 	var notary NotaryLike
 	var component = v.RemoveSubcomponent(
 		doc.Symbol("$notaries"),
-		-1,
+		-1, // The last notary seal.
 	)
 	if uti.IsDefined(component) {
-		notary = component.GetComposite().(NotaryLike)
+		var source = doc.FormatComponent(component)
+		notary = NotaryClass().NotaryFromSource(source)
 	}
 	return notary
 }
@@ -115,7 +117,7 @@ func (v *document_) GetNotaryCitation() CitationLike {
 	var citation CitationLike
 	var component = v.GetSubcomponent(
 		doc.Symbol("$notaries"),
-		-1,
+		-1, // The last notary seal.
 		doc.Symbol("$citation"),
 	)
 	if uti.IsDefined(component) {
@@ -131,9 +133,9 @@ func (v *document_) SetNotarySeal(
 	seal SealLike,
 ) {
 	v.SetSubcomponent(
-		seal,
+		seal.AsIntrinsic(),
 		doc.Symbol("$notaries"),
-		-1,
+		-1, // The last notary seal.
 		doc.Symbol("$seal"),
 	)
 }
@@ -142,11 +144,12 @@ func (v *document_) RemoveNotarySeal() SealLike {
 	var seal SealLike
 	var component = v.RemoveSubcomponent(
 		doc.Symbol("$notaries"),
-		-1,
+		-1, // The last notary seal.
 		doc.Symbol("$seal"),
 	)
 	if uti.IsDefined(component) {
-		seal = SealClass().SealFromSource(doc.FormatComponent(component))
+		var source = doc.FormatComponent(component)
+		seal = SealClass().SealFromSource(source)
 	}
 	return seal
 }
