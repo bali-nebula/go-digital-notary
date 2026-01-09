@@ -95,7 +95,7 @@ func (v *notary_) GetTimestamp() doc.MomentLike {
 
 func (v *notary_) GetOptionalCitation() CitationLike {
 	var citation CitationLike
-	var component = v.GetParameter(doc.Symbol("$citation"))
+	var component = v.GetConstraint(doc.Symbol("$citation"))
 	if uti.IsDefined(component) {
 		var source = doc.FormatComponent(component)
 		if source != "none" {

@@ -103,28 +103,28 @@ func (v *content_) AsSource() string {
 }
 
 func (v *content_) GetType() doc.NameLike {
-	var component = v.GetParameter(doc.Symbol("$type"))
+	var component = v.GetConstraint(doc.Symbol("$type"))
 	return doc.Name(doc.FormatComponent(component))
 }
 
 func (v *content_) GetTag() doc.TagLike {
-	var component = v.GetParameter(doc.Symbol("$tag"))
+	var component = v.GetConstraint(doc.Symbol("$tag"))
 	return doc.Tag(doc.FormatComponent(component))
 }
 
 func (v *content_) GetVersion() doc.VersionLike {
-	var component = v.GetParameter(doc.Symbol("$version"))
+	var component = v.GetConstraint(doc.Symbol("$version"))
 	return doc.Version(doc.FormatComponent(component))
 }
 
 func (v *content_) GetPermissions() doc.NameLike {
-	var component = v.GetParameter(doc.Symbol("$permissions"))
+	var component = v.GetConstraint(doc.Symbol("$permissions"))
 	return doc.Name(doc.FormatComponent(component))
 }
 
 func (v *content_) GetOptionalPrevious() doc.ResourceLike {
 	var previous doc.ResourceLike
-	var component = v.GetParameter(doc.Symbol("$previous"))
+	var component = v.GetConstraint(doc.Symbol("$previous"))
 	if uti.IsDefined(component) {
 		var source = doc.FormatComponent(component)
 		if source != "none" {
