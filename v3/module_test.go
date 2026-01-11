@@ -207,11 +207,11 @@ func TestDigitalNotaryLifecycle(t *tes.T) {
     $merchant: <https://www.starbucks.com/>
     $amount: 7.95($currency: $USD)
 ](
-	$type: /bali/examples/Transaction/v1.2.3
-	$tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
-	$version: v1
-	$permissions: /bali/permissions/Public/v3
-	$previous: none
+    $type: /bali/examples/Transaction/v1.2.3
+    $tag: #BCASYZR1MC2J2QDPL03HG42W0M7P36TQ
+    $version: v1
+    $permissions: /bali/permissions/Public/v3
+    $previous: none
 )`,
 	)
 

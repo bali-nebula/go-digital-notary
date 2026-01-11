@@ -60,10 +60,10 @@ func (c *identityClass_) Identity(
     $key: ` + key.AsSource() + `
     $attributes: ` + doc.FormatComponent(attributes) + `
 ](
-	$type: /bali/types/notary/Identity/v3
+    $type: /bali/types/notary/Identity/v3
     $tag: ` + tag.AsSource() + `
     $version: ` + version.AsSource() + `
-	$permissions: /bali/permissions/Public/v3
+    $permissions: /bali/permissions/Public/v3
     $previous: ` + previous + `
 )`
 	return c.IdentityFromSource(source)

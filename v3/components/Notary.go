@@ -43,7 +43,7 @@ func (c *notaryClass_) Notary(
 	var source = `[
     $owner: ` + owner.AsSource() + `
     $timestamp: ` + timestamp.AsSource() + `
-	$citation: ` + citation + `
+    $citation: ` + citation + `
 ]($type: /bali/types/notary/Notary/v3)`
 	return c.NotaryFromSource(source)
 }
